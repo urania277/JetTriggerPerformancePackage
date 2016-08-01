@@ -1,0 +1,34 @@
+[HTopMultilep-00-01-04-121-gb657653] xAH_run.py --files ../../filelists/MC15cNoJES.txt --inputList -f --config config_MiniTree.py --treeName outTree --submitDir hist-MC15c --isMC direct
+Code:  https://github.com/UCATLAS/xAODAnaHelpers/tree/b657653
+Start: Feb 17 2016 15:32:59
+Stop:  Feb 17 2016 15:34:12
+Delta: 0:01:13.357771
+
+job runner options
+	input_filename                                      = ['../../filelists/MC15cNoJES.txt']
+	submit_dir                                          = hist-MC15c
+	num_events                                          = 0
+	skip_events                                         = 0
+	force_overwrite                                     = True
+	use_inputFileList                                   = True
+	use_scanDQ2                                         = False
+	verbose                                             = 0
+	driver                                              = direct
+<class 'ROOT.InputHandler'> algorithm options
+	setting <class 'ROOT.InputHandler'>.m_doTriggerJetKinematics       = True
+	setting <class 'ROOT.InputHandler'>.m_debugInExecute               = False
+	setting <class 'ROOT.InputHandler'>.m_debug                        = True
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsOff       = True
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsTruth     = True
+	setting <class 'ROOT.InputHandler'>.m_doLeadSubleadThirdJetKinematics = True
+	setting <class 'ROOT.InputHandler'>.m_doTriggerOfflineResponse     = True
+	setting <class 'ROOT.InputHandler'>.m_doEtainBinsOfPt              = False
+	setting <class 'ROOT.InputHandler'>.m_doOfflineTruthResponse       = True
+	setting <class 'ROOT.InputHandler'>.m_doKinematicsInBinsOfEta      = False
+	setting <class 'ROOT.InputHandler'>.m_doTruthJetKinematics         = True
+	setting <class 'ROOT.InputHandler'>.m_doOnlyThisNumberOfEvents     = -1
+	setting <class 'ROOT.InputHandler'>.m_TriggerName                  = STUDYALL; HLT_j360; HLT_j360_a10_lcw_sub_L1J100; HLT_4j85; HLT_5j60; HLT_6j45; HLT_7j45; HLT_ht850_L1J75
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseOffVsTruth      = True
+	setting <class 'ROOT.InputHandler'>.m_doOfflineJetKinematics       = True
+	setting <class 'ROOT.InputHandler'>.m_doTriggerTruthResponse       = True
+	setting <class 'ROOT.InputHandler'>.m_name                         = MultijetAlgo

@@ -1,0 +1,7 @@
+setupATLAS
+rcSetup
+rc find_packages
+rc compile
+cd ..
+eosmount eos
+cd JetTriggerPerformancePackageDesign

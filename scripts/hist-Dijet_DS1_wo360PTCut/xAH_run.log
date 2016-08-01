@@ -1,0 +1,52 @@
+[HTopMultilep-00-01-08-24-g02c6ead] xAH_run.py --files ../../filelists/Dijet_DS1_wo360PTCut.txt --inputList -f --config config_TurnOns_Dijet.py --treeName outTree --submitDir hist-Dijet_DS1_wo360PTCut --isMC direct
+Code:  https://github.com/UCATLAS/xAODAnaHelpers/tree/02c6ead
+Start: Jun 23 2016 17:12:38
+Stop:  Jun 23 2016 17:29:02
+Delta: 0:16:24.159669
+
+job runner options
+	input_filename                                      = ['../../filelists/Dijet_DS1_wo360PTCut.txt']
+	submit_dir                                          = hist-Dijet_DS1_wo360PTCut
+	num_events                                          = 0
+	skip_events                                         = 0
+	force_overwrite                                     = True
+	use_inputFileList                                   = True
+	use_scanDQ2                                         = False
+	verbose                                             = 0
+	driver                                              = direct
+<class 'ROOT.InputHandler'> algorithm options
+	setting <class 'ROOT.InputHandler'>.m_doTriggerJetKinematics       = False
+	setting <class 'ROOT.InputHandler'>.m_debugInExecute               = False
+	setting <class 'ROOT.InputHandler'>.m_debug                        = True
+	setting <class 'ROOT.InputHandler'>.m_doPTBalance                  = False
+	setting <class 'ROOT.InputHandler'>.m_useEmulation                 = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsTruth     = False
+	setting <class 'ROOT.InputHandler'>.m_doEtainBinsOfPt              = False
+	setting <class 'ROOT.InputHandler'>.m_checkLArError                = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsOff       = False
+	setting <class 'ROOT.InputHandler'>.m_doTruthJetKinematics         = False
+	setting <class 'ROOT.InputHandler'>.m_doCleaning                   = False
+	setting <class 'ROOT.InputHandler'>.m_TurnOnName                   = HLT_j360-L1_J100; HLT_j380-L1_J100; HLT_j400-L1_J100
+	setting <class 'ROOT.InputHandler'>.m_doMHT                        = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseOffVsTruth      = False
+	setting <class 'ROOT.InputHandler'>.m_doTurnOns                    = True
+	setting <class 'ROOT.InputHandler'>.m_name                         = MultijetAlgo
+	setting <class 'ROOT.InputHandler'>.m_isData                       = True
+	setting <class 'ROOT.InputHandler'>.m_useTriggerDecisionTool       = True
+	setting <class 'ROOT.InputHandler'>.m_doOfflineTruthResponse       = False
+	setting <class 'ROOT.InputHandler'>.m_doFracSamplingMax            = False
+	setting <class 'ROOT.InputHandler'>.m_doLeadSubleadThirdJetKinematics = True
+	setting <class 'ROOT.InputHandler'>.m_doTriggerOfflineResponse     = False
+	setting <class 'ROOT.InputHandler'>.m_doOnlyThisNumberOfEvents     = -1
+	setting <class 'ROOT.InputHandler'>.m_doEMFrac                     = False
+	setting <class 'ROOT.InputHandler'>.m_doTriggerTruthResponse       = False
+	setting <class 'ROOT.InputHandler'>.m_doKinematicsInBinsOfEta      = False
+	setting <class 'ROOT.InputHandler'>.m_doDeltaPhi                   = False
+	setting <class 'ROOT.InputHandler'>.m_doyStar                      = False
+	setting <class 'ROOT.InputHandler'>.m_doHECFrac                    = False
+	setting <class 'ROOT.InputHandler'>.m_TriggerName                  = STUDYALL; HLT_j360; HLT_j380; HLT_j400; L1_J100
+	setting <class 'ROOT.InputHandler'>.m_useTriggerBeforePraescale    = False
+	setting <class 'ROOT.InputHandler'>.m_doNthJetKinematics           = False
+	setting <class 'ROOT.InputHandler'>.m_doMHTPhi                     = False
+	setting <class 'ROOT.InputHandler'>.m_doCuts                       = False
+	setting <class 'ROOT.InputHandler'>.m_doOfflineJetKinematics       = True

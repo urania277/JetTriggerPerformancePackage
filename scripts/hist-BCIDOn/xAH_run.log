@@ -1,0 +1,40 @@
+[HTopMultilep-00-01-04-121-gb657653] xAH_run.py --files ../../filelists/BCIDOn.txt --inputList -f --config config_MinBiasNewTrigger.py --treeName outTree --submitDir hist-BCIDOn --isMC direct
+Code:  https://github.com/UCATLAS/xAODAnaHelpers/tree/b657653
+Start: Mar 21 2016 23:13:26
+Stop:  Mar 21 2016 23:18:06
+Delta: 0:04:40.286987
+
+job runner options
+	input_filename                                      = ['../../filelists/BCIDOn.txt']
+	submit_dir                                          = hist-BCIDOn
+	num_events                                          = 0
+	skip_events                                         = 0
+	force_overwrite                                     = True
+	use_inputFileList                                   = True
+	use_scanDQ2                                         = False
+	verbose                                             = 0
+	driver                                              = direct
+<class 'ROOT.InputHandler'> algorithm options
+	setting <class 'ROOT.InputHandler'>.m_doTriggerJetKinematics       = True
+	setting <class 'ROOT.InputHandler'>.m_debug                        = True
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsTruth     = False
+	setting <class 'ROOT.InputHandler'>.m_doEtainBinsOfPt              = False
+	setting <class 'ROOT.InputHandler'>.m_checkLArError                = False
+	setting <class 'ROOT.InputHandler'>.m_doCleaning                   = False
+	setting <class 'ROOT.InputHandler'>.m_name                         = MultijetAlgo
+	setting <class 'ROOT.InputHandler'>.m_isData                       = False
+	setting <class 'ROOT.InputHandler'>.m_doLeadSubleadThirdJetKinematics = True
+	setting <class 'ROOT.InputHandler'>.m_doTriggerTruthResponse       = False
+	setting <class 'ROOT.InputHandler'>.m_TriggerName                  = STUDYALL; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490; HLT_j60_320eta490; HLT_j110_320eta490; HLT_j260_320eta490; HLT_4j25; HLT_4j45; HLT_5j25; HLT_5j45; HLT_6j25; HLT_7j25
+	setting <class 'ROOT.InputHandler'>.m_doOfflineJetKinematics       = True
+	setting <class 'ROOT.InputHandler'>.m_debugInExecute               = False
+	setting <class 'ROOT.InputHandler'>.m_doOfflineTruthResponse       = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsOff       = False
+	setting <class 'ROOT.InputHandler'>.m_doTruthJetKinematics         = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseOffVsTruth      = False
+	setting <class 'ROOT.InputHandler'>.m_doMoreKinematics             = False
+	setting <class 'ROOT.InputHandler'>.m_doTriggerOfflineResponse     = False
+	setting <class 'ROOT.InputHandler'>.m_doKinematicsInBinsOfEta      = True
+	setting <class 'ROOT.InputHandler'>.m_doOnlyThisNumberOfEvents     = -1
+	setting <class 'ROOT.InputHandler'>.m_doNthJetKinematics           = True
+	setting <class 'ROOT.InputHandler'>.m_doCuts                       = False

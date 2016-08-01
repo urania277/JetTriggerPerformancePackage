@@ -1,0 +1,40 @@
+[HTopMultilep-00-01-04-121-gb657653] xAH_run.py --files /afs/cern.ch/user/e/ekellerm/private/eos/atlas/atlascerngroupdisk/phys-exotics/jdm/dijet/TLA/Data/DS/rawDownload/group.phys-exotics.data15_13TeV.00281317.calibration_DataScouting_05_Jets.v6_AllCalibAllDataScouting_20160316_tree.root/* -f --config config_TLA_DS.py --treeName outTree --submitDir hist-TLA-DS-hist-TLA2015-Run281317 --isMC direct
+Code:  https://github.com/UCATLAS/xAODAnaHelpers/tree/b657653
+Start: Mar 24 2016 12:35:22
+Stop:  Mar 24 2016 12:37:34
+Delta: 0:02:11.662476
+
+job runner options
+	input_filename                                      = ['/afs/cern.ch/user/e/ekellerm/private/eos/atlas/atlascerngroupdisk/phys-exotics/jdm/dijet/TLA/Data/DS/rawDownload/group.phys-exotics.data15_13TeV.00281317.calibration_DataScouting_05_Jets.v6_AllCalibAllDataScouting_20160316_tree.root/*']
+	submit_dir                                          = hist-TLA-DS-hist-TLA2015-Run281317
+	num_events                                          = 0
+	skip_events                                         = 0
+	force_overwrite                                     = True
+	use_inputFileList                                   = False
+	use_scanDQ2                                         = False
+	verbose                                             = 0
+	driver                                              = direct
+<class 'ROOT.InputHandler'> algorithm options
+	setting <class 'ROOT.InputHandler'>.m_doTriggerJetKinematics       = True
+	setting <class 'ROOT.InputHandler'>.m_debug                        = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsTruth     = False
+	setting <class 'ROOT.InputHandler'>.m_doEtainBinsOfPt              = False
+	setting <class 'ROOT.InputHandler'>.m_checkLArError                = True
+	setting <class 'ROOT.InputHandler'>.m_doCleaning                   = False
+	setting <class 'ROOT.InputHandler'>.m_name                         = MultijetAlgo
+	setting <class 'ROOT.InputHandler'>.m_isData                       = True
+	setting <class 'ROOT.InputHandler'>.m_doLeadSubleadThirdJetKinematics = True
+	setting <class 'ROOT.InputHandler'>.m_doTriggerTruthResponse       = False
+	setting <class 'ROOT.InputHandler'>.m_TriggerName                  = HLT_j60
+	setting <class 'ROOT.InputHandler'>.m_doOfflineJetKinematics       = False
+	setting <class 'ROOT.InputHandler'>.m_debugInExecute               = False
+	setting <class 'ROOT.InputHandler'>.m_doOfflineTruthResponse       = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsOff       = False
+	setting <class 'ROOT.InputHandler'>.m_doTruthJetKinematics         = False
+	setting <class 'ROOT.InputHandler'>.m_doMjjResponseOffVsTruth      = False
+	setting <class 'ROOT.InputHandler'>.m_doMoreKinematics             = True
+	setting <class 'ROOT.InputHandler'>.m_doTriggerOfflineResponse     = False
+	setting <class 'ROOT.InputHandler'>.m_doKinematicsInBinsOfEta      = True
+	setting <class 'ROOT.InputHandler'>.m_doOnlyThisNumberOfEvents     = -1
+	setting <class 'ROOT.InputHandler'>.m_doNthJetKinematics           = False
+	setting <class 'ROOT.InputHandler'>.m_doCuts                       = True
