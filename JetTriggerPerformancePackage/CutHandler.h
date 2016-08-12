@@ -28,10 +28,22 @@ class CutHandler: public BaseJTPP
   bool m_passedCuts;
   std::map<std::string, bool> m_passedTrigger;
 
+  //for cutString method
+  std::vector< std::string> vec_cuts;
+  std::vector< std::string > vec_cut_options;
+  std::vector<int> vec_index; // index of the vector, i.e. leading, subleading pt, E, etc.
+  std::vector<int> vec_obs_index; // vector that simplifies the identification of the selected observable
+  std::vector<int> vec_jetType_index; // index representing the jetType
+  std::vector<float> vec_cutValue;
+
+  // my Tools for handling strings
+  ToolsJTPP *myTools;
+
   virtual float GetR(int pos1, int pos2, EventData* ED);
 
  public:
   CutHandler();
+  CutHandler(std::string cutString);
   virtual ~CutHandler();
 
   virtual void Reset();
@@ -42,8 +54,14 @@ class CutHandler: public BaseJTPP
   virtual void AddCut(float observable, float cutValue, std::string option);
   virtual void ApplyTriggerSpecificCut(std::string triggerName, std::vector<std::string> confTriggers, std::vector<bool> &boolConfTriggers, float observable, float cutValue, std::string option);
   virtual void CheckIsolation(int pos, EventData* ED, float R, float ptMin);
+  virtual void UseCutStringMethod(EventData* ED, EventData* trigED, EventData* truthED);
 
   virtual bool passedCuts();
+
+private:
+  virtual void InitialiseCutStringMethod(std::string cutString);
+  virtual void AddCutWithThisJetType(EventData* ED, int obs_index, int index, std::string cut_options, float cut_value);
+
 };
 
 #endif // JetTriggerPerformancePackage_CUTHANDLER_H

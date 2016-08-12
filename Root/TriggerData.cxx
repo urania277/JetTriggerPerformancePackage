@@ -231,8 +231,8 @@ float TriggerData::GetEtaMax(std::string triggerString)
     else {
 	if (cut1.compare("31ETA49") == 0) return 4.5; // max forward L1 value
 	else{
-	    if (myTools->splitString(triggerString ,"_", 0).compare("L1") == 0) return 2.0; // TODO change back to 2.6 !!!
-	    else return 2.0; // TODO change back to 2.8 !!!
+        if (myTools->splitString(triggerString ,"_", 0).compare("L1") == 0) return 2.6; // TODO change back to 2.6 !!!
+        else return 2.8; // TODO change back to 2.8 !!!
 	}
     }
 }

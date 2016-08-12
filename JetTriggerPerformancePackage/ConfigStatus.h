@@ -53,6 +53,7 @@ class ConfigStatus: public BaseJTPP
 		 bool a_useEmulation,
 		 bool a_useTriggerBeforePraescale,
 		 bool a_doCuts,
+         std::string a_cutStringKinematics,
 		 bool a_doCleaning,
 		 int a_doOnlyThisNumberOfEvents); // "a_" for argument
     virtual ~ConfigStatus();
@@ -110,6 +111,7 @@ class ConfigStatus: public BaseJTPP
 
     //cuts and cleaning
     const bool doCuts;
+    const std::string cutStringKinematics;
     const bool doCleaning;
     const int doOnlyThisNumberOfEvents;
 

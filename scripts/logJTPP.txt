@@ -1,0 +1,4 @@
+# This is logJTPP.txt, created at 1470934720
+#
+#All necessary settings needed for JTPPPlotter will be listed in the following
+#

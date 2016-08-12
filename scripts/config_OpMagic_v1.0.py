@@ -1,8 +1,9 @@
+# ===================================================================================================
 # config file for JetTriggerPerformancePackage (JTPP)
 #
 # Please follow the instructions below in order to set the parameters in the correct way
 # and to obtain performance plots of you choice.
-#
+# ===================================================================================================
 
 import ROOT
 from xAH_config import xAH_config
@@ -33,7 +34,7 @@ doTruthOnly = True
 #
 c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 #
-# ============= 0. General Parameters =============
+# ============= 0. General Parameters ================================================================================================================
 #
 # Determine whether the ntuple contains REAL DATA or MC. In case of MC, this option will automatically switch of parameters that exist for real data only
 #
@@ -54,14 +55,14 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_checkLArError"                         : True,
 #
 #
-# ============= 1. Kinematics =============
+# ============= 1. Kinematics ========================================================================================================================
 #
 # The following parameters will only affect the kinematic plots
 #
 # Switch on the generation of Kinematic Plots for offline, trigger and/or truth jets
 #
-                           "m_doOfflineJetKinematics"                : False,
-                           "m_doTriggerJetKinematics"                : False,
+                           "m_doOfflineJetKinematics"                : True,
+                           "m_doTriggerJetKinematics"                : True,
                            "m_doTruthJetKinematics"                  : False,
 #
 # Select triggers which kinematic plots you would like to generate.
@@ -71,7 +72,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 #
 # Generate leading, subleading and third jet (in pt ordering) and/or the nth jet of each jet trigger
 #
-                           "m_doLeadSubleadThirdJetKinematics"       : False,
+                           "m_doLeadSubleadThirdJetKinematics"       : True,
                            "m_doNthJetKinematics"                    : False,
 #
 # Option to separate kinematic plots in BINS OF ETA
@@ -80,7 +81,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 #
 # Options to plot kinematics of additional observables:
 #
-                           "m_doyStar"                               : False,
+                           "m_doyStar"                               : True,
                            "m_doDeltaPhi"                            : False,
                            "m_doPTBalance"                           : False,
                            "m_doMHT"                                 : False,
@@ -89,7 +90,15 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_doHECFrac"                             : False,
                            "m_doFracSamplingMax"                     : False,
 #
-# ============= 2. Response =============
+# Specifiy the wanted event cuts for kinematic plots in the string (separate with semicolon, vector in edgy brackets [] and no units).
+# For trigger or truth jets, write 'trig' or 'truth' in front of the observable, e.g. trigpt or trig-pt.
+# e.g. "|yStar| < 0.6; pt[0] > 150; pt[1] > 50"
+#
+                           "m_doCuts"                                : True,
+                           "m_cutStringKinematics"                   : "trig-pt[0] > 50; |yStar| < 0.2; trig-phi[1] < 2.5",
+
+#
+# ============= 2. Response ==========================================================================================================================
 #
 #
 # Switch on the generation of Pt Response Plots for offline, trigger and/or truth jets
@@ -104,7 +113,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_doMjjResponseTrigVsTruth"              : False,
                            "m_doMjjResponseTrigVsOff"                : False,
 #
-# ============= 3. TurnOns (Trigger Efficiencies) =============
+# ============= 3. TurnOns (Trigger Efficiencies) ===================================================================================================
 #
 #
 # Switch on the generation of turnons
@@ -125,7 +134,6 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_useTriggerBeforePraescale"             : False,
 # TODO CUTS
                            #cuts:
-                           "m_doCuts"                                : False,
 # CLEANING                           "m_doCleaning"                            : False,
                            } )
 

@@ -1,52 +1,51 @@
-[HTopMultilep-00-01-08-24-g02c6ead] xAH_run.py --files ../../filelists/Data16_run300800.txt --inputList -f --config config_TurnOns.py --treeName outTree --submitDir hist-Data16_run300800 --isMC direct
-Code:  https://github.com/UCATLAS/xAODAnaHelpers/tree/02c6ead
-Start: Jun 27 2016 14:21:12
-Stop:  Jun 27 2016 14:57:42
-Delta: 0:36:30.375230
+[hh4b-01-02-00-29-gf88f771] xAH_run.py --files ../../user.nbludau.8644628._000010.tree.root -f --config config_OpMagic_v1.0.py --treeName outTree --submitDir hist-Data16_run300800 --isMC direct
+Code:  https://github.com/UCATLAS/xAODAnaHelpers/tree/f88f771
+Start: Aug 11 2016 18:58:31
+Stop:  Aug 11 2016 18:58:45
+Delta: 0:00:13.981451
 
 job runner options
-	input_filename                                      = ['../../filelists/Data16_run300800.txt']
+	input_filename                                      = ['../../user.nbludau.8644628._000010.tree.root']
 	submit_dir                                          = hist-Data16_run300800
 	num_events                                          = 0
 	skip_events                                         = 0
 	force_overwrite                                     = True
-	use_inputFileList                                   = True
+	use_inputFileList                                   = False
 	use_scanDQ2                                         = False
 	verbose                                             = 0
 	driver                                              = direct
 <class 'ROOT.InputHandler'> algorithm options
-	setting <class 'ROOT.InputHandler'>.m_doTriggerJetKinematics       = False
+	setting <class 'ROOT.InputHandler'>.m_doTriggerJetKinematics       = True
 	setting <class 'ROOT.InputHandler'>.m_debugInExecute               = False
-	setting <class 'ROOT.InputHandler'>.m_debug                        = True
+	setting <class 'ROOT.InputHandler'>.m_debug                        = False
 	setting <class 'ROOT.InputHandler'>.m_doPTBalance                  = False
 	setting <class 'ROOT.InputHandler'>.m_useEmulation                 = True
 	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsTruth     = False
-	setting <class 'ROOT.InputHandler'>.m_doEtainBinsOfPt              = False
+	setting <class 'ROOT.InputHandler'>.m_useTriggerDecisionTool       = False
 	setting <class 'ROOT.InputHandler'>.m_checkLArError                = True
 	setting <class 'ROOT.InputHandler'>.m_doMjjResponseTrigVsOff       = False
 	setting <class 'ROOT.InputHandler'>.m_doTruthJetKinematics         = False
-	setting <class 'ROOT.InputHandler'>.m_doCleaning                   = False
-	setting <class 'ROOT.InputHandler'>.m_TurnOnName                   = HLT_j25-HLT_j15; HLT_j60-HLT_j25; HLT_j110-HLT_j85; HLT_j360-HLT_j260; HLT_j380-HLT_j260; HLT_j400-HLT_j260; L1_J15-HLT_j15; L1_J20-HLT_j25; L1_J40-HLT_j25; L1_J50-HLT_j25; L1_J40-HLT_j45; L1_J100-HLT_j85; L1_J75-HLT_j45; HLT_j110-HLT_j45; HLT_3j175-HLT_j110; HLT_4j85-HLT_j85; HLT_6j45-HLT_j60; HLT_6j45-HLT_j45; L1_3J40-HLT_j60; L1_4J15-HLT_j45; HLT_j25_320eta490-HLT_j15_320eta490; HLT_j60_320eta490-HLT_j25_320eta490; L1_J15.31ETA49-HLT_j15_320eta490; L1_J75.31ETA49-HLT_j60_320eta490; L1_J75.31ETA49-HLT_j45_320eta490; L1_J20.31ETA49-HLT_j15_320eta490; L1_J50.31ETA49-HLT_j45_320eta490
+	setting <class 'ROOT.InputHandler'>.m_TurnOnName                   = HLT_j25-HLT_j15; HLT_j60-HLT_j25; HLT_j110-HLT_j85; HLT_j360-HLT_j260
 	setting <class 'ROOT.InputHandler'>.m_doMHT                        = False
 	setting <class 'ROOT.InputHandler'>.m_doMjjResponseOffVsTruth      = False
 	setting <class 'ROOT.InputHandler'>.m_doTurnOns                    = True
+	setting <class 'ROOT.InputHandler'>.m_cutStringKinematics          = trig-pt[0] > 50; |yStar| < 0.2; trig-phi[1] < 2.5
 	setting <class 'ROOT.InputHandler'>.m_name                         = MultijetAlgo
 	setting <class 'ROOT.InputHandler'>.m_isData                       = True
-	setting <class 'ROOT.InputHandler'>.m_useTriggerDecisionTool       = False
+	setting <class 'ROOT.InputHandler'>.m_useTriggerBeforePraescale    = False
 	setting <class 'ROOT.InputHandler'>.m_doOfflineTruthResponse       = False
-	setting <class 'ROOT.InputHandler'>.m_doFracSamplingMax            = False
-	setting <class 'ROOT.InputHandler'>.m_doLeadSubleadThirdJetKinematics = False
-	setting <class 'ROOT.InputHandler'>.m_doTriggerOfflineResponse     = False
+	setting <class 'ROOT.InputHandler'>.m_doyStar                      = True
 	setting <class 'ROOT.InputHandler'>.m_doOnlyThisNumberOfEvents     = -1
+	setting <class 'ROOT.InputHandler'>.m_doTriggerOfflineResponse     = False
 	setting <class 'ROOT.InputHandler'>.m_doEMFrac                     = False
 	setting <class 'ROOT.InputHandler'>.m_doTriggerTruthResponse       = False
 	setting <class 'ROOT.InputHandler'>.m_doKinematicsInBinsOfEta      = False
 	setting <class 'ROOT.InputHandler'>.m_doDeltaPhi                   = False
-	setting <class 'ROOT.InputHandler'>.m_doyStar                      = False
+	setting <class 'ROOT.InputHandler'>.m_doLeadSubleadThirdJetKinematics = True
 	setting <class 'ROOT.InputHandler'>.m_doHECFrac                    = False
-	setting <class 'ROOT.InputHandler'>.m_TriggerName                  = STUDYALL; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490; HLT_j60_320eta490; HLT_j110_320eta490; HLT_j260_320eta490; HLT_4j25; HLT_4j45; HLT_5j25; HLT_5j45; HLT_6j25; HLT_7j25; L1_J75.31ETA49
-	setting <class 'ROOT.InputHandler'>.m_useTriggerBeforePraescale    = False
+	setting <class 'ROOT.InputHandler'>.m_TriggerName                  = STUDYALL; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490
 	setting <class 'ROOT.InputHandler'>.m_doNthJetKinematics           = False
 	setting <class 'ROOT.InputHandler'>.m_doMHTPhi                     = False
-	setting <class 'ROOT.InputHandler'>.m_doCuts                       = False
-	setting <class 'ROOT.InputHandler'>.m_doOfflineJetKinematics       = False
+	setting <class 'ROOT.InputHandler'>.m_doCuts                       = True
+	setting <class 'ROOT.InputHandler'>.m_doFracSamplingMax            = False
+	setting <class 'ROOT.InputHandler'>.m_doOfflineJetKinematics       = True

@@ -7,6 +7,7 @@
 #include <JetTriggerPerformancePackage/InputHandler.h>
 #include <JetTriggerPerformancePackage/ToolsJTPP.h>
 #include <JetTriggerPerformancePackage/AnalysisHandler.h>
+#include <JetTriggerPerformancePackage/LogWriter.h>
 #include <JetTriggerPerformancePackage/EventData.h>
 #include <JetTriggerPerformancePackage/L1Data.h>
 #include <JetTriggerPerformancePackage/TriggerData.h>
@@ -33,6 +34,7 @@
 #pragma link C++ class InputHandler+;
 #pragma link C++ class ToolsJTPP+;
 #pragma link C++ class AnalysisHandler+;
+#pragma link C++ class LogWriter+;
 #pragma link C++ class EventData+;
 #pragma link C++ class L1Data+;
 #pragma link C++ class TriggerData+;

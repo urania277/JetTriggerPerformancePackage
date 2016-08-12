@@ -28,7 +28,6 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 #include <sstream>
 #include <vector>
-#include <sstream>
 
 // own classes
 #include <JetTriggerPerformancePackage/TriggerHistoPack.h>
@@ -37,6 +36,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <JetTriggerPerformancePackage/TriggerEfficiencyMatrix.h>
 #include <JetTriggerPerformancePackage/ToolsJTPP.h>
 #include <JetTriggerPerformancePackage/AnalysisHandler.h>
+#include <JetTriggerPerformancePackage/LogWriter.h>
 #include <JetTriggerPerformancePackage/EventData.h>
 #include <JetTriggerPerformancePackage/L1Data.h>
 #include <JetTriggerPerformancePackage/TriggerData.h>
@@ -97,6 +97,7 @@ class InputHandler : public xAH::Algorithm
     bool m_useTriggerBeforePraescale;
 
     bool m_doCuts;
+    std::string m_cutStringKinematics;
     bool m_doCleaning;
 
     int m_doOnlyThisNumberOfEvents;
@@ -149,6 +150,9 @@ class InputHandler : public xAH::Algorithm
     // AnalysisHandler
     AnalysisHandler* anaHandler; //!
     const double DeltaRMax; //!
+
+    // LogWriter
+    LogWriter* logwr;
 
     // output of logfiles for for JTPPPlotter.py
     ofstream* out_trigger; //!

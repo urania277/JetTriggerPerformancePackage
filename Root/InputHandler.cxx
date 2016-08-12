@@ -68,6 +68,7 @@ InputHandler :: InputHandler () :
     m_useEmulation(false),
     m_useTriggerBeforePraescale(false),
     m_doCuts(false),
+    m_cutStringKinematics(""),
     m_doCleaning(false),
     m_doOnlyThisNumberOfEvents(-1),
     cutH(nullptr),
@@ -80,6 +81,7 @@ InputHandler :: InputHandler () :
     ED_jet_truth(nullptr),
     L1D(nullptr),
     anaHandler(nullptr),
+    logwr(nullptr),
     DeltaRMax(0.4),
     out_trigger(nullptr),
     out_turnOns(nullptr),
@@ -126,6 +128,7 @@ EL::StatusCode  InputHandler :: configure ()
                         m_useEmulation,
                         m_useTriggerBeforePraescale,
                         m_doCuts,
+                        m_cutStringKinematics,
                         m_doCleaning,
                         m_doOnlyThisNumberOfEvents);
 
@@ -136,6 +139,9 @@ EL::StatusCode  InputHandler :: configure ()
   out_trigger = new ofstream("logfile_trigger.txt");
   out_turnOns = new ofstream("logfile_turnOns.txt");
   out_logfile = new ofstream("logfileJTPP.txt");
+
+  // Declare and construct LogWriter
+  logwr = new LogWriter("logJTPP.txt");
 
   // eventCounter variable in order to keep track of the number if events
   eventCounter = 0;
@@ -174,7 +180,7 @@ EL::StatusCode  InputHandler :: configure ()
   }
 
   // Declare and construct CutHandler for kinematic plots
-  cutH = new CutHandler();
+  cutH = new CutHandler(CS->cutStringKinematics);
 
   // Declare and construct EventData classes for all jet types, i.e. offline jets, trigger jets, truth jets, matched truth jets and L1 jets
   ED_jet = new EventData("jet");
@@ -224,7 +230,6 @@ EL::StatusCode InputHandler :: setupJob (EL::Job& job)
 
   return EL::StatusCode::SUCCESS;
 }
-
 
 
 EL::StatusCode InputHandler :: histInitialize ()
@@ -649,11 +654,15 @@ EL::StatusCode InputHandler :: execute ()
       //cutH->AddCut(ED_trigJet->eta->at(1), 2.8, "absmax");
 
       // yStar cut
-      cutH->AddCut(ED_trigJet->yStar, 0.6, "absmax");
+      //cutH->AddCut(ED_trigJet->yStar, 0.6, "absmax");
 
       // mjj cut
       //cutH->AddCut(ED_trigJet->mjj, 500.0, "min");
       //cutH->AddCut(ED_trigJet->mjj, 900.0, "max");
+
+      // cutString method
+      cutH->UseCutStringMethod(ED_jet, ED_trigJet, ED_truthJet);
+
   }
 
   // Discard if event did not pass
@@ -828,6 +837,7 @@ EL::StatusCode InputHandler :: histFinalize ()
 
   out_trigger->close();
   out_logfile->close();
+  logwr->CloseLogfile();
 
   return EL::StatusCode::SUCCESS;
 }

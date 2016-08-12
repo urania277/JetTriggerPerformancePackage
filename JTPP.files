@@ -30,3 +30,8 @@ Root/TriggerEfficiencyMatrix.cxx
 Root/TriggerHistoPack.cxx
 scripts/config_TurnOns.py
 scripts/config_OpMagic_v1.0.py
+logwriter.h
+logwriter.cpp
+JetTriggerPerformancePackage/LogWriter.h
+Root/LogWriter.cpp
+Root/LogWriter.cxx

@@ -7,6 +7,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 --------------------------------------------------------------------*/
 
 #include <JetTriggerPerformancePackage/CutHandler.h>
+#include <JetTriggerPerformancePackage/ToolsJTPP.h>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -20,6 +21,17 @@ m_passedCuts(true) // In dubio pro reo
 {
   if (m_debug) std::cout << "Starting constructor CutHandler()..." << std::endl;
 
+  myTools = new ToolsJTPP();
+
+}
+
+CutHandler::CutHandler(std::string cutString):
+m_passedCuts(true) // In dubio pro reo
+{
+  if (m_debug) std::cout << "Starting constructor CutHandler()..." << std::endl;
+
+  myTools = new ToolsJTPP();
+  this->InitialiseCutStringMethod(cutString);
 }
 
 CutHandler::~CutHandler()
@@ -39,7 +51,7 @@ void CutHandler::Reset(std::vector<bool> &boolConfTriggers)
     if (m_debug) std::cout << "Starting Reset()..." << std::endl;
 
     for (unsigned int i = 0; i < boolConfTriggers.size(); i++){
-	boolConfTriggers[i] = false;
+        boolConfTriggers[i] = false;
     }
 
     m_passedCuts = true;
@@ -102,6 +114,90 @@ void CutHandler::AddCut(float observable, float cutValue, std::string option)
     }
 }
 
+void CutHandler::InitialiseCutStringMethod(std::string cutString)
+{
+    if (m_debug) std::cout << "Starting AddCutString()..." << std::endl;
+
+    //--- split cutString cut by cut ---
+    std::string cutj;
+
+    int n = 0;
+    do{
+    cutj = myTools->splitString(cutString,"; ", n);
+    vec_cuts.push_back(cutj);
+    n++;
+    } while( cutj.compare("String TOO SHORT") != 0);
+    vec_cuts.pop_back(); //remove last entry since it is just "String TOO SHORT"
+
+    // Cout of all selected cuts
+    std::cout << "\n=== Selected cuts ===" << std::endl;
+    for (unsigned int i=0; i< vec_cuts.size(); i++){
+    std::cout << "cut " << i << ": " << vec_cuts.at(i) << std::endl;
+    }
+    std::cout << "======================== \n" << std::endl;
+
+    //--- parsing each cut ---
+    for (unsigned int i=0; i < vec_cuts.size(); i++){
+
+        // What is the operator?
+        if (vec_cuts.at(i).find(">")!=std::string::npos) vec_cut_options.push_back("min");
+        else if (vec_cuts.at(i).find("<")!=std::string::npos) vec_cut_options.push_back("max");
+        else{
+            // case of operator cannot be read
+            std::cout << "CutHandler::AddCutString CANNOT READ THE OPERATOR OF CUT " << i << std::endl << "Please check your config file" << std::endl;
+
+            // set operator to larger
+            vec_cut_options.push_back("min");
+        }
+
+        // Do we have a absolute value?
+        if (vec_cuts.at(i).compare("|") > 0) vec_cut_options.at(i) = "abs" + vec_cut_options.at(i);
+
+        // Get the index number of the vector. If observable is a scalar, set vec_index to -1
+        std::string sIndex = myTools->splitString(myTools->splitString(vec_cuts.at(i),"[", 1),"]",0);
+
+        if (sIndex.compare("String TOO SHORT") == 0) vec_index.push_back(-1);
+        else vec_index.push_back(stoi(sIndex));
+
+        // Identify the observable and give it a observable number for later
+        if (vec_cuts.at(i).find("E"              )!=std::string::npos) vec_obs_index.push_back(0);
+        if (vec_cuts.at(i).find("pt"             )!=std::string::npos) vec_obs_index.push_back(1);
+        if (vec_cuts.at(i).find("phi"            )!=std::string::npos) vec_obs_index.push_back(2);
+        if (vec_cuts.at(i).find("eta"            )!=std::string::npos) vec_obs_index.push_back(3);
+        if (vec_cuts.at(i).find("mjj"            )!=std::string::npos) vec_obs_index.push_back(4);
+        if (vec_cuts.at(i).find("m23"            )!=std::string::npos) vec_obs_index.push_back(5);
+
+        if (vec_cuts.at(i).find("yStar"          )!=std::string::npos) vec_obs_index.push_back(6);
+        if (vec_cuts.at(i).find("deltaPhi"       )!=std::string::npos) vec_obs_index.push_back(7);
+        if (vec_cuts.at(i).find("pTBalance"      )!=std::string::npos) vec_obs_index.push_back(8);
+        if (vec_cuts.at(i).find("MHT"            )!=std::string::npos) vec_obs_index.push_back(9);
+        if (vec_cuts.at(i).find("MHTPhi"         )!=std::string::npos) vec_obs_index.push_back(10);
+        if (vec_cuts.at(i).find("EMFrac"         )!=std::string::npos) vec_obs_index.push_back(11);
+        if (vec_cuts.at(i).find("HECFrac"        )!=std::string::npos) vec_obs_index.push_back(12);
+        if (vec_cuts.at(i).find("FracSamplingMax")!=std::string::npos) vec_obs_index.push_back(13);
+        if (vec_cuts.at(i).find("Timing"         )!=std::string::npos) vec_obs_index.push_back(14);
+
+        // Get the jet type
+
+        // default: offline jets:
+        vec_jetType_index.push_back(0);
+
+        if (vec_cuts.at(i).find("trig"           )!=std::string::npos) vec_jetType_index.at(i) = 1;
+        if (vec_cuts.at(i).find("truth"          )!=std::string::npos) vec_jetType_index.at(i) = 2;
+
+        // Get the cut value
+        std::string delimiter;
+        if (vec_cut_options.at(i).find("min")!=std::string::npos) delimiter = ">";
+        else delimiter="<";
+
+        std::string sCutValue = myTools->splitString(vec_cuts.at(i),delimiter,1);
+
+        vec_cutValue.push_back(std::stof(sCutValue));
+    }
+
+}
+
+
 // Check observable and set boolConfTriggers false if event does not pass this cut
 // ATTENTION: Apply this AFTER SearchTrigger()!!!!
 void CutHandler::ApplyTriggerSpecificCut(std::string triggerName, std::vector<std::string> confTriggers, std::vector<bool> &boolConfTriggers, float observable, float cutValue, std::string option)
@@ -115,27 +211,27 @@ void CutHandler::ApplyTriggerSpecificCut(std::string triggerName, std::vector<st
     bool passedTriggerCut = true;
 
     if (option.compare("max") == 0){
-	if (observable > cutValue) passedTriggerCut = false;
+        if (observable > cutValue) passedTriggerCut = false;
     }
 
     if (option.compare("min") == 0){
-	if (observable < cutValue) passedTriggerCut = false;
+        if (observable < cutValue) passedTriggerCut = false;
     }
 
     if (option.compare("maxeq") == 0){
-	if (observable >= cutValue) m_passedCuts = false;
+        if (observable >= cutValue) m_passedCuts = false;
     }
 
     if (option.compare("mineq") == 0){
-	if (observable <= cutValue) m_passedCuts = false;
+        if (observable <= cutValue) m_passedCuts = false;
     }
 
     if (option.compare("absmax") == 0){
-	if (fabs(observable) > cutValue) passedTriggerCut = false;
+        if (fabs(observable) > cutValue) passedTriggerCut = false;
     }
 
     if (option.compare("absmin") == 0){
-	if (fabs(observable) < cutValue) passedTriggerCut = false;
+        if (fabs(observable) < cutValue) passedTriggerCut = false;
     }
 
     // Set right boolConfTriggers false
@@ -199,3 +295,85 @@ bool CutHandler::passedCuts()
   return m_passedCuts;
 }
 
+void CutHandler::UseCutStringMethod(EventData *ED, EventData *trigED, EventData *truthED)
+{
+    if (m_debug) std::cout << "Starting UseCutStringMethod()..." << std::endl;
+
+    // Reset
+    this->Reset();
+
+    // Loop over every cut
+    for (int i=0; i < vec_cuts.size(); i++){
+
+        // separate with respect to jetType
+        switch (vec_jetType_index.at(i)) {
+        case 0: // offline jets
+            this->AddCutWithThisJetType(ED,vec_obs_index.at(i), vec_index.at(i), vec_cut_options.at(i), vec_cutValue.at(i));
+            break;
+        case 1: // trigger jets
+            this->AddCutWithThisJetType(trigED,vec_obs_index.at(i), vec_index.at(i), vec_cut_options.at(i), vec_cutValue.at(i));
+            break;
+        case 2: // truth jets
+            this->AddCutWithThisJetType(truthED,vec_obs_index.at(i), vec_index.at(i), vec_cut_options.at(i), vec_cutValue.at(i));
+            break;
+        }
+
+    }
+
+}
+
+void CutHandler::AddCutWithThisJetType(EventData *ED, int obs_index, int index, std::string cut_options, float cut_value)
+{
+    if (m_debug) std::cout << "Starting AddCutWithThisJetType()..." << std::endl;
+
+    // reading obs_index in order to find the proper observable
+    switch (obs_index) {
+    case 0:
+        this->AddCut(ED->E->at(index), cut_value, cut_options);
+        break;
+    case 1:
+        this->AddCut(ED->pt->at(index), cut_value, cut_options);
+        break;
+    case 2:
+        this->AddCut(ED->phi->at(index), cut_value, cut_options);
+        break;
+    case 3:
+        this->AddCut(ED->eta->at(index), cut_value, cut_options);
+        break;
+    case 4:
+        this->AddCut(ED->mjj, cut_value, cut_options);
+        break;
+    case 5:
+        this->AddCut(ED->m23, cut_value, cut_options);
+        break;
+    case 6:
+        this->AddCut(ED->yStar, cut_value, cut_options);
+        break;
+    case 7:
+        this->AddCut(ED->deltaPhi, cut_value, cut_options);
+        break;
+    case 8:
+        this->AddCut(ED->pTBalance, cut_value, cut_options);
+        break;
+    case 9:
+        this->AddCut(ED->MHT, cut_value, cut_options);
+        break;
+    case 10:
+        this->AddCut(ED->MHTPhi, cut_value, cut_options);
+        break;
+    case 11:
+        this->AddCut(ED->EMFrac->at(index), cut_value, cut_options);
+        break;
+    case 12:
+        this->AddCut(ED->HECFrac->at(index), cut_value, cut_options);
+        break;
+    case 13:
+        this->AddCut(ED->FracSamplingMax->at(index), cut_value, cut_options);
+        break;
+    case 14:
+        this->AddCut(ED->Timing->at(index), cut_value, cut_options);
+        break;
+    }
+
+
+}
