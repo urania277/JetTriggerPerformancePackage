@@ -30,6 +30,8 @@ class EventData: public BaseJTPP
 
   // determine the "transverse energy" of the particle using E, pt, phi and eta
   virtual float GetEt(int n);
+  virtual float GetMjj(int i, int j);
+  virtual float GetYStar(int i, int j);
 
   const std::string m_jetType;
 

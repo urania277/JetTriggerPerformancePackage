@@ -45,3 +45,42 @@ float EventData::GetEt(int n)
 
     return vec.Et();
 }
+
+float EventData::GetMjj(int i=0, int j=1)
+{
+    if (m_debug) std::cout << "Starting method Mjj()..." << std::endl;
+
+    // crosscheck vector size
+    if ((pt->size() < (i+1)) || (pt->size() < (j+1))) return 0.0;
+
+    TLorentzVector vec1;
+    TLorentzVector vec2;
+
+    // fill Lorentz vectors
+    vec1.SetPtEtaPhiE(pt->at(i), eta->at(i), phi->at(i), E->at(i));
+    vec2.SetPtEtaPhiE(pt->at(j), eta->at(j), phi->at(j), E->at(j));
+
+    // combine vectors
+    TLorentzVector vecSum = vec1 + vec2;
+
+    // return invariant mass
+    return vecSum.M();
+}
+
+float EventData::GetYStar(int i=0, int j=1)
+{
+    if (m_debug) std::cout << "Starting method yStar()..." << std::endl;
+
+    // crosscheck vector size
+    if ((pt->size() < (i+1)) || (pt->size() < (j+1))) return -999.0;
+
+    TLorentzVector vec1;
+    TLorentzVector vec2;
+
+    // fill Lorentz vectors
+    vec1.SetPtEtaPhiE(pt->at(i), eta->at(i), phi->at(i), E->at(i));
+    vec2.SetPtEtaPhiE(pt->at(j), eta->at(j), phi->at(j), E->at(j));
+
+    // calculate rapidity and return yStar
+    return 0.5* fabs(vec1.Rapidity() - vec2.Rapidity());
+}
