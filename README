@@ -1,0 +1,45 @@
+***************************************************************************
+* This is the README file of the JetTriggerPerformancePackage (JTPP)
+*
+* In the following you will find instructions of how to compile the package,
+* make changes in the configuration file and finally, how to run JTPP
+*
+* Edgar Kellermann (edgar.kellermann@cern.ch)
+****************************************************************************
+
+*** 1. Compiling Code and Getting Ready ************************************
+
+The JetTriggerPerformancePackage is a rootcore package and is therefore
+compiled by using rootcore. It also uses an additional package, the xAODAna-
+Helpers package, that is not part of the Rootcore AnalysisBase. This means
+that a copy of xAODAnaHelpers is needed in the same directory in which you
+copied JetTriggerPerformancePackage.
+
+You can download xAODAnaHelpers by using:
+
+  git clone https://github.com/UCATLAS/xAODAnaHelpers
+
+More informations can be found here: https://xaodanahelpers.readthedocs.io/en/master/Installing.html
+
+After you succesfully cloned xAODAnaHelpers it is time to compile the rootcore
+packages. JTPP was designed using the Rootcore Analysis Base 2.4.9 which we
+therefore recommend to use. For the compilation, use the following command lines:
+
+  setupATLAS
+  rcSetup Base,2.4.9
+  rc find_packages
+  rc compile
+
+The compilation can take some minutes. If something goes wrong during the compilation and you would like to compile again, use 'rc clean' for cleaning first.
+
+*** 2. Setting Configurations in JTPP  ************************************
+
+JTPP offers various options for jet trigger performance studies which are
+specified in a config file. An example for such a file is given by
+
+ scripts/config_OpMagic_v1.0.py
+
+You will find more informations about the available options in this file.
+In order to test your settings, you can also use  config_OpMagic_v1.0.py
+for a run straight ahead. Please note that it's important to keep the syntax
+in the config file to guarantee a succesfull run.
