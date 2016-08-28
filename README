@@ -39,7 +39,30 @@ specified in a config file. An example for such a file is given by
 
  scripts/config_OpMagic_v1.0.py
 
-You will find more informations about the available options in this file.
+You will find more informations about the available options in the confi file itself.
 In order to test your settings, you can also use  config_OpMagic_v1.0.py
 for a run straight ahead. Please note that it's important to keep the syntax
 in the config file to guarantee a succesfull run.
+
+*** 3. Running JTPP  ******************************************************
+
+After a successful compilation, JTPP can be run on ntuples stored locally or
+on the Grid. In general, the package is run by using the script xAH_run.py
+that you can find in the 'scripts' directory.In order to run this package locally,
+use following command:
+
+  xAH_run.py --files "TOTAL/PATH/TO/file.root" -f --config config_OpMagic_v1.0.py --treeName outTree --submitDir SUMBITDIRNAME  --isMC direct
+
+The submit directory will be placed under scripts and have the name SUBMITDIRNAME.
+Note that you have to give the total path of the root file as an argument.
+Alternatively, you provide a filelist as argument that includes the total paths (!) of
+all root files that you would like to use for this run:
+
+  xAH_run.py --files PATH/TO/filelist.txt --inputList -f --config config_OpMagic_v1.0.py --treeName outTree --submitDir SUMBITDIRNAME  --isMC direct
+
+For ntuples of the grid, we use xAH_run.py as well, but with the command:
+
+  xAH_run.py -f --files "user.username.filename.root/" --treeName outTree --submitDir=SUBMITDIRNAME --config config_OpMagic_v1.0.py --inputDQ2 prun --optGridDestSE=""  --optGridOutputSampleName=user.username.%in:name[1]%.%in:name[2]%.%in:name[3]%.v1.FILENAME
+
+More informations on tags for xAH_run.py can be found on the webpage:
+https://xaodanahelpers.readthedocs.io/en/master/UsingUs.html#configuration-details
