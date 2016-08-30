@@ -123,7 +123,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 # Select triggers which turnon plots you would like to generate.
 # The syntax for turnon plots is 'probe-trigger'-'reference-trigger', e.g. HLT_j25-HLT_j15
 #
-                           "m_TurnOnName"                            : "HLT_j25-HLT_j15; HLT_j60-HLT_j25; HLT_j110-HLT_j85; HLT_j360-HLT_j260",
+                           "m_TurnOnName"                            : "HLT_j25-HLT_j15; HLT_j60-HLT_j25; HLT_j110-HLT_j85; HLT_j360-HLT_j260; HLT_j380-HLT_j260; HLT_j400-HLT_j260",
 #
 # Select the STRATEGY of turnOn generation.
 # The available options are the Trigger Decision Tool (TDT), Emulation or Trigger Before Preascale. Note that more than one strategy can be selected
