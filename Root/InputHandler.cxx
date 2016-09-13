@@ -69,6 +69,7 @@ InputHandler :: InputHandler () :
     m_useTriggerBeforePraescale(false),
     m_doCuts(false),
     m_cutStringKinematics(""),
+    m_cutStringTurnons(""),
     m_doCleaning(false),
     m_doOnlyThisNumberOfEvents(-1),
     cutH(nullptr),
@@ -129,8 +130,13 @@ EL::StatusCode  InputHandler :: configure ()
                         m_useTriggerBeforePraescale,
                         m_doCuts,
                         m_cutStringKinematics,
+                        m_cutStringTurnons,
                         m_doCleaning,
                         m_doOnlyThisNumberOfEvents);
+
+  // Declare and construct CutHandler for kinematic plots
+  std::cout << "==== Kinmatics Cut Selection ====" << std::endl;
+  cutH = new CutHandler(CS->cutStringKinematics);
 
   // Declare and construct a TriggerData class
   TD = new TriggerData(m_TriggerName, m_TurnOnName, CS);
@@ -161,16 +167,11 @@ EL::StatusCode  InputHandler :: configure ()
       *out_turnOns << TD->probeTriggers.at(i) << "-" << TD->refTriggers.at(i) << endl;
   }
 
-
   // Declare a TriggerEfficiencyMatrix class (containing all Turn-ons) and book all wanted histograms
   if (CS->doTurnOns){
       trigEffic = new TriggerEfficiencyMatrix("effic", "TurnOns", CS);
       trigEffic->BookAll(TD, CS, wk());
   }
-
-  // TODO - is this still needed?
-  // Set config_nthJet variable in TD, IMPORTANT to do this AFTER trigEffic->BookAll()!
-  TD->SetAllnthJetPtEta();
 
   // Declare all TriggerHistoPack classes (one for each trigger) and book all histograms
   for (unsigned int i=0; i<TD->config_triggerName.size(); i++){
@@ -178,9 +179,6 @@ EL::StatusCode  InputHandler :: configure ()
       triggerhisto->BookAll(wk());
       m_map_triggerhistos[TD->config_triggerName.at(i)] = triggerhisto;
   }
-
-  // Declare and construct CutHandler for kinematic plots
-  cutH = new CutHandler(CS->cutStringKinematics);
 
   // Declare and construct EventData classes for all jet types, i.e. offline jets, trigger jets, truth jets, matched truth jets and L1 jets
   ED_jet = new EventData("jet");
@@ -773,7 +771,7 @@ EL::StatusCode InputHandler :: execute ()
 
   /* ======= Fill Turnons ======= */
   if (CS->doTurnOns){
-      trigEffic->FillAll(TD, ED_jet, ED_trigJet, L1D, m_weight, CS);
+      trigEffic->FillAll(TD, ED_jet, ED_trigJet, ED_truthJet, L1D, m_weight, CS);
   }
 
 

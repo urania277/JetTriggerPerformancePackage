@@ -20,7 +20,10 @@ TriggerEfficiencyMatrix::TriggerEfficiencyMatrix(std::string key, std::string di
     if (m_debug) std::cout << "Starting constructor TriggerEfficiencyMatrix()..." << std::endl;
 
     tools = new ToolsJTPP();
-    cutHandler = new CutHandler();
+
+    // Defining cutHandler
+    std::cout << "==== Turnon Cut Selection ====" << std::endl;
+    cutHandler = new CutHandler(CS->cutStringTurnons);
 }
 
 TriggerEfficiencyMatrix::~TriggerEfficiencyMatrix()
@@ -111,18 +114,18 @@ void TriggerEfficiencyMatrix::Book(std::string name1, std::string name2, int nBi
   HistogramMatrix::Book(m_key + "_" + name1, m_key + "_" + name2, nBins, xBinning , wk);
 }
 
-void TriggerEfficiencyMatrix::FillAll(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, L1Data* L1D, double weight, ConfigStatus* CS)
+void TriggerEfficiencyMatrix::FillAll(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, L1Data* L1D, double weight, ConfigStatus* CS)
 {
     if (m_debug) std::cout << "Starting FillAll()..." << std::endl;
 
     //TDT
     if (CS->useTriggerDecisionTool){
-	this->FillUsingTDT(TD, ED_jet, ED_trigJet, weight, CS);
+    this->FillUsingTDT(TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
     }
 
     //Emu
     if (CS->useEmulation){
-	this->FillUsingEmu(TD, ED_jet, ED_trigJet, L1D, weight, CS);
+    this->FillUsingEmu(TD, ED_jet, ED_trigJet,ED_truthJet, L1D, weight, CS);
     }
 
     //TBP
@@ -132,7 +135,7 @@ void TriggerEfficiencyMatrix::FillAll(TriggerData* TD, EventData* ED_jet, EventD
 
 }
 
-void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, double weight, ConfigStatus* CS)
+void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS)
 {
     if (m_debug) std::cout << "Starting FillUsingTDT()..." << std::endl;
 
@@ -144,7 +147,7 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
 	//TODO uncomment again	if (!TD->boolRefTriggers.at(n)) continue; //speed things up
 
 	// 1. Get nthJetAfterCuts and the corresponding pt value
-	nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->nthJetProbe.at(n), TD->etaMinProbeTrigger.at(n), TD->etaMaxProbeTrigger.at(n), ED_jet);
+    nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->nthJetProbe.at(n), TD->etaMinProbeTrigger.at(n), TD->etaMaxProbeTrigger.at(n), ED_jet, ED_trigJet, ED_truthJet);
 
 	if (nthJetAfterCutsProbe == 0) continue; // continue if no proper jet was found
 	ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
@@ -218,7 +221,7 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
     }
 }
 
-void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, L1Data* L1D, double weight, ConfigStatus* CS)
+void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, L1Data* L1D, double weight, ConfigStatus* CS)
 {
     if (m_debug) std::cout << "Starting FillUsingEmu()..." << std::endl;
 
@@ -236,7 +239,7 @@ void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, E
 
 	// 1. Get nthJetAfterCuts and the corresponding pt value
 	//nthJetAfterCutsProbe = this->nthJetAfterCutsChristiansVersion(TD, TD->nthJetProbe.at(n), TD->etaMinProbeTrigger.at(n), TD->etaMaxProbeTrigger.at(n), ED_jet);
-	nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->nthJetProbe.at(n), TD->etaMinProbeTrigger.at(n), TD->etaMaxProbeTrigger.at(n), ED_jet);
+    nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->nthJetProbe.at(n), TD->etaMinProbeTrigger.at(n), TD->etaMaxProbeTrigger.at(n), ED_jet, ED_trigJet, ED_truthJet);
 
 	// continue if no proper jet was found
 	if (nthJetAfterCutsProbe == 0) continue;
@@ -311,26 +314,27 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
 }
 
 // Returns number of nth jet after the wished cuts, if value is 0, no nth jet exists
-int TriggerEfficiencyMatrix::nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED)
+int TriggerEfficiencyMatrix::nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet)
 {
     if (m_debug) std::cout << "Starting nthJetAfterCuts()..." << std::endl;
 
     int passedJets = 0;
     int posLastPassedJet = 0;
 
-    for (unsigned int n=0; n < ED->eta->size(); n++){
+    for (unsigned int n=0; n < ED_jet->eta->size(); n++){
 
 
 	// Reset CutHandler for every jet
 	cutHandler->Reset();
 
 	// Apply cuts
-	cutHandler->AddCut(ED->eta->at(n), etaMin, "absmin");
-	cutHandler->AddCut(ED->eta->at(n), etaMax, "absmax");
-	cutHandler->AddCut(ED->Timing->at(n), 10.0, "absmax");
+    //cutHandler->AddCut(ED_jet->eta->at(n), etaMin, "absmin");
+    //cutHandler->AddCut(ED_jet->eta->at(n), etaMax, "absmax");
+    //cutHandler->AddCut(ED_jet->Timing->at(n), 10.0, "absmax");
+    cutHandler->UseCutStringMethod(ED_jet, ED_trigJet, ED_truthJet);
 
 	// Isolation for multijets only
-	if (nthJet > 1) cutHandler->CheckIsolation(n, ED, 0.6, 20);
+    if (nthJet > 1) cutHandler->CheckIsolation(n, ED_jet, 0.6, 20);
 
 	// check if jet passed cuts
 	if (cutHandler->passedCuts()){
@@ -347,29 +351,29 @@ int TriggerEfficiencyMatrix::nthJetAfterCuts(TriggerData* TD, int nthJet, float 
 
 }
 
-int TriggerEfficiencyMatrix::nthJetAfterCutsTLA(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED)
+int TriggerEfficiencyMatrix::nthJetAfterCutsTLA(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet)
 {
     if (m_debug) std::cout << "Starting nthJetAfterCuts()..." << std::endl;
 
     int passedJets = 0;
     int posLastPassedJet = 0;
 
-    for (unsigned int n=0; n < ED->eta->size(); n++){
+    for (unsigned int n=0; n < ED_jet->eta->size(); n++){
 
 
 	// Reset CutHandler for every jet
 	cutHandler->Reset();
 
 	// Apply cuts
-	cutHandler->AddCut(ED->eta->at(n), etaMin, "absmin");
-	cutHandler->AddCut(ED->eta->at(n), etaMax, "absmax");
-	cutHandler->AddCut(ED->Timing->at(n), 10.0, "absmax");
+    //cutHandler->AddCut(ED->eta->at(n), etaMin, "absmin");
+    //cutHandler->AddCut(ED->eta->at(n), etaMax, "absmax");
+    //cutHandler->AddCut(ED->Timing->at(n), 10.0, "absmax");
 
 	//Additional cut for TLA triggers: |yStar| < 0.6
-	cutHandler->AddCut(ED->yStar, 0.6, "absmax");
+    //cutHandler->AddCut(ED->yStar, 0.6, "absmax");
 
 	// Isolation for multijets only
-	if (nthJet > 1) cutHandler->CheckIsolation(n, ED, 0.6, 20);
+    if (nthJet > 1) cutHandler->CheckIsolation(n, ED_jet, 0.6, 20);
 
 	// check if jet passed cuts
 	if (cutHandler->passedCuts()){

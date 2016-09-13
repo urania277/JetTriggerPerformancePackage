@@ -63,18 +63,18 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
 
   virtual  void BookAll(TriggerData* TD, ConfigStatus* CS, EL::Worker* wk);
 
-  virtual  void FillAll(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, L1Data* L1D, double weight, ConfigStatus* CS);
+  virtual  void FillAll(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, L1Data* L1D, double weight, ConfigStatus* CS);
 
   virtual  void Fill(std::string obs, double value, bool isGood, double weight);
   virtual  void Fill(std::string obs, int value, bool isGood, double weight);
   virtual  void Fill(std::string obs, std::vector<float>* valueVector, std::vector<bool>* isGood, double weight);
 
-  virtual  void FillUsingTDT(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, double weight, ConfigStatus* CS);
-  virtual  void FillUsingEmu(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, L1Data* L1D, double weight, ConfigStatus* CS);
+  virtual  void FillUsingTDT(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
+  virtual  void FillUsingEmu(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, L1Data* L1D, double weight, ConfigStatus* CS);
   virtual  void FillUsingTBP();
 
-  virtual  int nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED);
-  virtual  int nthJetAfterCutsTLA(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED);
+  virtual  int nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet);
+  virtual  int nthJetAfterCutsTLA(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet);
   virtual  int nthJetAfterCutsChristiansVersion(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED);
 
   virtual  bool passedEmulation(bool isL1, int nthJet, float ptThreshold, float etaMin, float etaMax, EventData* ED_trigJet, L1Data* L1D);

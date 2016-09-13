@@ -132,6 +132,11 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_useTriggerDecisionTool"                : False,
                            "m_useEmulation"                          : True,
                            "m_useTriggerBeforePraescale"             : False,
+#
+# Hear you can define the event selection for turnons. The recommended event selection from the Jet Trigger Signature Group is:
+#
+                           "m_cutStringTurnons"                      : "|pt[0]| < 50",
+
 # TODO CUTS
                            #cuts:
 # CLEANING                           "m_doCleaning"                            : False,

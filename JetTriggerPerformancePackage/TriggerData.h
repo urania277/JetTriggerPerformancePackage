@@ -31,7 +31,6 @@ class TriggerData: public BaseJTPP
     // counting passed events per trigger and writing them out
     virtual void UpdateCounting();
     virtual void CoutCounting();
-    virtual void SetAllnthJetPtEta(); // IMPORTANT: RUN AFTER TriggerEfficiencyMatrix::BookAll !!! (For nthJetRaw to be filled properly)
     virtual int  GetnthJet(std::string triggerString);
     virtual float GetPtThreshold(std::string triggerString);
     virtual float GetEtaMin(std::string triggerString);

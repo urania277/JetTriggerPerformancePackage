@@ -50,35 +50,67 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
     std::string turnon, trigger1, trigger2, level, pt;
     n = 0;
     do{
-	turnon = myTools->splitString(TurnOnName,"; ", n);
-	trigger1 = myTools->splitString(turnon,"-", 0);
-	trigger2 = myTools->splitString(turnon,"-", 1);
-	probeTriggers.push_back(trigger1);
-	boolProbeTriggers.push_back(false);
-	refTriggers.push_back(trigger2);
-	boolRefTriggers.push_back(false);
+        turnon = myTools->splitString(TurnOnName,"; ", n);
+        trigger1 = myTools->splitString(turnon,"-", 0);
+        trigger2 = myTools->splitString(turnon,"-", 1);
+        probeTriggers.push_back(trigger1);
+        boolProbeTriggers.push_back(false);
+        refTriggers.push_back(trigger2);
+        boolRefTriggers.push_back(false);
 
-	//fill pt threshold
-	//level = myTools->splitString(trigger1,"j"
-	//if (
+        //fill pt threshold
+        //level = myTools->splitString(trigger1,"j"
+        //if (
 
-	n++;
-    } while(turnon.compare("String TOO SHORT") != 0);
-    probeTriggers.pop_back(); //remove last entry since it is just "String TOO SHORT"
-    boolProbeTriggers.pop_back();
-    refTriggers.pop_back();
-    boolRefTriggers.pop_back();
+        n++;
+     } while(turnon.compare("String TOO SHORT") != 0);
+     probeTriggers.pop_back(); //remove last entry since it is just "String TOO SHORT"
+     boolProbeTriggers.pop_back();
+     refTriggers.pop_back();
+     boolRefTriggers.pop_back();
 
-    // Cout of all selected turn-ons
-    std::cout << "\n=== Selected Turn-ons ===" << std::endl;
-    for (unsigned int i=0; i<probeTriggers.size(); i++){
-	std::cout << "probe: " << probeTriggers.at(i) << " ::: ref: " << refTriggers.at(i) << std::endl;
-    }
+     // Cout of all selected turn-ons
+     std::cout << "\n=== Selected Turn-ons ===" << std::endl;
+      for (unsigned int i=0; i<probeTriggers.size(); i++){
+        std::cout << "probe: " << probeTriggers.at(i) << " ::: ref: " << refTriggers.at(i) << std::endl;
+       }
     std::cout << "======================== \n" << std::endl;
 
     // Initialise counting of passed events per trigger
     for (unsigned int n=0; n < nTriggers; n++){
-	nPassedEvents.push_back(0);
+        nPassedEvents.push_back(0);
+    }
+
+    // Fill config_nthJet
+    for (unsigned int n=0; n < config_triggerName.size(); n++){
+        config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
+        std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
+    }
+
+    // Fill nthJetProbe and nthJetRef
+    for (unsigned int n=0; n < probeTriggers.size(); n++){
+        nthJetProbe.push_back(this->GetnthJet(probeTriggers.at(n)));
+        ptThresholdProbeTrigger.push_back(this->GetPtThreshold(probeTriggers.at(n)));
+        etaMinProbeTrigger.push_back(this->GetEtaMin(probeTriggers.at(n)));
+        etaMaxProbeTrigger.push_back(this->GetEtaMax(probeTriggers.at(n)));
+        isL1Probe.push_back(this->isTriggerL1(probeTriggers.at(n)));
+        std::cout << "probeTriggers.at(n): " << probeTriggers.at(n) << " ::: nthJetProbe.at(n): " << nthJetProbe.at(n) << std::endl;
+        std::cout << "ptThresholdProbeTrigger.at(n): " << ptThresholdProbeTrigger.at(n) << std::endl;
+        std::cout << "etaMinProbeTrigger.at(n): " << etaMinProbeTrigger.at(n) << std:: endl;
+        std::cout << "etaMaxProbeTrigger.at(n): " << etaMaxProbeTrigger.at(n) << std:: endl;
+        std::cout << "isL1Probe.at(n): " << isL1Probe.at(n) << std:: endl;
+
+        nthJetRef.push_back(this->GetnthJet(refTriggers.at(n)));
+        ptThresholdRefTrigger.push_back(this->GetPtThreshold(refTriggers.at(n)));
+        etaMinRefTrigger.push_back(this->GetEtaMin(refTriggers.at(n)));
+        etaMaxRefTrigger.push_back(this->GetEtaMax(refTriggers.at(n)));
+        isL1Ref.push_back(this->isTriggerL1(refTriggers.at(n)));
+        std::cout << "refTriggers.at(n): " << refTriggers.at(n) << " ::: nthJetRef.at(n): " << nthJetRef.at(n) << std::endl;
+        std::cout << "ptThresholdRefTrigger.at(n): " << ptThresholdRefTrigger.at(n) << std::endl;
+        std::cout << "etaMinRefTrigger.at(n): " << etaMinRefTrigger.at(n) << std:: endl;
+        std::cout << "etaMaxRefTrigger.at(n): " << etaMaxRefTrigger.at(n) << std:: endl;
+        std::cout << "isL1Ref.at(n): " << isL1Ref.at(n) << std:: endl;
+
     }
 
 }
@@ -106,44 +138,6 @@ void TriggerData::CoutCounting()
 	std::cout << config_triggerName.at(n) << " ::: " << nPassedEvents.at(n) << std::endl;
     }
     std::cout << "===============================================" << std::endl;
-}
-
-void TriggerData::SetAllnthJetPtEta()  // IMPORTANT: RUN AFTER TriggerEfficiencyMatrix::BookAll !!! (For nthJetRaw to be filled properly)
-{
-    if (m_debug) std::cout << "Starting method SetAllnthJet()..." << std::endl;
-
-    // Fill config_nthJet
-    for (unsigned int n=0; n < config_triggerName.size(); n++){
-	config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
-	std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
-    }
-
-    // Fill nthJetProbe and nthJetRef
-    for (unsigned int n=0; n < probeTriggers.size(); n++){
-	nthJetProbe.push_back(this->GetnthJet(probeTriggers.at(n)));
-	ptThresholdProbeTrigger.push_back(this->GetPtThreshold(probeTriggers.at(n)));
-	etaMinProbeTrigger.push_back(this->GetEtaMin(probeTriggers.at(n)));
-	etaMaxProbeTrigger.push_back(this->GetEtaMax(probeTriggers.at(n)));
-	isL1Probe.push_back(this->isTriggerL1(probeTriggers.at(n)));
-	std::cout << "probeTriggers.at(n): " << probeTriggers.at(n) << " ::: nthJetProbe.at(n): " << nthJetProbe.at(n) << std::endl;
-	std::cout << "ptThresholdProbeTrigger.at(n): " << ptThresholdProbeTrigger.at(n) << std::endl;
-	std::cout << "etaMinProbeTrigger.at(n): " << etaMinProbeTrigger.at(n) << std:: endl;
-	std::cout << "etaMaxProbeTrigger.at(n): " << etaMaxProbeTrigger.at(n) << std:: endl;
-	std::cout << "isL1Probe.at(n): " << isL1Probe.at(n) << std:: endl;
-
-	nthJetRef.push_back(this->GetnthJet(refTriggers.at(n)));
-	ptThresholdRefTrigger.push_back(this->GetPtThreshold(refTriggers.at(n)));
-	etaMinRefTrigger.push_back(this->GetEtaMin(refTriggers.at(n)));
-	etaMaxRefTrigger.push_back(this->GetEtaMax(refTriggers.at(n)));
-	isL1Ref.push_back(this->isTriggerL1(refTriggers.at(n)));
-	std::cout << "refTriggers.at(n): " << refTriggers.at(n) << " ::: nthJetRef.at(n): " << nthJetRef.at(n) << std::endl;
-	std::cout << "ptThresholdRefTrigger.at(n): " << ptThresholdRefTrigger.at(n) << std::endl;
-	std::cout << "etaMinRefTrigger.at(n): " << etaMinRefTrigger.at(n) << std:: endl;
-	std::cout << "etaMaxRefTrigger.at(n): " << etaMaxRefTrigger.at(n) << std:: endl;
-	std::cout << "isL1Ref.at(n): " << isL1Ref.at(n) << std:: endl;
-
-    }
-
 }
 
 

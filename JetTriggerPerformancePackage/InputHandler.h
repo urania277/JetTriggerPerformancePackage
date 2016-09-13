@@ -98,6 +98,7 @@ class InputHandler : public xAH::Algorithm
 
     bool m_doCuts;
     std::string m_cutStringKinematics;
+    std::string m_cutStringTurnons;
     bool m_doCleaning;
 
     int m_doOnlyThisNumberOfEvents;
