@@ -121,6 +121,13 @@ void CutHandler::InitialiseCutStringMethod(std::string cutString)
     //--- split cutString cut by cut ---
     std::string cutj;
 
+    // check if string is not empty, otherwise set everything to -1
+    if (cutString.compare("") == 0) {
+        vec_jetType_index.push_back(0);
+        vec_jetType_index.push_back(1);
+        return;
+    }
+
     int n = 0;
     do{
     cutj = myTools->splitString(cutString,"; ", n);
@@ -307,6 +314,8 @@ void CutHandler::UseCutStringMethod(EventData *ED, EventData *trigED, EventData 
 
         // separate with respect to jetType
         switch (vec_jetType_index.at(i)) {
+        case -1: // no cut
+            break;
         case 0: // offline jets
             this->AddCutWithThisJetType(ED,vec_obs_index.at(i), vec_index.at(i), vec_cut_options.at(i), vec_cutValue.at(i));
             break;

@@ -96,9 +96,22 @@ class InputHandler : public xAH::Algorithm
     bool m_useEmulation;
     bool m_useTriggerBeforePraescale;
 
+    // Turnon Event Selection
+    float m_HLT_cen_etaMin;
+    float m_HLT_cen_etaMax;
+    float m_HLT_fwd_etaMin;
+    float m_HLT_fwd_etaMax;
+    float m_L1_cen_etaMin;
+    float m_L1_cen_etaMax;
+    float m_L1_fwd_etaMin;
+    float m_L1_fwd_etaMax;
+    float m_TurnonCut_Timing;
+
+    std::string m_cutStringTurnons;
+
+    // Kinematic Cuts
     bool m_doCuts;
     std::string m_cutStringKinematics;
-    std::string m_cutStringTurnons;
     bool m_doCleaning;
 
     int m_doOnlyThisNumberOfEvents;

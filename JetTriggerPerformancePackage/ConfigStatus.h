@@ -52,6 +52,15 @@ class ConfigStatus: public BaseJTPP
 		 bool a_useTriggerDecisionTool,
 		 bool a_useEmulation,
 		 bool a_useTriggerBeforePraescale,
+         const float a_HLT_cen_etaMin,
+         const float a_HLT_cen_etaMax,
+         const float a_HLT_fwd_etaMin,
+         const float a_HLT_fwd_etaMax,
+         const float a_L1_cen_etaMin,
+         const float a_L1_cen_etaMax,
+         const float a_L1_fwd_etaMin,
+         const float a_L1_fwd_etaMax,
+         const float a_TurnonCut_Timing,
 		 bool a_doCuts,
          std::string a_cutStringKinematics,
          std::string a_cutStringTurnons,
@@ -109,6 +118,15 @@ class ConfigStatus: public BaseJTPP
     const bool useTriggerDecisionTool;
     const bool useEmulation;
     const bool useTriggerBeforePraescale;
+    const float HLT_cen_etaMin;
+    const float HLT_cen_etaMax;
+    const float HLT_fwd_etaMin;
+    const float HLT_fwd_etaMax;
+    const float L1_cen_etaMin;
+    const float L1_cen_etaMax;
+    const float L1_fwd_etaMin;
+    const float L1_fwd_etaMax;
+    const float TurnonCut_Timing;
 
     //cuts and cleaning
     const bool doCuts;

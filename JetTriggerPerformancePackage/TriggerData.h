@@ -60,30 +60,41 @@ class TriggerData: public BaseJTPP
 
     // ---- For Turnons ----
     // strings for turn-ons, one entry corresponds for one histogram request
-    std::vector< std::string> probeTriggers; // list of probe triggers
-    std::vector< std::string> refTriggers; // list of ref triggers
+    std::vector< std::string> probe_triggerName; // list of probe triggers
+    std::vector< std::string> ref_triggerName; // list of ref triggers
 
     // corresponding nthJets
-    std::vector< int> nthJetProbe;
-    std::vector< int> nthJetRef;
+    std::vector< int> probe_nthJet;
+    std::vector< int> ref_nthJet;
 
     // corresponding bools for passing
-    std::vector< bool> boolProbeTriggers;
-    std::vector< bool> boolRefTriggers;
+    std::vector< bool> probe_passedTrigger;
+    std::vector< bool> ref_passedTrigger;
 
     // corresponding pt threshold of triggers
-    std::vector< float> ptThresholdProbeTrigger;
-    std::vector< float> ptThresholdRefTrigger;
+    std::vector< float> probe_ptThreshold;
+    std::vector< float> ref_ptThreshold;
 
     // corresponding eta region
-    std::vector< float> etaMinProbeTrigger;
-    std::vector< float> etaMinRefTrigger;
-    std::vector< float> etaMaxProbeTrigger;
-    std::vector< float> etaMaxRefTrigger;
+    std::vector< float> probe_etaMin;
+    std::vector< float> ref_etaMin;
+    std::vector< float> probe_etaMax;
+    std::vector< float> ref_etaMax;
 
     // is L1 or not
-    std::vector< bool> isL1Probe;
-    std::vector< bool> isL1Ref;
+    std::vector< bool> probe_isL1;
+    std::vector< bool> ref_isL1;
+
+    // Turnon Event Selection
+     const float HLT_cen_etaMin;
+     const float HLT_cen_etaMax;
+     const float HLT_fwd_etaMin;
+     const float HLT_fwd_etaMax;
+     const float L1_cen_etaMin;
+     const float L1_cen_etaMax;
+     const float L1_fwd_etaMin;
+     const float L1_fwd_etaMax;
+     const float TurnonCut_Timing;
 
     // other used classes
     ToolsJTPP* myTools;

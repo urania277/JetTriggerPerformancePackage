@@ -54,6 +54,20 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
   // TODO Crosscheck
   TH2D* PtvsEta;
 
+  // physical parameters of the calorimeter (needed for turnon emulation
+  const float calo_HLT_cen_etaMin;
+  const float calo_HLT_cen_etaMax;
+
+  const float calo_HLT_fwd_etaMin;
+  const float calo_HLT_fwd_etaMax;
+
+  const float calo_L1_cen_etaMin;
+  const float calo_L1_cen_etaMax;
+
+  const float calo_L1_fwd_etaMin;
+  const float calo_L1_fwd_etaMax;
+
+
  public:
   TriggerEfficiencyMatrix(std::string key, std::string directory, ConfigStatus* a_CS);
   virtual ~TriggerEfficiencyMatrix();
@@ -74,7 +88,6 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
   virtual  void FillUsingTBP();
 
   virtual  int nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet);
-  virtual  int nthJetAfterCutsTLA(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet);
   virtual  int nthJetAfterCutsChristiansVersion(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED);
 
   virtual  bool passedEmulation(bool isL1, int nthJet, float ptThreshold, float etaMin, float etaMax, EventData* ED_trigJet, L1Data* L1D);

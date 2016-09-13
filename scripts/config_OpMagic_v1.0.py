@@ -48,7 +48,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 # Select how many events you would like to study for this run.
 # If '-1' is selected, all events are used.
 #
-                           "m_doOnlyThisNumberOfEvents"              : -1,
+                           "m_doOnlyThisNumberOfEvents"              : 1000,
 #
 # Specific options for REAL DATA
 #

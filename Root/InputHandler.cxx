@@ -67,6 +67,15 @@ InputHandler :: InputHandler () :
     m_useTriggerDecisionTool(false),
     m_useEmulation(false),
     m_useTriggerBeforePraescale(false),
+    m_HLT_cen_etaMin(0.0), // DEFAULT ETA REGIONS AND TIMING FOR TURNON EVENT SELECTION!
+    m_HLT_cen_etaMax(2.8), //
+    m_HLT_fwd_etaMin(3.6), //
+    m_HLT_fwd_etaMax(4.5), //
+    m_L1_cen_etaMin(0.0),  //
+    m_L1_cen_etaMax(2.6),  //
+    m_L1_fwd_etaMin(3.6),  //
+    m_L1_fwd_etaMax(4.5),  //
+    m_TurnonCut_Timing(10.0), //
     m_doCuts(false),
     m_cutStringKinematics(""),
     m_cutStringTurnons(""),
@@ -128,6 +137,15 @@ EL::StatusCode  InputHandler :: configure ()
                         m_useTriggerDecisionTool,
                         m_useEmulation,
                         m_useTriggerBeforePraescale,
+                        m_HLT_cen_etaMin,
+                        m_HLT_cen_etaMax,
+                        m_HLT_fwd_etaMin,
+                        m_HLT_fwd_etaMax,
+                        m_L1_cen_etaMin,
+                        m_L1_cen_etaMax,
+                        m_L1_fwd_etaMin,
+                        m_L1_fwd_etaMax,
+                        m_TurnonCut_Timing,
                         m_doCuts,
                         m_cutStringKinematics,
                         m_cutStringTurnons,
@@ -135,7 +153,7 @@ EL::StatusCode  InputHandler :: configure ()
                         m_doOnlyThisNumberOfEvents);
 
   // Declare and construct CutHandler for kinematic plots
-  std::cout << "==== Kinmatics Cut Selection ====" << std::endl;
+  std::cout << "\n==== Kinmatics Cut Selection ====" << std::endl;
   cutH = new CutHandler(CS->cutStringKinematics);
 
   // Declare and construct a TriggerData class
@@ -156,15 +174,15 @@ EL::StatusCode  InputHandler :: configure ()
   ToolsJTPP* myTools = new ToolsJTPP();
 
   // write all selected triggers into logfiles
-  *out_logfile << "===Triggers===" << endl;
+  *out_logfile << "\n===Triggers===" << endl;
   for (unsigned int i=0; i<TD->config_triggerName.size(); i++){
       *out_trigger << TD->config_triggerName.at(i) << endl;
       *out_logfile << TD->config_triggerName.at(i) << endl;
   }
 
   // write all selected triggers into logfiles
-  for (unsigned int i=0; i<TD->probeTriggers.size(); i++){
-      *out_turnOns << TD->probeTriggers.at(i) << "-" << TD->refTriggers.at(i) << endl;
+  for (unsigned int i=0; i<TD->probe_triggerName.size(); i++){
+      *out_turnOns << TD->probe_triggerName.at(i) << "-" << TD->ref_triggerName.at(i) << endl;
   }
 
   // Declare a TriggerEfficiencyMatrix class (containing all Turn-ons) and book all wanted histograms
@@ -624,8 +642,8 @@ EL::StatusCode InputHandler :: execute ()
 
   // Reset Cut Class
   cutH->Reset(TD->config_passedTriggers);
-  cutH->Reset(TD->boolProbeTriggers);
-  cutH->Reset(TD->boolRefTriggers);
+  cutH->Reset(TD->probe_passedTrigger);
+  cutH->Reset(TD->ref_passedTrigger);
 
   // CHECK LArERROR
   if (CS->checkLArError) cutH->AddCut(!m_LArError); // if argument is false, event does NOT pass
@@ -677,10 +695,10 @@ EL::StatusCode InputHandler :: execute ()
   if (CS->doTurnOns){
 
       // probe
-      cutH->SearchTrigger(TD->probeTriggers, TD->event_passedTriggers, TD->boolProbeTriggers);
+      cutH->SearchTrigger(TD->probe_triggerName, TD->event_passedTriggers, TD->probe_passedTrigger);
 
       // ref
-      cutH->SearchTrigger(TD->refTriggers, TD->event_passedTriggers, TD->boolRefTriggers);
+      cutH->SearchTrigger(TD->ref_triggerName, TD->event_passedTriggers, TD->ref_passedTrigger);
   }
 
   //Apply trigger specific cuts

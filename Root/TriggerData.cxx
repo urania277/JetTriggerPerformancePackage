@@ -16,7 +16,16 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 
 TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, ConfigStatus* CS):
-    event_passedTriggers(nullptr)
+    event_passedTriggers(nullptr),
+    HLT_cen_etaMin(CS->HLT_cen_etaMin),
+    HLT_cen_etaMax(CS->HLT_cen_etaMax),
+    HLT_fwd_etaMin(CS->HLT_fwd_etaMin),
+    HLT_fwd_etaMax(CS->HLT_fwd_etaMax),
+    L1_cen_etaMin (CS->L1_cen_etaMin),
+    L1_cen_etaMax (CS->L1_cen_etaMax),
+    L1_fwd_etaMin (CS->L1_fwd_etaMin),
+    L1_fwd_etaMax (CS->L1_fwd_etaMax),
+    TurnonCut_Timing(CS->TurnonCut_Timing)
 {
 
     if (m_debug) std::cout << "Starting constructor TriggerData()..." << std::endl;
@@ -53,10 +62,10 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
         turnon = myTools->splitString(TurnOnName,"; ", n);
         trigger1 = myTools->splitString(turnon,"-", 0);
         trigger2 = myTools->splitString(turnon,"-", 1);
-        probeTriggers.push_back(trigger1);
-        boolProbeTriggers.push_back(false);
-        refTriggers.push_back(trigger2);
-        boolRefTriggers.push_back(false);
+        probe_triggerName.push_back(trigger1);
+        probe_passedTrigger.push_back(false);
+        ref_triggerName.push_back(trigger2);
+        ref_passedTrigger.push_back(false);
 
         //fill pt threshold
         //level = myTools->splitString(trigger1,"j"
@@ -64,15 +73,15 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
 
         n++;
      } while(turnon.compare("String TOO SHORT") != 0);
-     probeTriggers.pop_back(); //remove last entry since it is just "String TOO SHORT"
-     boolProbeTriggers.pop_back();
-     refTriggers.pop_back();
-     boolRefTriggers.pop_back();
+     probe_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
+     probe_passedTrigger.pop_back();
+     ref_triggerName.pop_back();
+     ref_passedTrigger.pop_back();
 
      // Cout of all selected turn-ons
      std::cout << "\n=== Selected Turn-ons ===" << std::endl;
-      for (unsigned int i=0; i<probeTriggers.size(); i++){
-        std::cout << "probe: " << probeTriggers.at(i) << " ::: ref: " << refTriggers.at(i) << std::endl;
+      for (unsigned int i=0; i<probe_triggerName.size(); i++){
+        std::cout << "probe: " << probe_triggerName.at(i) << " ::: ref: " << ref_triggerName.at(i) << std::endl;
        }
     std::cout << "======================== \n" << std::endl;
 
@@ -84,32 +93,32 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
     // Fill config_nthJet
     for (unsigned int n=0; n < config_triggerName.size(); n++){
         config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
-        std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
+        //std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
     }
 
-    // Fill nthJetProbe and nthJetRef
-    for (unsigned int n=0; n < probeTriggers.size(); n++){
-        nthJetProbe.push_back(this->GetnthJet(probeTriggers.at(n)));
-        ptThresholdProbeTrigger.push_back(this->GetPtThreshold(probeTriggers.at(n)));
-        etaMinProbeTrigger.push_back(this->GetEtaMin(probeTriggers.at(n)));
-        etaMaxProbeTrigger.push_back(this->GetEtaMax(probeTriggers.at(n)));
-        isL1Probe.push_back(this->isTriggerL1(probeTriggers.at(n)));
-        std::cout << "probeTriggers.at(n): " << probeTriggers.at(n) << " ::: nthJetProbe.at(n): " << nthJetProbe.at(n) << std::endl;
-        std::cout << "ptThresholdProbeTrigger.at(n): " << ptThresholdProbeTrigger.at(n) << std::endl;
-        std::cout << "etaMinProbeTrigger.at(n): " << etaMinProbeTrigger.at(n) << std:: endl;
-        std::cout << "etaMaxProbeTrigger.at(n): " << etaMaxProbeTrigger.at(n) << std:: endl;
-        std::cout << "isL1Probe.at(n): " << isL1Probe.at(n) << std:: endl;
+    // Fill probe_nthJet and ref_nthJet
+    for (unsigned int n=0; n < probe_triggerName.size(); n++){
+        probe_nthJet.push_back(this->GetnthJet(probe_triggerName.at(n)));
+        probe_ptThreshold.push_back(this->GetPtThreshold(probe_triggerName.at(n)));
+        probe_etaMin.push_back(this->GetEtaMin(probe_triggerName.at(n)));
+        probe_etaMax.push_back(this->GetEtaMax(probe_triggerName.at(n)));
+        probe_isL1.push_back(this->isTriggerL1(probe_triggerName.at(n)));
+        /*std::cout << "probe_triggerName.at(n): " << probe_triggerName.at(n) << " ::: probe_nthJet.at(n): " << probe_nthJet.at(n) << std::endl;
+        std::cout << "probe_ptThreshold.at(n): " << probe_ptThreshold.at(n) << std::endl;
+        std::cout << "probe_etaMin.at(n): " << probe_etaMin.at(n) << std:: endl;
+        std::cout << "probe_etaMax.at(n): " << probe_etaMax.at(n) << std:: endl;
+        std::cout << "probe_isL1.at(n): " << probe_isL1.at(n) << std:: endl;*/
 
-        nthJetRef.push_back(this->GetnthJet(refTriggers.at(n)));
-        ptThresholdRefTrigger.push_back(this->GetPtThreshold(refTriggers.at(n)));
-        etaMinRefTrigger.push_back(this->GetEtaMin(refTriggers.at(n)));
-        etaMaxRefTrigger.push_back(this->GetEtaMax(refTriggers.at(n)));
-        isL1Ref.push_back(this->isTriggerL1(refTriggers.at(n)));
-        std::cout << "refTriggers.at(n): " << refTriggers.at(n) << " ::: nthJetRef.at(n): " << nthJetRef.at(n) << std::endl;
-        std::cout << "ptThresholdRefTrigger.at(n): " << ptThresholdRefTrigger.at(n) << std::endl;
-        std::cout << "etaMinRefTrigger.at(n): " << etaMinRefTrigger.at(n) << std:: endl;
-        std::cout << "etaMaxRefTrigger.at(n): " << etaMaxRefTrigger.at(n) << std:: endl;
-        std::cout << "isL1Ref.at(n): " << isL1Ref.at(n) << std:: endl;
+        ref_nthJet.push_back(this->GetnthJet(ref_triggerName.at(n)));
+        ref_ptThreshold.push_back(this->GetPtThreshold(ref_triggerName.at(n)));
+        ref_etaMin.push_back(this->GetEtaMin(ref_triggerName.at(n)));
+        ref_etaMax.push_back(this->GetEtaMax(ref_triggerName.at(n)));
+        ref_isL1.push_back(this->isTriggerL1(ref_triggerName.at(n)));
+        /*std::cout << "ref_triggerName.at(n): " << ref_triggerName.at(n) << " ::: ref_nthJet.at(n): " << ref_nthJet.at(n) << std::endl;
+        std::cout << "ref_ptThreshold.at(n): " << ref_ptThreshold.at(n) << std::endl;
+        std::cout << "ref_etaMin.at(n): " << ref_etaMin.at(n) << std:: endl;
+        std::cout << "ref_etaMax.at(n): " << ref_etaMax.at(n) << std:: endl;
+        std::cout << "ref_isL1.at(n): " << ref_isL1.at(n) << std:: endl;*/
 
     }
 
@@ -201,9 +210,13 @@ float TriggerData::GetEtaMin(std::string triggerString)
     }
 
     std::string cut1 = myTools->splitString(triggerString , dotscore, pos);
-    if (cut1.compare("320eta490") == 0) return 3.6;  // min forward HLT value
-    else { if (cut1.compare("31ETA49") == 0) return 3.6; // min forward L1 value
-	else return 0.0;
+    if (cut1.compare("320eta490") == 0) return HLT_fwd_etaMin;  // min forward HLT value
+    else {
+        if (cut1.compare("31ETA49") == 0) return L1_fwd_etaMin; // min forward L1 value
+    else{
+        if (myTools->splitString(triggerString ,"_", 0).compare("L1") == 0) return L1_cen_etaMin; // min central L1 value
+        else return HLT_cen_etaMin; // min central HLT value
+        }
     }
 }
 
@@ -221,13 +234,13 @@ float TriggerData::GetEtaMax(std::string triggerString)
     }
 
     std::string cut1 = myTools->splitString(triggerString , dotscore, pos);
-    if (cut1.compare("320eta490") == 0) return 4.5;  // max forward HLT value
+    if (cut1.compare("320eta490") == 0) return HLT_fwd_etaMax;  // max forward HLT value
     else {
-	if (cut1.compare("31ETA49") == 0) return 4.5; // max forward L1 value
+    if (cut1.compare("31ETA49") == 0) return L1_fwd_etaMax; // max forward L1 value
 	else{
-        if (myTools->splitString(triggerString ,"_", 0).compare("L1") == 0) return 2.6; // TODO change back to 2.6 !!!
-        else return 2.8; // TODO change back to 2.8 !!!
-	}
+        if (myTools->splitString(triggerString ,"_", 0).compare("L1") == 0) return L1_cen_etaMax; // max central L1 value
+        else return HLT_cen_etaMax; // max central HLT value
+        }
     }
 }
 
