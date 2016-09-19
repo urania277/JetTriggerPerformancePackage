@@ -56,6 +56,14 @@ std::string ToolsJTPP::ftos(double number, int precision)
   return ss.str();
 }
 
+std::string ToolsJTPP::rmSpaces(std::string input)
+{
+    if(m_debug) std::cout << "Starting rmSpaces()..." << std::endl;
+
+    input.erase(std::remove(input.begin(),input.end(),' '),input.end());
+    return input;
+}
+
 int ToolsJTPP::GetPosInVector(std::vector<std::string>& vec, std::string name)
 {
     // returns the position in the vector (starting with 0)

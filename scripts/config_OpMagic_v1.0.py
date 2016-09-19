@@ -2,7 +2,7 @@
 # config file for JetTriggerPerformancePackage (JTPP)
 #
 # Please follow the instructions below in order to set the parameters in the correct way
-# and to obtain performance plots of you choice.
+# and to obtain performance plots of your choice.
 # ===================================================================================================
 
 import ROOT
@@ -68,7 +68,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 # Select triggers which kinematic plots you would like to generate.
 # STUDYALL is the option to obtain kinematics for ANY trigger that are included in the ntuple
 #
-                           "m_TriggerName"                           : "STUDYALL; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490",
+                           "m_TriggerName"                           : "STUDYALL; HLT_j460_a10_lcw_L1HT190-J15.ETA21; HLT_j460_a10_lcw_L1J100; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490",
 #
 # Generate leading, subleading and third jet (in pt ordering) and/or the nth jet of each jet trigger
 #
@@ -123,17 +123,23 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 # Select triggers which turnon plots you would like to generate.
 # The syntax for turnon plots is 'probe-trigger'-'reference-trigger', e.g. HLT_j25-HLT_j15
 #
-                           "m_TurnOnName"                            : "HLT_j25-HLT_j15; HLT_j60-HLT_j25; HLT_j110-HLT_j85; HLT_j360-HLT_j260; HLT_j380-HLT_j260; HLT_j400-HLT_j260",
+                           "m_TurnOnName"                            : "HLT_j25/HLT_j15;  HLT_j60/HLT_j25; HLT_j110/HLT_j85; HLT_j360/HLT_j260;  HLT_j380/HLT_j260; HLT_j400/  HLT_j260",
 #
 # Select the STRATEGY of turnOn generation.
 # The available options are the Trigger Decision Tool (TDT), Emulation or Trigger Before Preascale. Note that more than one strategy can be selected
 # and will be created independently of each other
 #
-                           "m_useTriggerDecisionTool"                : False,
-                           "m_useEmulation"                          : True,
+                           "m_useTriggerDecisionTool"                : True,
+                           "m_useEmulation"                          : False,
                            "m_useTriggerBeforePraescale"             : False,
 #
-# Hear you can define the event selection for turnons. The recommended event selection from the Jet Trigger Signature Group is:
+# For the turnon event selection, following cuts on offline jets are applied by default:
+# HLT:                       L1:
+# |eta| < 2.8 (central)       |eta| < 2.6 (central)
+# |eta| > 3.6 (fwd)           |eta| > 3.6 (fwd)
+# |timing| < 10.0             |timing| < 10.0
+#
+# Additionally, you can define the event selection for turnons here:
 #
                            "m_cutStringTurnons"                      : "|pt[0]| < 50",
 

@@ -13,6 +13,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 
 //Own classes
@@ -26,6 +27,7 @@ class ToolsJTPP: public BaseJTPP
 
   virtual std::string splitString(std::string name, std::string delimiter, int wordNumber);
   virtual std::string ftos(double number, int precision);
+  virtual std::string rmSpaces(std::string input);
 
   virtual int GetPosInVector(std::vector<std::string>& vec, std::string name);
 

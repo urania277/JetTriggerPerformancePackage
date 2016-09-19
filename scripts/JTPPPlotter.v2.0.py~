@@ -1,0 +1,145 @@
+###########################################################################
+#
+# This is JTPPPlotter.v2.0.py providing plot mechanisms for JTPP.
+#
+# by Edgar Kellermann (edgar.kellermann@cern.ch)
+###########################################################################
+
+from ROOT import *
+import math
+import sys
+import re
+from array import array
+import AtlasStyle
+
+################### CONFIGURATIONS ########################################
+
+# Select input data:
+
+inputDataList = ["hist-Data16_run300800.root"]
+
+#### KINEMATICS ####
+
+# Select wanted plots:
+
+## Select plots from logfile (i.e. all provided plots)
+ReadLogfileForKinematics = False
+
+if (ReadLogfileForKinematics):
+    print "Reading Logfile...."
+    # TODO Implement reading logfile
+
+## Otherwise pick wanted plots and but them into the lists
+else:
+
+    # jetType (jet = offline/reco jets)
+    jetTypeList = ["jet", "trigJet"]
+    #["jet", "trigJet", "truthJet"]
+
+    # all jets, leading, sublead, third, nth jets
+    praefixList = [""]
+    # ["","lead", "sublead", "third", "nth"]
+
+    # observables
+    obsList = ["phi"]
+    # ["E", "pt", "phi", "eta", "mjj", "yStar", "mjj", "m23", "yStar", "deltaPhi", "pTBalance", "MHT", "MHTPhi", "EMFrac", "HECFrac", "FracSamplingMax"]
+
+    # etaBins # TODO Implement proper list
+    etaBinsList = [""]
+
+    # triggers of interest
+    triggerList = ["HLT_j360"]
+
+# Select ratio plots at the buttom of the canvas
+EnableRatioPlots = False
+
+# Select if histos should be plotted together on one canvas and  the criteria for combination
+EnableHistoCombination = True
+
+CriteriaOfHistoCombination = "jetType" # other options: "inputData", "trigger", "jetType", "praefix", "obs", "etaBins"
+
+#### TURNONS ####
+
+# TODO
+
+
+###############################################################################
+
+# Looping in a proper way
+listSize = 6
+
+list = [inputDataList] *listSize
+var = ["ThereWillBeString"] * listSize
+
+# permuting lists depending on the combination criteria (since the criteria has to be in the last loop)
+if (CriteriaOfHistoCombination == "etaBins"):   i = 0
+if (CriteriaOfHistoCombination == "obs"):       i = 1
+if (CriteriaOfHistoCombination == "praefix"):   i = 2
+if (CriteriaOfHistoCombination == "jetType"):   i = 3
+if (CriteriaOfHistoCombination == "trigger"):   i = 4
+if (CriteriaOfHistoCombination == "inputData"): i = 5
+if (not EnableHistoCombination):                i = 0
+
+list[(0+i)%listSize] = inputDataList
+list[(1+i)%listSize] = triggerList
+list[(2+i)%listSize] = jetTypeList
+list[(3+i)%listSize] = praefixList
+list[(4+i)%listSize] = obsList
+list[(5+i)%listSize] = etaBinsList
+
+for var[0] in list[0]:
+    for var[1] in list[1]:
+        for var[2] in list[2]:
+            for var[3] in list[3]:
+                for var[4] in list[4]:
+
+                    #create Canvas
+                    if (EnableHistoCombination):
+                        c = TCanvas()
+                        firstPlot = True
+
+                    for var[5] in list[5]:
+
+                        #create Canvas
+                        if (not EnableHistoCombination):
+                            c = TCanvas()
+                            firstPlot = True
+
+                        # identify what the var[] list actually contains:
+                        inputData = var[(0+i)%listSize]
+                        trigger   = var[(1+i)%listSize]
+                        jetType   = var[(2+i)%listSize]
+                        praefix   = var[(3+i)%listSize]
+                        obs       = var[(4+i)%listSize]
+                        etaBins   = var[(5+i)%listSize]
+
+                        # no lead, sublead, third for scalar observables:
+                        if (((obs == "mjj")|(obs == "m23")|(obs == "yStar")|(obs == "deltaPhi")|(obs == "pTBalance")|(obs == "MHT")|(obs == "MHTPhi")) & (praefix != "")): continue
+
+                        # loading histogram
+                        histoName = trigger + "/" + jetType + "Kinematics/" + praefix + jetType + etaBins +  "_" + obs
+
+                        # opening file
+                        fin = TFile.Open(inputData)
+
+                        # loading histo
+                        histo = fin.Get(histoName)
+
+                        print histoName
+
+                        # drawing plots
+                        if (firstPlot):
+                            histo.Draw("HIST");
+                            firstPlot = False
+                        else: histo.Draw("Same HIST")
+
+                        c.Update()
+
+                        if (not EnableHistoCombination):
+                            c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".pdf")
+                            c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".eps")
+
+                    if (EnableHistoCombination):
+                        c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".pdf")
+                        c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".eps")
+

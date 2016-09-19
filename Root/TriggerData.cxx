@@ -37,7 +37,8 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
 
     int n = 0;
     do{
-	trigger = myTools->splitString(TriggerName,"; ", n);
+    trigger = myTools->rmSpaces(TriggerName);
+    trigger = myTools->splitString(trigger,";", n);
 	config_triggerName.push_back(trigger);
 	config_passedTriggers.push_back(false);
 	n++;
@@ -59,9 +60,10 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
     std::string turnon, trigger1, trigger2, level, pt;
     n = 0;
     do{
-        turnon = myTools->splitString(TurnOnName,"; ", n);
-        trigger1 = myTools->splitString(turnon,"-", 0);
-        trigger2 = myTools->splitString(turnon,"-", 1);
+        turnon = myTools->rmSpaces(TurnOnName);
+        turnon = myTools->splitString(turnon,";", n);
+        trigger1 = myTools->splitString(turnon,"/", 0);
+        trigger2 = myTools->splitString(turnon,"/", 1);
         probe_triggerName.push_back(trigger1);
         probe_passedTrigger.push_back(false);
         ref_triggerName.push_back(trigger2);

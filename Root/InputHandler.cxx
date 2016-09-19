@@ -70,11 +70,11 @@ InputHandler :: InputHandler () :
     m_HLT_cen_etaMin(0.0), // DEFAULT ETA REGIONS AND TIMING FOR TURNON EVENT SELECTION!
     m_HLT_cen_etaMax(2.8), //
     m_HLT_fwd_etaMin(3.6), //
-    m_HLT_fwd_etaMax(4.5), //
+    m_HLT_fwd_etaMax(99.0), //
     m_L1_cen_etaMin(0.0),  //
     m_L1_cen_etaMax(2.6),  //
     m_L1_fwd_etaMin(3.6),  //
-    m_L1_fwd_etaMax(4.5),  //
+    m_L1_fwd_etaMax(99.0),  //
     m_TurnonCut_Timing(10.0), //
     m_doCuts(false),
     m_cutStringKinematics(""),
