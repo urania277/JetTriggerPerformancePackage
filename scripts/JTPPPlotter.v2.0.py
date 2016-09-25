@@ -25,6 +25,9 @@ ATLAS_Preliminary = False
 
 ####### KINEMATICS #######
 
+# Enabling Kinematic plots
+DoKinematics = False
+
 # Select wanted plots:
 
 ## Select plots from logfile (i.e. all provided plots)
@@ -38,7 +41,7 @@ if (ReadLogfileForKinematics):
 else:
 
     # jetType (jet = offline/reco jets)
-    jetTypeList = ["jet", "trigJet"]
+    jetTypeList = ["trigJet", "jet"]
     #["jet", "trigJet", "truthJet"]
 
     # all jets, leading, sublead, third, nth jets
@@ -61,16 +64,48 @@ EnableHistoCombination = True
 CriteriaOfHistoCombination = "jetType" # other options: "inputData", "trigger", "jetType", "praefix", "obs", "etaBins"
 
 # Select ratio plots at the buttom of the canvas
+# Only available if EnableHistoCombination = True (need other plots to compare with, right? ;) )
 # Note: Ratios are always taken with respect to the first histogram in the combined plot
 EnableRatioPlots = True
 
 # Set Legend Settings
 LegendHeader = "look at me!"
-LegendEntryList = ["offline jet", "trigger jet"]
+LegendEntryList = ["trigger jet", "offline jet"]
 
 ######## TURNONS ########
 
-# TODO
+# Enable Turnon Plotting
+PlotTDT             = False
+PlotEmulation       = True
+PlotBeforePraescale = False #TODO
+
+# Enable Combined Plots
+EnableCombinedTurnons = False
+
+if (not EnableCombinedTurnons):
+
+    #select if all turnons from logfile should be plotted
+    PlotAllTurnonsFromLogfile = False #TODO
+
+    #otherwise create turnon list
+    TurnonList=["HLT_j360-HLT_j260","HLT_j110-HLT_j85","HLT_j25-HLT_j15","HLT_j60-HLT_j25"]
+
+
+else:
+
+    #create list of name combined plots
+    CombinedTurnonsList=["HLT-high", "HLT-low"]
+
+    #declare list of contents for every combined plot (do not touch this line)
+    ContentCombinedTurnonsList = []
+
+    #select content for combined plot number 1
+    ContentCombinedTurnonsList.append = ["HLT_j360-HLT_j260","HLT_j110-HLT_j85"]
+
+    #select content for combined plot number 2
+    ContentCombinedTurnonsList.append = ["HLT_j25-HLT_j15","HLT_j60-HLT_j25"]
+
+    #can be continued....
 
 ######## STYLE ########
 
@@ -83,188 +118,195 @@ MarkerStyle = 0
 
 ###############################################################################
 
-# Initial style settings
-AtlasStyle.SetAtlasStyle()
-gStyle.SetOptStat(0) # get rid of statistics box
+################## CREATING KINEMATICS ########################################
 
-# opening all output files
-finList = []
+if (DoKinematics):
 
-for inputData in inputDataList:
-    finList.append(TFile.Open(inputData))
+    # Initial style settings
+    AtlasStyle.SetAtlasStyle()
+    gStyle.SetOptStat(0) # get rid of statistics box
 
-# Looping in a proper way
-listSize = 6
+    # opening all output files
+    finList = []
 
-list = [inputDataList] *listSize
-var = ["ThereWillBeString"] * listSize
+    for inputData in inputDataList:
+        finList.append(TFile.Open(inputData))
 
-## permuting lists depending on the combination criteria (since the criteria has to be in the last loop)
-i = -1
-if (CriteriaOfHistoCombination == "etaBins"):   i = 0
-if (CriteriaOfHistoCombination == "obs"):       i = 1
-if (CriteriaOfHistoCombination == "praefix"):   i = 2
-if (CriteriaOfHistoCombination == "jetType"):   i = 3
-if (CriteriaOfHistoCombination == "trigger"):   i = 4
-if (CriteriaOfHistoCombination == "inputData"): i = 5
-if (not EnableHistoCombination):                i = 0
+    # Looping in a proper way
+    listSize = 6
 
-# assert
-if (i == -1): print "ERROR: Combination Criteria cannot be read"; # TODO ASSERT
+    list = [inputDataList] *listSize
+    var = ["ThereWillBeString"] * listSize
 
-list[(0+i)%listSize] = finList
-list[(1+i)%listSize] = triggerList
-list[(2+i)%listSize] = jetTypeList
-list[(3+i)%listSize] = praefixList
-list[(4+i)%listSize] = obsList
-list[(5+i)%listSize] = etaBinsList
+    ## permuting lists depending on the combination criteria (since the criteria has to be in the last loop)
+    i = -1
+    if (CriteriaOfHistoCombination == "etaBins"):   i = 0
+    if (CriteriaOfHistoCombination == "obs"):       i = 1
+    if (CriteriaOfHistoCombination == "praefix"):   i = 2
+    if (CriteriaOfHistoCombination == "jetType"):   i = 3
+    if (CriteriaOfHistoCombination == "trigger"):   i = 4
+    if (CriteriaOfHistoCombination == "inputData"): i = 5
+    if (not EnableHistoCombination):                i = 0
 
-for var[0] in list[0]:
-    for var[1] in list[1]:
-        for var[2] in list[2]:
-            for var[3] in list[3]:
-                for var[4] in list[4]:
+    # assert
+    if (i == -1): print "ERROR: Combination Criteria cannot be read"; # TODO ASSERT
 
-                    #create Canvas
-                    if (EnableHistoCombination):
-                        c = TCanvas()
-                        NPlots = 0
-                        legend = TLegend(0.5,0.60,0.75,0.75)
-                        legend.SetHeader(LegendHeader)
+    list[(0+i)%listSize] = finList
+    list[(1+i)%listSize] = triggerList
+    list[(2+i)%listSize] = jetTypeList
+    list[(3+i)%listSize] = praefixList
+    list[(4+i)%listSize] = obsList
+    list[(5+i)%listSize] = etaBinsList
 
-                        if (EnableRatioPlots):
-                            #making the pads for the histoRatio:
-                            pad1 = TPad("pad1","pad1",0.05,0.30,1,1);
-                            pad2 = TPad("pad2","pad2",0.05,0.05,1,0.30);
-                            pad1.SetTopMargin(0.02);
-                            pad2.SetTopMargin(0.0);
-                            pad1.SetBottomMargin(0.0);
-                            pad2.SetBottomMargin(0.30);
-
-                    for var[5] in list[5]:
+    for var[0] in list[0]:
+        for var[1] in list[1]:
+            for var[2] in list[2]:
+                for var[3] in list[3]:
+                    for var[4] in list[4]:
 
                         #create Canvas
-                        if (not EnableHistoCombination):
+                        if (EnableHistoCombination):
                             c = TCanvas()
                             NPlots = 0
                             legend = TLegend(0.5,0.60,0.75,0.75)
                             legend.SetHeader(LegendHeader)
 
-                        # identify what the var[] list actually contains:
-                        #                        inputData = var[(0+i)%listSize]
-                        fin = var[(0+i)%listSize]
-                        trigger   = var[(1+i)%listSize]
-                        jetType   = var[(2+i)%listSize]
-                        praefix   = var[(3+i)%listSize]
-                        obs       = var[(4+i)%listSize]
-                        etaBins   = var[(5+i)%listSize]
+                            if (EnableRatioPlots):
+                                #making the pads for the histoRatio:
+                                pad1 = TPad("pad1","pad1",0.05,0.30,1,1);
+                                pad2 = TPad("pad2","pad2",0.05,0.05,1,0.30);
+                                pad1.SetTopMargin(0.02);
+                                pad2.SetTopMargin(0.0);
+                                pad1.SetBottomMargin(0.0);
+                                pad2.SetBottomMargin(0.30);
 
-                        # no lead, sublead, third for scalar observables:
-                        if (((obs == "mjj")|(obs == "m23")|(obs == "yStar")|(obs == "deltaPhi")|(obs == "pTBalance")|(obs == "MHT")|(obs == "MHTPhi")) & (praefix != "")): continue
+                        for var[5] in list[5]:
 
-                        # loading histogram
-                        histoName = trigger + "/" + jetType + "Kinematics/" + praefix + jetType + etaBins +  "_" + obs
+                            #create Canvas
+                            if (not EnableHistoCombination):
+                                c = TCanvas()
+                                NPlots = 0
+                                legend = TLegend(0.5,0.60,0.75,0.75)
+                                legend.SetHeader(LegendHeader)
 
-                        # opening file
-                        #if (NPlots == 0): fin = TFile.Open(inputData)
+                            # identify what the var[] list actually contains:
+                            fin = var[(0+i)%listSize]
+                            trigger   = var[(1+i)%listSize]
+                            jetType   = var[(2+i)%listSize]
+                            praefix   = var[(3+i)%listSize]
+                            obs       = var[(4+i)%listSize]
+                            etaBins   = var[(5+i)%listSize]
 
-                        # loading histo
-                        histo = fin.Get(histoName)
+                            # no lead, sublead, third for scalar observables:
+                            if (((obs == "mjj")|(obs == "m23")|(obs == "yStar")|(obs == "deltaPhi")|(obs == "pTBalance")|(obs == "MHT")|(obs == "MHTPhi")) & (praefix != "")): continue
 
-                        # HISTO COSMETICS
+                            # loading histogram
+                            histoName = trigger + "/" + jetType + "Kinematics/" + praefix + jetType + etaBins +  "_" + obs
 
-                        ### histo style
-                        histo.SetLineStyle(LineStyle)
-                        histo.SetMarkerStyle(MarkerStyle)
-                        histo.SetLineColor(colorList[NPlots])
-                        histo.SetMarkerColor(colorList[NPlots])
+                            # opening file
+                            #if (NPlots == 0): fin = TFile.Open(inputData)
 
-                        ### axis style
-                        histo.GetXaxis().SetTitleOffset(1.4)
-                        histo.GetYaxis().SetTitleOffset(1.4)
+                            # loading histo
+                            histo = fin.Get(histoName)
 
-                        histo.GetYaxis().SetTitle("entries/width")
-                        if ((obs == "pt")| (obs == "E")| (obs == "mjj")| (obs == "m23")| (obs == "MHT")):
-                            histo.GetXaxis().SetTitle(obs + " [GeV]")
+                            # HISTO COSMETICS
 
-                        c.Update()
+                            ### histo style
+                            histo.SetLineStyle(LineStyle)
+                            histo.SetMarkerStyle(MarkerStyle)
+                            histo.SetLineColor(colorList[NPlots])
+                            histo.SetMarkerColor(colorList[NPlots])
 
-                        # draw pads and change to pad1
-                        if (EnableRatioPlots):
-                            pad1.Draw()
-                            pad2.Draw()
-                            pad1.cd()
+                            ### axis style
+                            histo.GetXaxis().SetTitleOffset(1.4)
+                            histo.GetYaxis().SetTitleOffset(1.4)
 
-                        # drawing plots
-                        if (NPlots == 0): histo.Draw("HIST")
-                        else: histo.Draw("Same HIST")
+                            histo.GetYaxis().SetTitle("entries/width")
+                            if ((obs == "pt")| (obs == "E")| (obs == "mjj")| (obs == "m23")| (obs == "MHT")):
+                                histo.GetXaxis().SetTitle(obs + " [GeV]")
 
-                        c.Update()
+                            c.Update()
 
-                        # legend
-                        legend.AddEntry(histo,LegendEntryList[NPlots],"l")
-                        legend.Draw("Same")
+                            # draw pads and change to pad1
+                            if (EnableHistoCombination & EnableRatioPlots & (NPlots == 0)):
+                                pad1.Draw()
+                                pad2.Draw()
+                                pad1.cd()
 
-                        # ATLAS Style Setting
-                        AtlasStyle.ATLAS_LABEL(0.5, 0.85, internal = ATLAS_Internal, preliminary = ATLAS_Preliminary, color=1)
-                        AtlasStyle.myText(0.5, 0.8, 1, "#sqrt{s} = 13 TeV")
+                            # drawing plots
+                            if (NPlots == 0): histo.Draw("HIST")
+                            else: histo.Draw("Same HIST")
 
-                        # create ratio plots in pad2
-                        if (EnableRatioPlots):
+                            c.Update()
 
-                            pad2.cd()
-                            pad2.SetLogy(False)
+                            # legend
+                            legend.AddEntry(histo,LegendEntryList[NPlots],"l")
+                            legend.Draw("Same")
 
+                            # ATLAS Style Setting
+                            AtlasStyle.ATLAS_LABEL(0.5, 0.85, internal = ATLAS_Internal, preliminary = ATLAS_Preliminary, color=1)
+                            AtlasStyle.myText(0.5, 0.8, 1, "#sqrt{s} = 13 TeV")
 
-                            ## save reference plot, i.e. NPlots == 0
-                            if (NPlots == 0): refHisto = histo
+                            # create ratio plots in pad2
+                            if (EnableHistoCombination & EnableRatioPlots):
 
-                            ## else plot ratio histos
-                            else:
+                                ## save reference plot, i.e. NPlots == 0
+                                if (NPlots == 0): refHisto = histo
 
-                                ## create and setup histoRatio
-                                histoRatio=histo.Clone()
-                                histoRatio.Sumw2()
-                                histoRatio.Divide(refHisto)
+                                ## else plot ratio histos
+                                else:
+                                    # change to pad2
+                                    pad2.cd()
+                                    pad2.SetLogy(False)
 
-                                histoRatio.GetXaxis().SetTitleSize(0.07)
-                                histoRatio.GetXaxis().SetLabelFont(42)
-                                histoRatio.GetXaxis().SetLabelSize(0.1)
-                                histoRatio.GetXaxis().SetTitleSize(0.1)
-                                histoRatio.GetYaxis().SetRangeUser(0.5,1.5)
-                                histoRatio.GetYaxis().SetTitle("Ratio")
-                                histoRatio.GetYaxis().SetTitleOffset(0.7)
-                                histoRatio.GetYaxis().SetLabelFont(42)
-                                histoRatio.GetYaxis().SetLabelSize(0.1)
-                                histoRatio.GetYaxis().SetTitleSize(0.08)
+                                    ## create and setup histoRatio
+                                    histoRatio=histo.Clone()
+                                    histoRatio.Sumw2()
+                                    histoRatio.Divide(refHisto)
 
-                                if (NPlots == 1): histoRatio.Draw("hist")
-                                else: histoRatio.Draw("Same hist")
-                                c.Update()
+                                    histoRatio.GetXaxis().SetTitleSize(0.07)
+                                    histoRatio.GetXaxis().SetLabelFont(42)
+                                    histoRatio.GetXaxis().SetLabelSize(0.1)
+                                    histoRatio.GetXaxis().SetTitleSize(0.1)
+                                    histoRatio.GetYaxis().SetRangeUser(0.5,1.5)
+                                    histoRatio.GetYaxis().SetTitle("Ratio")
+                                    histoRatio.GetYaxis().SetTitleOffset(0.7)
+                                    histoRatio.GetYaxis().SetLabelFont(42)
+                                    histoRatio.GetYaxis().SetLabelSize(0.1)
+                                    histoRatio.GetYaxis().SetTitleSize(0.08)
 
-                                # black lines at 1.0 in ratio plot
-                                for yLine in [0.9, 1.0, 1.1]:
-                                    line = TLine(histoRatio.GetXaxis().GetXmin(), yLine, histoRatio.GetXaxis().GetXmax(), yLine);
-                                    line.SetLineColor(kBlack);
-                                    line.SetLineStyle(3);
-                                    line.Draw("Same");
+                                    if (NPlots == 1): histoRatio.Draw("hist")
+                                    else: histoRatio.Draw("Same hist")
                                     c.Update()
 
+                                    # black lines at 1.0 in ratio plot
+                                    for yLine in [0.9, 1.0, 1.1]:
+                                        line = TLine(histoRatio.GetXaxis().GetXmin(), yLine, histoRatio.GetXaxis().GetXmax(), yLine);
+                                        line.SetLineColor(kBlack);
+                                        line.SetLineStyle(3);
+                                        #line.Draw("Same"); WARNING
+                                        c.Update()
 
 
 
-                        # increasing NPlots
-                        if (EnableHistoCombination): NPlots += 1
+
+                            # increasing NPlots
+                            if (EnableHistoCombination): NPlots += 1
 
 
-                        if (not EnableHistoCombination):
-                            c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".pdf")
-                            c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".eps")
+                            if (not EnableHistoCombination):
+                                c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".pdf")
+                                c.SaveAs("makeResultPdf/plots/"+ trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs +".eps")
 
-                    if (EnableHistoCombination):
-                        # modify name with respect to Criteria
-                        subName = trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs
-                        modSubName = subName.replace(var[listSize-1], "")
-                        c.SaveAs("makeResultPdf/plots/"+ "Comb" + "-" + modSubName +".pdf")
-                        c.SaveAs("makeResultPdf/plots/"+ "Comb" + "-" + modSubName +".eps")
+                        if (EnableHistoCombination):
+                            # modify name with respect to Criteria
+                            subName = trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs
+                            modSubName = subName.replace(var[listSize-1], "")
+                            c.SaveAs("makeResultPdf/plots/"+ "Comb" + "-" + modSubName +".pdf")
+                            c.SaveAs("makeResultPdf/plots/"+ "Comb" + "-" + modSubName +".eps")
+
+
+################## CREATING TURNONS  ########################################
+
+
 
