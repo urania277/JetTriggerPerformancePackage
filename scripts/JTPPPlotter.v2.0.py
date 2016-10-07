@@ -16,8 +16,8 @@ import AtlasStyle
 
 # Select input data:
 
-#inputDataList = ["hist-Data16_run300800.root", "hist-Data16_run300800_oldCuts.root"]
-inputDataList = ["hist-Data16_run300800_oldCuts.root"]
+inputDataList = ["hist-Data16_run300800.root", "hist-Data16_run300800_oldCuts.root"]
+#inputDataList = ["hist-Data16_run300800_oldCuts.root"]
 
 # Select ATLAS Labeling
 ATLAS_Internal = True
@@ -72,6 +72,10 @@ EnableRatioPlots = True
 LegendHeader = "look at me!"
 LegendEntryList = ["trigger jet", "offline jet"]
 
+# Line and Marker Style
+KLineStyle = 1
+KMarkerStyle = 0
+
 ######## TURNONS ########
 
 # Enable Turnon Plotting
@@ -82,6 +86,9 @@ PlotBeforePraescale = False #TODO
 # Enable Combined Plots
 EnableCombinedTurnons = False
 
+# NOTE: If several datasets are listed in inputDataList, the same
+# turnons from the different datasets are plotted together in one plot
+
 if (not EnableCombinedTurnons):
 
     #select if all turnons from logfile should be plotted
@@ -90,11 +97,33 @@ if (not EnableCombinedTurnons):
     #otherwise create turnon list
     TurnonList=["HLT_j360-HLT_j260","HLT_j110-HLT_j85","HLT_j25-HLT_j15","HLT_j60-HLT_j25"]
 
+    #set the min and the max x-axis range for the selected turnons respectively
+    minXList = [ 20.0,  20.0,  20.0,  20.0]
+    maxXList = [600.0, 160.0,  40.0, 110.0]
+
+    #set legend entries
+    # Set Legend Settings
+    TurnonLegendHeader = "look at Turnons!"
+    TurnonLegendEntryList = TurnonList
+
+    #rebin factor (has to be a factor of 1200)
+    rebinList = [5, 5, 5, 5]
 
 else:
 
     #create list of name combined plots
     CombinedTurnonsList=["HLT-high", "HLT-low"]
+
+    #set the min and the max x-axis range for the selected turnons respectively
+    minXList = [ 20.0,  20.0]
+    maxXList = [450.0, 160.0]
+
+    #set legend entries
+    TurnonLegendHeader = "look at Turnons!"
+    TLegendEntryList = CombinedTurnonsList
+
+    #rebin factor (has to be a factor of 1200)
+    rebinList = [5, 5, 5, 5]
 
     #declare list of contents for every combined plot (do not touch this line)
     ContentCombinedTurnonsList = []
@@ -107,14 +136,14 @@ else:
 
     #can be continued....
 
-######## STYLE ########
+# Line and Marker Style
+TLineStyle = 0
+TMarkerStyle = [20, 24] # Marker style for different input data
+
+######## GENERAL STYLE ########
 
 # list of colors (feel free to change colors if you are not satisfied)
 colorList = [ kRed+2, kBlue+2, kGreen+2, kCyan+2, kMagenta+2, kYellow+2, kRed-2, kBlue+0, kGreen-6, kCyan-2, kMagenta-7, kYellow-7 ]
-
-# Line and Marker Style
-LineStyle = 1
-MarkerStyle = 0
 
 ###############################################################################
 
@@ -212,8 +241,8 @@ if (DoKinematics):
                             # HISTO COSMETICS
 
                             ### histo style
-                            histo.SetLineStyle(LineStyle)
-                            histo.SetMarkerStyle(MarkerStyle)
+                            histo.SetLineStyle(KLineStyle)
+                            histo.SetMarkerStyle(KMarkerStyle)
                             histo.SetLineColor(colorList[NPlots])
                             histo.SetMarkerColor(colorList[NPlots])
 
@@ -308,5 +337,96 @@ if (DoKinematics):
 
 ################## CREATING TURNONS  ########################################
 
+# TODO
+#ErrGraph1 = TGraphAsymmErrors(histo1, histo1Denum, 'b(1,1) mode')
+
+# Gstyle and ATLAS Style
+AtlasStyle.SetAtlasStyle()
+gStyle.SetOptStat(0) # get rid of statistics box
+
+# Create PraefixList
+EvalTypeList = []
+
+if (PlotTDT): EvalTypeList.append("TDT")
+if (PlotEmulation): EvalTypeList.append("Emu")
+if (PlotBeforePraescale): EvalTypeList.append("TODO")
 
 
+for EvalType in EvalTypeList:
+
+    NTurnon = 0
+    for TurnonName in TurnonList:
+
+        # create canvas
+        c = TCanvas()
+        legend = TLegend(0.55,0.50,0.8,0.2)
+        legend.SetHeader(TurnonLegendHeader)
+
+        NData = 0
+        for inputData  in inputDataList:
+
+            #open TFile
+            fin = TFile.Open(inputData)
+
+            # create histo names
+            histoName = "TurnOns" + "/" + "effic_pt_" + EvalType + "_" + TurnonName
+            histoNameDN = "TurnOns" + "/" + "effic_DENUM_pt_" + EvalType + "_" + TurnonName
+
+            # load histograms from Data
+            histo = fin.Get(histoName)
+            histoDN = fin.Get(histoNameDN)
+
+            # rebin
+            print "NTurnon" + str(NTurnon)
+            histo.Rebin(rebinList[NTurnon])
+            histoDN.Rebin(rebinList[NTurnon])
+
+            # Divide to obtain Turnons
+            histo.Divide(histo, histoDN, 1.0, 1.0 , "")
+
+            # HISTO COSMETICS
+
+            ### histo style
+            histo.SetLineStyle(TLineStyle)
+            print "TMarkerStyle[NData]: " + str(TMarkerStyle[NData])
+            histo.SetMarkerStyle(TMarkerStyle[NData])
+            histo.SetLineColor(colorList[NTurnon])
+            histo.SetMarkerColor(colorList[NTurnon])
+
+            # set range
+            histo.GetXaxis().SetRangeUser(minXList[NTurnon], maxXList[NTurnon])
+            histo.GetYaxis().SetRangeUser(0.0, 1.2)
+
+            c.Update()
+
+            ### axis style
+            histo.GetXaxis().SetTitleOffset(1.4)
+            histo.GetYaxis().SetTitleOffset(1.4)
+
+            histo.GetYaxis().SetTitle("entries/width")
+            histo.GetXaxis().SetTitle("pt [GeV]")
+
+            c.Update()
+
+            # Drawing
+            ## Draw histo
+            if (NData ==0): histo.Draw("PE")
+            else: histo.Draw("Same PE")
+
+            ## Draw legend
+            legend.AddEntry(histo,TurnonLegendEntryList[NTurnon],"p")
+            legend.Draw("Same")
+
+            # ATLAS Style Setting
+            AtlasStyle.ATLAS_LABEL(0.5, 0.55, internal = ATLAS_Internal, preliminary = ATLAS_Preliminary, color=1)
+            AtlasStyle.myText(0.5, 0.5, 1, "#sqrt{s} = 13 TeV")
+
+            NData +=1
+
+            c.Update()
+
+        NTurnon += 1
+
+        # Save Turnons
+        c.SaveAs("makeResultPdf/plots/efficienciesPT" + TurnonName +".pdf")
+        c.SaveAs("makeResultPdf/plots/efficienciesPT" + TurnonName +".eps")
