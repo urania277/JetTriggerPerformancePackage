@@ -128,6 +128,19 @@ class InputHandler : public xAH::Algorithm
 
   private:
 
+    // Branch Names
+    string m_branch_offlineJet_front;
+    string m_branch_triggerJet_front;
+    string m_branch_truthJet_front;
+    string m_branch_jet_truth_front;
+    string m_branch_LVL1JetROI_front;
+
+    string m_branch_offlineJet_back;
+    string m_branch_triggerJet_back;
+    string m_branch_truthJet_back;
+    string m_branch_jet_truth_back;
+    string m_branch_LVL1JetROI_back;
+
     int numberOfEntries;
 
     int eventCounter; // 'It's the final countdown!'

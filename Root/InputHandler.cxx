@@ -36,11 +36,11 @@ ClassImp(InputHandler)
 
 InputHandler :: InputHandler () :
     //constructor for variables
-    m_branch_offlineJet("jet"),
-    m_branch_triggerJet("trigJet"),
-    m_branch_truthJet("truthJet"),
-    m_branch_jet_truth("jet_truth"),
-    m_branch_LVL1JetROI("LVL1JetROI"),
+    m_branch_offlineJet("jet_X"),
+    m_branch_triggerJet("trigJet_X"),
+    m_branch_truthJet("truthJet_X"),
+    m_branch_jet_truth("jet_truth_X"),
+    m_branch_LVL1JetROI("LVL1JetROIs_X"),
     m_TriggerName("STUDYALL"),
     m_debug(false),
     m_debugInExecute(false),
@@ -108,7 +108,7 @@ InputHandler :: InputHandler () :
 // Declare and construct all needed classes
 EL::StatusCode  InputHandler :: configure ()
 {
-  if(m_debug) Info("InputHandler()", "Calling InputHandler :: configure");
+  if(m_debug) Info("InputHandler()", "Calling InputHandler :: configure");  
 
   // Declare and construct a ConfigStatus class
   CS = new ConfigStatus(m_debug,
@@ -177,6 +177,22 @@ EL::StatusCode  InputHandler :: configure ()
 
   // Declare and construct ToolsJTPP();
   ToolsJTPP* myTools = new ToolsJTPP();
+
+  // Cut branch names and fill variables
+  m_branch_offlineJet_front = myTools->splitString(m_branch_offlineJet,"X",0);
+  m_branch_offlineJet_back  = myTools->splitString(m_branch_offlineJet,"X",1);
+
+  m_branch_triggerJet_front = myTools->splitString(m_branch_triggerJet,"X",0);
+  m_branch_triggerJet_back  = myTools->splitString(m_branch_triggerJet,"X",1);
+
+  m_branch_truthJet_front = myTools->splitString(m_branch_truthJet,"X",0);
+  m_branch_truthJet_back  = myTools->splitString(m_branch_truthJet,"X",1);
+
+  m_branch_jet_truth_front = myTools->splitString(m_branch_jet_truth,"X",0);
+  m_branch_jet_truth_back  = myTools->splitString(m_branch_jet_truth,"X",1);
+
+  m_branch_LVL1JetROI_front = myTools->splitString(m_branch_LVL1JetROI,"X",0);
+  m_branch_LVL1JetROI_back  = myTools->splitString(m_branch_LVL1JetROI,"X",1);
 
   // write all selected triggers into logfiles
   *out_logfile << "\n===Triggers===" << endl;
@@ -340,64 +356,64 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
 
       if(m_debug) Info("InputHandler()", "Setting offline branches");
 
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_pt").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_pt").c_str(), &(ED_jet->pt));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "pt" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "pt" + m_branch_offlineJet_back).c_str(), &(ED_jet->pt));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_eta").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_eta").c_str(), &(ED_jet->eta));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "eta" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "eta" + m_branch_offlineJet_back).c_str(), &(ED_jet->eta));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_phi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_phi").c_str(), &(ED_jet->phi));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "phi" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "phi" + m_branch_offlineJet_back).c_str(), &(ED_jet->phi));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_E").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_E").c_str(), &(ED_jet->E));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "E" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "E" + m_branch_offlineJet_back).c_str(), &(ED_jet->E));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_mjj").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_mjj").c_str(), &(ED_jet->mjj));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "mjj" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "mjj" + m_branch_offlineJet_back).c_str(), &(ED_jet->mjj));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_m23").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_m23").c_str(), &(ED_jet->m23));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "m23" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "m23" + m_branch_offlineJet_back).c_str(), &(ED_jet->m23));
 
       if (CS->isData){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_clean_passLooseBad").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_clean_passLooseBad").c_str(), &(ED_jet->passedCleaning));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "clean_passLooseBad" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "clean_passLooseBad" + m_branch_offlineJet_back).c_str(), &(ED_jet->passedCleaning));
       }
 
       if(CS->doyStar){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_yStar").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_yStar").c_str(), &(ED_jet->yStar));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "yStar" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "yStar" + m_branch_offlineJet_back).c_str(), &(ED_jet->yStar));
       }
       if(CS->doDeltaPhi){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_deltaPhi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_deltaPhi").c_str(), &(ED_jet->deltaPhi));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "deltaPhi" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "deltaPhi" + m_branch_offlineJet_back).c_str(), &(ED_jet->deltaPhi));
       }
       if(CS->doPTBalance){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_pTBalance").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_pTBalance").c_str(), &(ED_jet->pTBalance));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "pTBalance" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "pTBalance" + m_branch_offlineJet_back).c_str(), &(ED_jet->pTBalance));
       }
       if(CS->doMHT){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_MHT").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_MHT").c_str(), &(ED_jet->MHT));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "MHT" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "MHT" + m_branch_offlineJet_back).c_str(), &(ED_jet->MHT));
       }
       if(CS->doMHTPhi){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_MHTPhi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_MHTPhi").c_str(), &(ED_jet->MHTPhi));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "MHTPhi" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "MHTPhi" + m_branch_offlineJet_back).c_str(), &(ED_jet->MHTPhi));
       }
       if(CS->doEMFrac){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_EMFrac").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_EMFrac").c_str(), &(ED_jet->EMFrac));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "EMFrac" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "EMFrac" + m_branch_offlineJet_back).c_str(), &(ED_jet->EMFrac));
       }
       if(CS->doHECFrac){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_HECFrac").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_HECFrac").c_str(), &(ED_jet->HECFrac));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "HECFrac" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "HECFrac" + m_branch_offlineJet_back).c_str(), &(ED_jet->HECFrac));
       }
       if(CS->doFracSamplingMax){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_FracSamplingMax").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_FracSamplingMax").c_str(), &(ED_jet->FracSamplingMax));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "FracSamplingMax" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "FracSamplingMax" + m_branch_offlineJet_back).c_str(), &(ED_jet->FracSamplingMax));
       }
       if (CS->doTurnOns){
-      tree->SetBranchStatus  ((m_branch_offlineJet + "_Timing").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet + "_Timing").c_str(), &(ED_jet->Timing));
+	  tree->SetBranchStatus  ((m_branch_offlineJet_front + "Timing" + m_branch_offlineJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_offlineJet_front + "Timing" + m_branch_offlineJet_back).c_str(), &(ED_jet->Timing));
       }
   }
 
@@ -406,64 +422,64 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
 
       if(m_debug) Info("InputHandler()", "Setting trigger branches");
 
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_pt").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_pt").c_str(), &(ED_trigJet->pt));
+      tree->SetBranchStatus  ((m_branch_triggerJet_front + "pt" + m_branch_triggerJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_triggerJet_front + "pt" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->pt));
 
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_eta").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_eta").c_str(), &(ED_trigJet->eta));
+      tree->SetBranchStatus  ((m_branch_triggerJet_front + "eta" + m_branch_triggerJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_triggerJet_front + "eta" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->eta));
 
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_phi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_phi").c_str(), &(ED_trigJet->phi));
+      tree->SetBranchStatus  ((m_branch_triggerJet_front + "phi" + m_branch_triggerJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_triggerJet_front + "phi" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->phi));
 
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_E").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_E").c_str(), &(ED_trigJet->E));
+      tree->SetBranchStatus  ((m_branch_triggerJet_front + "E" + m_branch_triggerJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_triggerJet_front + "E" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->E));
 
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_mjj").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_mjj").c_str(), &(ED_trigJet->mjj));
+      tree->SetBranchStatus  ((m_branch_triggerJet_front + "mjj" + m_branch_triggerJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_triggerJet_front + "mjj" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->mjj));
 
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_m23").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_m23").c_str(), &(ED_trigJet->m23));
+      tree->SetBranchStatus  ((m_branch_triggerJet_front + "m23" + m_branch_triggerJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_triggerJet_front + "m23" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->m23));
 
       if (CS->doCleaning){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_clean_passLooseBad").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_clean_passLooseBad").c_str(), &(ED_trigJet->passedCleaning));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "_clean_passLooseBad" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "_clean_passLooseBad" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->passedCleaning));
       }
 
       if(CS->doyStar){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_yStar").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_yStar").c_str(), &(ED_trigJet->yStar));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "yStar" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "yStar" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->yStar));
       }
       if(CS->doDeltaPhi){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_deltaPhi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_deltaPhi").c_str(), &(ED_trigJet->deltaPhi));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "deltaPhi" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "deltaPhi" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->deltaPhi));
       }
       if(CS->doPTBalance){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_pTBalance").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_pTBalance").c_str(), &(ED_trigJet->pTBalance));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "pTBalance" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "pTBalance" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->pTBalance));
       }
       if(CS->doMHT){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_MHT").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_MHT").c_str(), &(ED_trigJet->MHT));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "MHT" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "MHT" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->MHT));
       }
       if(CS->doMHTPhi){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_MHTPhi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_MHTPhi").c_str(), &(ED_trigJet->MHTPhi));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "MHTPhi" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "MHTPhi" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->MHTPhi));
       }
       if(CS->doEMFrac){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_EMFrac").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_EMFrac").c_str(), &(ED_trigJet->EMFrac));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "EMFrac" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "EMFrac" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->EMFrac));
       }
       if(CS->doHECFrac){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_HECFrac").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_HECFrac").c_str(), &(ED_trigJet->HECFrac));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "HECFrac" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "HECFrac" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->HECFrac));
       }
       if(CS->doFracSamplingMax){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_FracSamplingMax").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_FracSamplingMax").c_str(), &(ED_trigJet->FracSamplingMax));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "FracSamplingMax" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "FracSamplingMax" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->FracSamplingMax));
       }
       if (CS->doTurnOns){
-      tree->SetBranchStatus  ((m_branch_triggerJet + "_Timing").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_triggerJet + "_Timing").c_str(), &(ED_trigJet->Timing));
+	  tree->SetBranchStatus  ((m_branch_triggerJet_front + "Timing" + m_branch_triggerJet_back).c_str(), 1);
+	  tree->SetBranchAddress ((m_branch_triggerJet_front + "Timing" + m_branch_triggerJet_back).c_str(), &(ED_trigJet->Timing));
       }
   }
 
@@ -472,55 +488,55 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
 
       if(m_debug) Info("InputHandler()", "Setting truth branches");
 
-      tree->SetBranchStatus  ((m_branch_truthJet + "_pt").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_pt").c_str(), &(ED_truthJet->pt));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "pt" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "pt" + m_branch_truthJet_back).c_str(), &(ED_truthJet->pt));
 
-      tree->SetBranchStatus  ((m_branch_truthJet + "_eta").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_eta").c_str(), &(ED_truthJet->eta));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "eta" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "eta" + m_branch_truthJet_back).c_str(), &(ED_truthJet->eta));
 
-      tree->SetBranchStatus  ((m_branch_truthJet + "_phi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_phi").c_str(), &(ED_truthJet->phi));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "phi" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "phi" + m_branch_truthJet_back).c_str(), &(ED_truthJet->phi));
 
-      tree->SetBranchStatus  ((m_branch_truthJet + "_E").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_E").c_str(), &(ED_truthJet->E));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "E" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "E" + m_branch_truthJet_back).c_str(), &(ED_truthJet->E));
 
-      tree->SetBranchStatus  ((m_branch_truthJet + "_mjj").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_mjj").c_str(), &(ED_truthJet->mjj));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "mjj" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "mjj" + m_branch_truthJet_back).c_str(), &(ED_truthJet->mjj));
 
-      tree->SetBranchStatus  ((m_branch_truthJet + "_m23").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_m23").c_str(), &(ED_truthJet->m23));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "m23" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "m23" + m_branch_truthJet_back).c_str(), &(ED_truthJet->m23));
 
       if(CS->doyStar){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_yStar").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_yStar").c_str(), &(ED_truthJet->yStar));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "yStar" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "yStar" + m_branch_truthJet_back).c_str(), &(ED_truthJet->yStar));
       }
       if(CS->doDeltaPhi){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_deltaPhi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_deltaPhi").c_str(), &(ED_truthJet->deltaPhi));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "deltaPhi" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "deltaPhi" + m_branch_truthJet_back).c_str(), &(ED_truthJet->deltaPhi));
       }
       if(CS->doPTBalance){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_pTBalance").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_pTBalance").c_str(), &(ED_truthJet->pTBalance));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "pTBalance" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "pTBalance" + m_branch_truthJet_back).c_str(), &(ED_truthJet->pTBalance));
       }
       if(CS->doMHT){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_MHT").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_MHT").c_str(), &(ED_truthJet->MHT));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "MHT" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "MHT" + m_branch_truthJet_back).c_str(), &(ED_truthJet->MHT));
       }
       if(CS->doMHTPhi){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_MHTPhi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_MHTPhi").c_str(), &(ED_truthJet->MHTPhi));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "MHTPhi" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "MHTPhi" + m_branch_truthJet_back).c_str(), &(ED_truthJet->MHTPhi));
       }
       if(CS->doEMFrac){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_EMFrac").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_EMFrac").c_str(), &(ED_truthJet->EMFrac));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "EMFrac" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "EMFrac" + m_branch_truthJet_back).c_str(), &(ED_truthJet->EMFrac));
       }
       if(CS->doHECFrac){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_HECFrac").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_HECFrac").c_str(), &(ED_truthJet->HECFrac));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "HECFrac" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "HECFrac" + m_branch_truthJet_back).c_str(), &(ED_truthJet->HECFrac));
       }
       if(CS->doFracSamplingMax){
-      tree->SetBranchStatus  ((m_branch_truthJet + "_FracSamplingMax").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_truthJet + "_FracSamplingMax").c_str(), &(ED_truthJet->FracSamplingMax));
+      tree->SetBranchStatus  ((m_branch_truthJet_front + "FracSamplingMax" + m_branch_truthJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_truthJet_front + "FracSamplingMax" + m_branch_truthJet_back).c_str(), &(ED_truthJet->FracSamplingMax));
       }
 
   }
@@ -530,17 +546,17 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
 
       if(m_debug) Info("InputHandler()", "Setting jet_truth branches");
 
-      tree->SetBranchStatus  ((m_branch_jet_truth + "_pt").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth + "_pt").c_str(), &(ED_jet_truth->pt));
+      tree->SetBranchStatus  ((m_branch_jet_truth_front + "pt" + m_branch_jet_truth_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_jet_truth_front + "pt" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->pt));
 
-      tree->SetBranchStatus  ((m_branch_jet_truth + "_eta").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth + "_eta").c_str(), &(ED_jet_truth->eta));
+      tree->SetBranchStatus  ((m_branch_jet_truth_front + "eta" + m_branch_jet_truth_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_jet_truth_front + "eta" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->eta));
 
-      tree->SetBranchStatus  ((m_branch_jet_truth + "_phi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth + "_phi").c_str(), &(ED_jet_truth->phi));
+      tree->SetBranchStatus  ((m_branch_jet_truth_front + "phi" + m_branch_jet_truth_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_jet_truth_front + "phi" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->phi));
 
-      tree->SetBranchStatus  ((m_branch_jet_truth + "_E").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth + "_E").c_str(), &(ED_jet_truth->E));
+      tree->SetBranchStatus  ((m_branch_jet_truth_front + "E" + m_branch_jet_truth_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_jet_truth_front + "E" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->E));
   }
 
   // L1 jets
@@ -548,14 +564,14 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
 
       if(m_debug) Info("InputHandler()", "Setting L1 branches");
 
-      tree->SetBranchStatus  ((m_branch_LVL1JetROI + "s_eta").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_LVL1JetROI + "s_eta").c_str(), &(L1D->eta));
+      tree->SetBranchStatus  ((m_branch_LVL1JetROI_front + "eta" + m_branch_LVL1JetROI_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_LVL1JetROI_front + "eta" + m_branch_LVL1JetROI_back).c_str(), &(L1D->eta));
 
-      tree->SetBranchStatus  ((m_branch_LVL1JetROI + "s_phi").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_LVL1JetROI + "s_phi").c_str(), &(L1D->phi));
+      tree->SetBranchStatus  ((m_branch_LVL1JetROI_front + "phi" + m_branch_LVL1JetROI_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_LVL1JetROI_front + "phi" + m_branch_LVL1JetROI_back).c_str(), &(L1D->phi));
 
-      tree->SetBranchStatus  ((m_branch_LVL1JetROI + "s_et8x8").c_str(), 1);
-      tree->SetBranchAddress ((m_branch_LVL1JetROI + "s_et8x8").c_str(), &(L1D->Et));
+      tree->SetBranchStatus  ((m_branch_LVL1JetROI_front + "et8x8" + m_branch_LVL1JetROI_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_LVL1JetROI_front + "et8x8" + m_branch_LVL1JetROI_back).c_str(), &(L1D->Et));
 
   }
 
