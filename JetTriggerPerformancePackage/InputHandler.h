@@ -58,6 +58,12 @@ class InputHandler : public xAH::Algorithm
     bool m_debug;
     bool m_debugInExecute;
 
+    string m_branch_offlineJet;
+    string m_branch_triggerJet;
+    string m_branch_truthJet;
+    string m_branch_jet_truth;
+    string m_branch_LVL1JetROI;
+
     string m_TriggerName;
     vector<string> m_confTriggers;
 
