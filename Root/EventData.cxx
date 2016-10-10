@@ -84,3 +84,16 @@ float EventData::GetYStar(int i=0, int j=1)
     // calculate rapidity and return yStar
     return 0.5* fabs(vec1.Rapidity() - vec2.Rapidity());
 }
+
+float EventData::GetHT()
+{
+    if (m_debug) std::cout << "Starting method GetHT()..." << std::endl;
+
+    float HT = 0.0;
+
+    // sum over all pt
+    for (int j=0; j < pt->size(); j++){
+        HT += pt->at(j);
+    }
+
+}

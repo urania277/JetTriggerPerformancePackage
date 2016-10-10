@@ -36,6 +36,7 @@ class ConfigStatus: public BaseJTPP
 		 bool a_doyStar,
 		 bool a_doDeltaPhi,
 		 bool a_doPTBalance,
+         bool a_doHT,
 		 bool a_doMHT,
 		 bool a_doMHTPhi,
 		 bool a_doEMFrac,
@@ -96,6 +97,7 @@ class ConfigStatus: public BaseJTPP
     const bool doyStar;
     const bool doDeltaPhi;
     const bool doPTBalance;
+    const bool doHT;
     const bool doMHT;
     const bool doMHTPhi;
     const bool doEMFrac;

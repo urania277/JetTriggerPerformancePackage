@@ -32,6 +32,7 @@ class EventData: public BaseJTPP
   virtual float GetEt(int n);
   virtual float GetMjj(int i, int j);
   virtual float GetYStar(int i, int j);
+  virtual float GetHT();
 
   const std::string m_jetType;
 

@@ -124,13 +124,14 @@ void TriggerHistoPack::BookAll(EL::Worker* wk)
       kinematic->Book("mjj", "mjj", mjjBinNumber-1, mjjBinning, wk);
       kinematic->Book("m23", "m23", mjjBinNumber-1, mjjBinning, wk);
       //more observables
-      if(CS->doyStar) kinematic->Book("yStar", "yStar", 20, -0.7, 0.7, wk);
-      if(CS->doDeltaPhi) kinematic->Book("deltaPhi", "deltaPhi", 25, 0.0001, 3.5, wk);
+      if(CS->doyStar)     kinematic->Book("yStar", "yStar", 20, -0.7, 0.7, wk);
+      if(CS->doDeltaPhi)  kinematic->Book("deltaPhi", "deltaPhi", 25, 0.0001, 3.5, wk);
       if(CS->doPTBalance) kinematic->Book("pTBalance", "pTBalance", 25, 0.0001, 1.0, wk);
-      if(CS->doMHT) kinematic->Book("MHT", "MHT", 50, 0.0001, 1000, wk);
-      if(CS->doMHTPhi) kinematic->Book("MHTPhi", "MHTPhi", 25, -3.5, 3.5, wk);
-      if(CS->doEMFrac) kinematic->Book("EMFrac", "EMFrac", 25, 0.0, 1.0, wk);
-      if(CS->doHECFrac) kinematic->Book("HECFrac", "HECFrac", 25, 0.0, 1.0, wk);
+      if(CS->doHT)        kinematic->Book("HT", "HT", 50, 0.0001, 1000, wk);
+      if(CS->doMHT)       kinematic->Book("MHT", "MHT", 50, 0.0001, 1000, wk);
+      if(CS->doMHTPhi)    kinematic->Book("MHTPhi", "MHTPhi", 25, -3.5, 3.5, wk);
+      if(CS->doEMFrac)    kinematic->Book("EMFrac", "EMFrac", 25, 0.0, 1.0, wk);
+      if(CS->doHECFrac)   kinematic->Book("HECFrac", "HECFrac", 25, 0.0, 1.0, wk);
       if(CS->doFracSamplingMax) kinematic->Book("FracSamplingMax", "FracSamplingMax", 25, 0.0, 1.0, wk);
 
 
@@ -165,7 +166,7 @@ void TriggerHistoPack::FillAll(EventData* ED_jet, EventData* ED_trigJet, EventDa
      //ptRespTrigVsTruthMatrix ->Fill(ED_trigJet->pt, ED_jet_truth->pt, ED_jet_truth->eta, matchingIndexList, m_weight, 1);
   }
 
-  // --- 2. mjj Kinematic plots ---
+  // --- 2. mjj Response plots ---
 
  if (CS->doMjjResponseOffVsTruth){
      if (m_debug) std::cout << "Starting Filling of mjjRespOffVsTruth..." << std::endl;

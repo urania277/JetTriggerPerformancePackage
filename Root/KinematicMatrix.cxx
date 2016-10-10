@@ -198,6 +198,7 @@ void KinematicMatrix::FillAll(EventData* ED, double weight)
    if(CS->doyStar)       this->Fill("yStar", ED->yStar, ED->eta, weight, ED->isLSGood());
    if(CS->doDeltaPhi)    this->Fill("deltaPhi", ED->deltaPhi, ED->eta, weight, ED->isLSGood());
    if(CS->doPTBalance)   this->Fill("pTBalance", ED->pTBalance, ED->eta, weight, ED->isLSGood());
+   if(CS->doHT)          this->Fill("HT", ED->GetHT(), ED->eta, weight, ED->isLSGood());
    if(CS->doMHT)         this->Fill("MHT", ED->MHT, ED->eta, weight, ED->isLSGood());
    if(CS->doMHTPhi)      this->Fill("MHTPhi", ED->MHTPhi, ED->eta, weight, ED->isLSGood());
    if(CS->doEMFrac)      this->Fill("EMFrac", ED->EMFrac, ED->eta, weight, &(ED->isGood));

@@ -38,12 +38,17 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 #
 # Determine whether the ntuple contains REAL DATA or MC. In case of MC, this option will automatically switch of parameters that exist for real data only
 #
-                           "m_isData"                                : True,
+                           "m_isData"                                : True,                        
 #
 # Debug options
 #
                            "m_debug"                                 : False,
                            "m_debugInExecute"                        : False,
+#
+# Determine the name of the offline and trigger branches like "jet_X" and "trigJet_X" (with a capital X!):
+#
+                           "m_branch_offlineJet"                     : "jet_X",
+                           "m_branch_triggerJet"                     : "trigJet_X",
 #
 # Select how many events you would like to study for this run.
 # If '-1' is selected, all events are used.
@@ -84,6 +89,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_doyStar"                               : True,
                            "m_doDeltaPhi"                            : False,
                            "m_doPTBalance"                           : False,
+                           "m_doHT"                                  : True,
                            "m_doMHT"                                 : False,
                            "m_doMHTPhi"                              : False,
                            "m_doEMFrac"                              : False,
@@ -123,7 +129,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 # Select triggers which turnon plots you would like to generate.
 # The syntax for turnon plots is 'probe-trigger'-'reference-trigger', e.g. HLT_j25-HLT_j15
 #
-                           "m_TurnOnName"                            : "HLT_j460_a10_lcw_L1HT190-J15.ETA21; HLT_j460_a10_lcw_L1J100; HLT_j25/HLT_j15;  HLT_j60/HLT_j25; HLT_j110/HLT_j85; HLT_j360/HLT_j260;  HLT_j380/HLT_j260; HLT_j400/  HLT_j260",
+                           "m_TurnOnName"                            : "HLT_j25/HLT_j15;  HLT_j60/HLT_j25; HLT_j110/HLT_j85; HLT_j360/HLT_j260;  HLT_j380/HLT_j260; HLT_j400/  HLT_j260",
 #
 # Select the STRATEGY of turnOn generation.
 # The available options are the Trigger Decision Tool (TDT), Emulation or Trigger Before Preascale. Note that more than one strategy can be selected

@@ -82,6 +82,7 @@ class InputHandler : public xAH::Algorithm
     bool m_doyStar;
     bool m_doDeltaPhi;
     bool m_doPTBalance;
+    bool m_doHT;
     bool m_doMHT;
     bool m_doMHTPhi;
     bool m_doEMFrac;
