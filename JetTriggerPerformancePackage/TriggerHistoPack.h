@@ -25,6 +25,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <JetTriggerPerformancePackage/AnalysisHandler.h>
 #include <JetTriggerPerformancePackage/EventData.h>
 #include <JetTriggerPerformancePackage/ConfigStatus.h>
+#include <JetTriggerPerformancePackage/ToolsJTPP.h>
 
 
 class TriggerHistoPack: public BaseJTPP
@@ -47,6 +48,9 @@ class TriggerHistoPack: public BaseJTPP
  private:
   //ConfigStatus
   ConfigStatus* CS;
+
+  // myTools
+  ToolsJTPP* myTools;
 
   // member variables
   ResponseMatrix* ptRespOffVsTruthMatrix; 

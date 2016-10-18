@@ -27,6 +27,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <EventLoop/Worker.h>
 
 //Own classes
+#include <JetTriggerPerformancePackage/GraphMatrix.h>
 #include <JetTriggerPerformancePackage/HistogramMatrix.h>
 #include <JetTriggerPerformancePackage/EventData.h>
 #include <JetTriggerPerformancePackage/L1Data.h>
@@ -39,7 +40,7 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
 {
  private:
   const std::string m_key;
-  const std::string m_raw = "DENUM_pt";
+  const std::string m_raw = "DENOM_pt";
   const std::string m_pt = "pt";
   const std::string m_TDT = "TDT";
   const std::string m_Emu = "Emu";
@@ -50,6 +51,12 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
   // ToolsJTPP
   ToolsJTPP* tools;
   CutHandler* cutHandler;
+
+  // ConfigStatus
+  ConfigStatus* CS;
+
+  // GraphMatrix
+  GraphMatrix* graphMatrix;
 
   // TODO Crosscheck
   TH2D* PtvsEta;
@@ -94,7 +101,7 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
   virtual  int nthJetAfterCutsEmu();
   virtual  int nthJetAfterCutsTBP();
 
-  virtual  void DivideEfficiencyPlots(TriggerData* TD, ConfigStatus* CS);
+  virtual  void DivideEfficiencyPlots(TriggerData* TD, ConfigStatus* CS, EL::Worker* wk);
 
 };
 

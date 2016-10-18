@@ -89,6 +89,9 @@ class InputHandler : public xAH::Algorithm
     bool m_doHECFrac;
     bool m_doFracSamplingMax;
 
+    bool m_doMatching;
+    float m_DeltaRMax;
+
     bool m_doOfflineTruthResponse;
     bool m_doTriggerTruthResponse;
     bool m_doTriggerOfflineResponse;
@@ -96,6 +99,11 @@ class InputHandler : public xAH::Algorithm
     bool m_doMjjResponseTrigVsOff;
     bool m_doMjjResponseOffVsTruth;
     bool m_doMjjResponseTrigVsTruth;
+
+    string m_PtResponse_ptBinning;
+    string m_PtResponse_etaBinning;
+    string m_MjjResponse_mjjBinning;
+    string m_MjjResponse_etaBinning;
 
     bool m_doTurnOns;
     string m_TurnOnName;
@@ -125,6 +133,8 @@ class InputHandler : public xAH::Algorithm
 
     std::string m_name;
     float m_mcEventWeight;  //!
+
+    int* m_testArray;
 
 
   private:
@@ -183,7 +193,6 @@ class InputHandler : public xAH::Algorithm
 
     // AnalysisHandler
     AnalysisHandler* anaHandler; //!
-    const double DeltaRMax; //!
 
     // LogWriter
     LogWriter* logwr;

@@ -64,6 +64,22 @@ std::string ToolsJTPP::rmSpaces(std::string input)
     return input;
 }
 
+// This function is splitting the inputString into an float array
+void ToolsJTPP::stringToArray(std::string inputString, double *array, std::string delimiter)
+{
+    if(m_debug) std::cout << "Starting ToolsJTPP::stringToArray(std::string inputString, int *array, std::string delimiter)..." << std::endl;
+
+    std::string cleanedString, stringPiece;
+    cleanedString = this->rmSpaces(inputString);
+
+    int NArraySize = std::count(cleanedString.begin(), cleanedString.end(),',') + 1;
+
+    for (int n =0; n < NArraySize; n++){
+        stringPiece = this->splitString(cleanedString,delimiter,n);
+        array[n] = std::stod(stringPiece);
+    }
+}
+
 int ToolsJTPP::GetPosInVector(std::vector<std::string>& vec, std::string name)
 {
     // returns the position in the vector (starting with 0)

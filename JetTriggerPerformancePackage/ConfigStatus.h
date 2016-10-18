@@ -42,12 +42,17 @@ class ConfigStatus: public BaseJTPP
 		 bool a_doEMFrac,
 		 bool a_doHECFrac,
 		 bool a_doFracSamplingMax,
-		 bool a_doOfflineTruthResponse,
+         bool a_doMatching,
+         bool a_doOfflineTruthResponse,
 		 bool a_doTriggerTruthResponse,
 		 bool a_doTriggerOfflineResponse,
 		 bool a_doMjjResponseTrigVsOff,
 		 bool a_doMjjResponseOffVsTruth,
 		 bool a_doMjjResponseTrigVsTruth,
+         std::string a_PtResponse_ptBinning,
+         std::string a_PtResponse_etaBinning,
+         std::string a_MjjResponse_mjjBinning,
+         std::string a_MjjResponse_etaBinning,
 		 bool a_doTurnOns,
 		 std::string a_TurnOnName,
 		 bool a_useTriggerDecisionTool,
@@ -104,6 +109,9 @@ class ConfigStatus: public BaseJTPP
     const bool doHECFrac;
     const bool doFracSamplingMax;
 
+    // Matching
+    const bool doMatching;
+
     //ptResponse
     const bool doOfflineTruthResponse;
     const bool doTriggerTruthResponse;
@@ -113,6 +121,12 @@ class ConfigStatus: public BaseJTPP
     const bool doMjjResponseTrigVsOff;
     const bool doMjjResponseOffVsTruth;
     const bool doMjjResponseTrigVsTruth;
+
+    //Response Binnings
+    const std::string PtResponse_ptBinning;
+    const std::string PtResponse_etaBinning;
+    const std::string MjjResponse_mjjBinning;
+    const std::string MjjResponse_etaBinning;
 
     //turn-ons
     const bool doTurnOns;

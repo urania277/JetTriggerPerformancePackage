@@ -15,7 +15,9 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 
 TriggerEfficiencyMatrix::TriggerEfficiencyMatrix(std::string key, std::string directory, ConfigStatus* a_CS):
-    m_key(key), HistogramMatrix(directory, a_CS),
+    m_key(key), HistogramMatrix(directory, false, false), // "false" booleans deactivate options for LeadSubleadThird and NthJet plots which are not needed for Turnons in general
+    CS(a_CS),
+    // eta values for the emulation of turnons
      calo_HLT_cen_etaMin(0.0),
      calo_HLT_cen_etaMax(3.2),
      calo_HLT_fwd_etaMin(3.2),
@@ -32,6 +34,9 @@ TriggerEfficiencyMatrix::TriggerEfficiencyMatrix(std::string key, std::string di
     // Defining cutHandler
     std::cout << "\n==== Turnon Cut Selection ====" << std::endl;
     cutHandler = new CutHandler(CS->cutStringTurnons);
+
+    // Defining GraphMatrix
+    graphMatrix = new GraphMatrix(directory);
 }
 
 TriggerEfficiencyMatrix::~TriggerEfficiencyMatrix()
@@ -43,70 +48,50 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
 {
     if (m_debug) std::cout << "Starting Book()..." << std::endl;
 
-    // Book Denominator (= Denumerator xD) plots
+    // Book Denominator plots
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
 
 	    if (CS->useTriggerDecisionTool){
         std::string name = m_raw + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
 	    }
 
 	    if (CS->useEmulation){
         std::string name = m_raw + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
 	    }
 
 	    if (CS->useTriggerBeforePraescale){
         std::string name = m_raw + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
 	    }
     }
 
-    // Book actual turnon plots
+    // Book nominator turnon plots
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
 	if (CS->useTriggerDecisionTool){
         std::string name = m_pt + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
 	}
 
 	if (CS->useEmulation){
         std::string name = m_pt + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
 	}
 
 	if (CS->useTriggerBeforePraescale){
         std::string name = m_pt + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
 	}
 
     }
-
-    // book Crosschecks histos
-    this->Book("notInTLATrigger_lead_jet_eta", "notInTLATrigger_lead_jet_eta", 20, -4.9, 4.9, wk);
-    this->Book("notInTLATrigger_sublead_jet_eta", "notInTLATrigger_sublead_jet_eta", 20, -4.9, 4.9, wk);
-
-    this->Book("notInTLATrigger_lead_trigJet_eta", "notInTLATrigger_lead_trigJet_eta", 20, -4.9, 4.9, wk);
-    this->Book("notInTLATrigger_sublead_trigJet_eta", "notInTLATrigger_sublead_trigJet_eta", 20, -4.9, 4.9, wk);
-
-    this->Book("notInTLATrigger_lead_jet_phi", "notInTLATrigger_lead_jet_phi", 50, -3.5, 3.5, wk);
-    this->Book("notInTLATrigger_sublead_jet_phi", "notInTLATrigger_sublead_jet_phi", 50, -3.5, 3.5, wk);
-
-    this->Book("notInTLATrigger_lead_trigJet_phi", "notInTLATrigger_lead_trigJet_phi", 50, -3.5, 3.5, wk);
-    this->Book("notInTLATrigger_sublead_trigJet_phi", "notInTLATrigger_sublead_trigJet_phi", 50, -3.5, 3.5, wk);
-
-    this->Book("notInTLATrigger_jet_mjj", "notInTLATrigger_jet_mjj", 300, 0.0, 1200.0, wk);
-
-    this->Book("notInTLATrigger_trigJet_mjj", "notInTLATrigger_trigJet_mjj", 300, 0.0, 1200.0, wk);
-
-    this->Book("notInTLATrigger_jet_m23", "notInTLATrigger_jet_m23", 300, 0.0, 1200.0, wk);
-
-    this->Book("notInTLATrigger_trigJet_m23", "notInTLATrigger_trigJet_m23", 300, 0.0, 1200.0, wk);
-
-
-
-    // initialise dummy counter
-    dummy_counter = 0;
 
 }
 
@@ -152,76 +137,18 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
 
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
-    //TODO uncomment again	if (!TD->ref_passedTrigger.at(n)) continue; //speed things up
-
 	// 1. Get nthJetAfterCuts and the corresponding pt value
     nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet, ED_trigJet, ED_truthJet);
 
 	if (nthJetAfterCutsProbe == 0) continue; // continue if no proper jet was found
 	ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
 
-	// TODO cout for crosscheck
-    //	if ((TD->ref_passedTrigger.at(n)) && ((ED_jet->mjj > 600.0) || (ED_jet->m23 > 600.0))) {
-	// if probe trigger is HLT j0 0i1c500m900TLA, it did not fire, but L1_J100 fired and the trigger jet mjj value is in between 500 and 900, then:
-    if ((n == 1) && (TD->probe_passedTrigger.at(n) == 0)  && (TD->ref_passedTrigger.at(n) == 1) && (ED_trigJet->mjj > 500.0) && (ED_trigJet->mjj < 900.0)) {
-	    //std::cout << "==============================" << std::endl;
-        //std::cout << "probe_ptThreshold.at(n): " << TD->probe_ptThreshold.at(n) << std::endl;
-        //std::cout << "probe_triggerName.at(n): " << TD->probe_triggerName.at(n) << std::endl;
-
-        //std::cout << "TD->probe_passedTrigger.at(n): " << TD->probe_passedTrigger.at(n) << std::endl;
-        //std::cout << "TD->ref_passedTrigger.at(n): " << TD->ref_passedTrigger.at(n) << std::endl;
-
-	    //std::cout << "ED_jet->eta->at(0): " << ED_jet->eta->at(0) << std::endl;
-	    this->Fill("notInTLATrigger_lead_jet_eta", ED_jet->eta->at(0), true, weight);
-	    //std::cout << "ED_jet->eta->at(1): " << ED_jet->eta->at(1) << std::endl;
-	    this->Fill("notInTLATrigger_sublead_jet_eta",  ED_jet->eta->at(1), true, weight);
-
-	    //std::cout << "ED_trigJet->eta->at(0): " << ED_trigJet->eta->at(0) << std::endl;
-	    this->Fill("notInTLATrigger_lead_trigJet_eta",  ED_trigJet->eta->at(0), true, weight);
-	    //std::cout << "ED_trigJet->eta->at(1): " << ED_trigJet->eta->at(1) << std::endl;
-	    this->Fill("notInTLATrigger_sublead_trigJet_eta",  ED_trigJet->eta->at(1), true, weight);
-
-	    //std::cout << "ED_jet->phi->at(0): " << ED_jet->phi->at(0) << std::endl;
-	    this->Fill("notInTLATrigger_lead_jet_phi",  ED_jet->phi->at(0), true, weight);
-	    //std::cout << "ED_jet->phi->at(1): " << ED_jet->phi->at(1) << std::endl;
-	    this->Fill("notInTLATrigger_sublead_jet_phi",  ED_jet->phi->at(1), true, weight);
-
-	    //std::cout << "ED_trigJet->phi->at(0): " << ED_trigJet->phi->at(0) << std::endl;
-	    this->Fill("notInTLATrigger_lead_trigJet_phi",  ED_trigJet->phi->at(0), true, weight);
-	    //std::cout << "ED_trigJet->phi->at(1): " << ED_trigJet->phi->at(1) << std::endl;
-	    this->Fill("notInTLATrigger_sublead_trigJet_phi",  ED_trigJet->phi->at(1), true, weight);
-
-	    //std::cout << "ED_jet->mjj: " << ED_jet->mjj << std::endl;
-	    this->Fill("notInTLATrigger_jet_mjj",  ED_jet->mjj, true, weight);
-	    //std::cout << "ED_jet->m23: " << ED_jet->m23 << std::endl;
-	    this->Fill("notInTLATrigger_jet_m23",  ED_jet->m23, true, weight);
-
-	    //std::cout << "ED_trigJet->mjj: " << ED_trigJet->mjj << std::endl;
-	    this->Fill("notInTLATrigger_trigJet_mjj",  ED_trigJet->mjj, true, weight);
-	    //std::cout << "ED_trigJet->m23: " << ED_trigJet->m23 << std::endl;
-	    this->Fill("notInTLATrigger_trigJet_m23",  ED_trigJet->m23, true, weight);
-
-	    //std::cout << "ED_jet->yStar: " << ED_jet->yStar << std::endl;
-	    //std::cout << "ED_trigJet->yStar: " << ED_trigJet->yStar << std::endl;
-	}
-
-	// TODO little hack for TLA triggers
-	// set bool true if you want to fill mjj instead of the nth jet pt
-	bool makeMjjPlots = false;
-	if (makeMjjPlots){
-	    // if HLT-j0-1i2c200m8000TLA, use offline m23
-        if (TD->probe_triggerName.at(n).compare("HLT_j0_1i2c200m8000TLA") == 0)  ptNthJetAfterCutsProbe = ED_jet->m23;
-
-	    // if HLT-j0-0i1c500m900TLA, use offline mjj
-        if (TD->probe_triggerName.at(n).compare("HLT_j0_0i1c500m900TLA") == 0) ptNthJetAfterCutsProbe = ED_jet->mjj;
-	}
-
-	// 2. Check if ref trigger fired and fill Denumerator
+    // 2. Check if ref trigger fired and fill denominator
     if (TD->ref_passedTrigger.at(n)){
         this->Fill(m_raw + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
 	}
 
-	// 3. Check if probe and ref trigger fired and fill numerator
+    // 3. Check if probe and ref trigger fired and fill nominator
     if ((TD->probe_passedTrigger.at(n))&&(TD->ref_passedTrigger.at(n))){
         this->Fill(m_pt + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
 	}
@@ -236,14 +163,8 @@ void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, E
     int nthJetAfterCutsProbe, nthJetAfterCutsRef;
     float ptNthJetAfterCutsProbe;
 
-    // CROSSCHECK
-    int ptThr;
-
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
     if (!TD->ref_passedTrigger.at(n)) continue; //speed things up
-
-	// CROSSCHECK
-    ptThr = TD->probe_ptThreshold.at(n);
 
 	// 1. Get nthJetAfterCuts and the corresponding pt value
     //nthJetAfterCutsProbe = this->nthJetAfterCutsChristiansVersion(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet);
@@ -296,7 +217,7 @@ void  TriggerEfficiencyMatrix::Fill(std::string obs, std::vector<float>* valueVe
   HistogramMatrix::Fill(m_key + "_" + obs, valueVector, isGood, weight);
   }
 
-void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStatus* CS)
+void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStatus* CS, EL::Worker* wk)
 {
     if (m_debug) std::cout << "Starting CreateEfficiencyPlots()..." << std::endl;
 
@@ -304,6 +225,8 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
         std::string turnOnName = m_key + "_" + m_pt + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         std::string refName = m_key + "_" + m_raw + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+
+        //graphMatrix->Divide(turnOnName, m_map[turnOnName], m_map[refName],"b(1,1) mode", wk);
 	    //	    m_map[turnOnName]->Sumw2();
 	    //	    m_map[turnOnName]->Divide(m_map[turnOnName],m_map[refName], 1.0, 1.0 , "B"); //binominal errors
 	}
@@ -313,6 +236,8 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
         std::string turnOnName = m_key + "_" + m_pt + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         std::string refName = m_key + "_" + m_raw + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+
+        //graphMatrix->Divide(turnOnName,m_map[turnOnName], m_map[refName],"b(1,1) mode", wk);
 	    //	    m_map[turnOnName]->Sumw2();
 	    //	    m_map[turnOnName]->Divide(m_map[turnOnName],m_map[refName], 1.0, 1.0 , "B"); //binominal errors
 	}

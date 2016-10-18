@@ -45,12 +45,13 @@ class HistogramMatrix: public BaseJTPP
   const std::string nth = "nth";
 
   //ConfigStatus
-  ConfigStatus* CS;
+  const bool doLeadSubleadThird;
+  const bool doNthJets;
 
  public:
-  HistogramMatrix(ConfigStatus* a_CS);
-  HistogramMatrix(std::string directory, ConfigStatus* a_CS);
-  HistogramMatrix(std::string directory, int nthJet, ConfigStatus* a_CS);
+  HistogramMatrix(bool a_doLeadSubleadThird, bool a_doNthJets);
+  HistogramMatrix(std::string directory,bool a_doLeadSubleadThird, bool a_doNthJets);
+  HistogramMatrix(std::string directory, int nthJet, bool a_doLeadSubleadThird, bool a_doNthJets);
   virtual ~HistogramMatrix();
 
   virtual  void Book(std::string name1, std::string name2, int nBins, double xMin, double xMax, EL::Worker* wk);

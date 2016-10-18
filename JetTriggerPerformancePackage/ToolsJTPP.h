@@ -28,6 +28,7 @@ class ToolsJTPP: public BaseJTPP
   virtual std::string splitString(std::string name, std::string delimiter, int wordNumber);
   virtual std::string ftos(double number, int precision);
   virtual std::string rmSpaces(std::string input);
+  virtual void stringToArray(std::string inputString, double *array, std::string delimiter);
 
   virtual int GetPosInVector(std::vector<std::string>& vec, std::string name);
 

@@ -11,21 +11,21 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <iostream>
 #include <assert.h>
 
-HistogramMatrix::HistogramMatrix(ConfigStatus* a_CS):
-    m_directory("HistogramMatrix"), m_nthJet(0), CS(a_CS)
+HistogramMatrix::HistogramMatrix(bool a_doLeadSubleadThird, bool a_doNthJets):
+    m_directory("HistogramMatrix"), m_nthJet(0), doLeadSubleadThird(a_doLeadSubleadThird), doNthJets(a_doNthJets)
 {
   if (m_debug) std::cout << "Starting constructor HistogramMatrix()..." << std::endl;
 }
 
-HistogramMatrix::HistogramMatrix(std::string directory, ConfigStatus* a_CS):
-    m_directory(directory), m_nthJet(0), CS(a_CS)
+HistogramMatrix::HistogramMatrix(std::string directory, bool a_doLeadSubleadThird, bool a_doNthJets):
+    m_directory(directory), m_nthJet(0), doLeadSubleadThird(a_doLeadSubleadThird), doNthJets(a_doNthJets)
 {
   if (m_debug) std::cout << "Starting constructor HistogramMatrix()..." << std::endl;
 }
 
 
-HistogramMatrix::HistogramMatrix(std::string directory, int nthJet, ConfigStatus* a_CS):
-    m_directory(directory), m_nthJet(nthJet), CS(a_CS)
+HistogramMatrix::HistogramMatrix(std::string directory, int nthJet, bool a_doLeadSubleadThird, bool a_doNthJets):
+    m_directory(directory), m_nthJet(nthJet), doLeadSubleadThird(a_doLeadSubleadThird), doNthJets(a_doNthJets)
 {
     if (m_debug) std::cout << "Starting constructor HistogramMatrix()..." << std::endl;
 }
@@ -46,7 +46,7 @@ void HistogramMatrix::Book(std::string name1, std::string name2, int nBins, doub
   wk->addOutput(m_map[name1]);
 
   // Addition for leadJet, subleadJet and ThirdJet
-  if (CS->doLeadSubleadThirdJetKinematics){
+  if (doLeadSubleadThird){
     // only book for vector values:
       if ((name1.find("_E")!=std::string::npos) || (name1.find("_pt")!=std::string::npos) ||  (name1.find("_eta")!=std::string::npos) || (name1.find("_phi")!=std::string::npos) || (name1.find("_EMFrac")!=std::string::npos) || (name1.find("_HECFrac")!=std::string::npos) || (name1.find("_FracSamplingMax")!=std::string::npos)){
 
@@ -68,7 +68,7 @@ void HistogramMatrix::Book(std::string name1, std::string name2, int nBins, doub
   }
 
   // nth Jet
-  if (CS->doNthJetKinematics){
+  if (doNthJets){
       // only book for vector values:
       if ((name1.find("_E")!=std::string::npos) || (name1.find("_pt")!=std::string::npos) ||  (name1.find("_eta")!=std::string::npos) || (name1.find("_phi")!=std::string::npos) || (name1.find("_EMFrac")!=std::string::npos) || (name1.find("_HECFrac")!=std::string::npos) || (name1.find("_FracSamplingMax")!=std::string::npos)){
 
@@ -91,7 +91,7 @@ void HistogramMatrix::Book(std::string name1, std::string name2, int nBins, doub
   wk->addOutput(m_map[name1]);
 
   // Addition for leadJet, subleadJet and ThirdJet
-  if (CS->doLeadSubleadThirdJetKinematics){
+  if (doLeadSubleadThird){
     // only book for vector values:
       if ((name1.find("_E")!=std::string::npos) || (name1.find("_pt")!=std::string::npos) ||  (name1.find("_eta")!=std::string::npos) || (name1.find("_phi")!=std::string::npos) || (name1.find("_EMFrac")!=std::string::npos) || (name1.find("_HECFrac")!=std::string::npos) || (name1.find("_FracSamplingMax")!=std::string::npos)){
 
@@ -113,7 +113,7 @@ void HistogramMatrix::Book(std::string name1, std::string name2, int nBins, doub
   }
 
   // nth Jet
-  if (CS->doNthJetKinematics){
+  if (doNthJets){
       // only book for vector values:
       if ((name1.find("_E")!=std::string::npos) || (name1.find("_pt")!=std::string::npos) ||  (name1.find("_eta")!=std::string::npos) || (name1.find("_phi")!=std::string::npos) || (name1.find("_EMFrac")!=std::string::npos) || (name1.find("_HECFrac")!=std::string::npos) || (name1.find("_FracSamplingMax")!=std::string::npos)){
 
@@ -171,13 +171,13 @@ void HistogramMatrix::FillConsiderLeadSubThird(std::string name, double value, i
     m_map[name]->Fill(value, weight);
 
     // Addition for leading, subleading and third jet
-    if(CS->doLeadSubleadThirdJetKinematics){
+    if(doLeadSubleadThird){
 	if (n == 0) m_map[lead+name]->Fill(value, weight);
 	if (n == 1) m_map[sublead+name]->Fill(value, weight);
 	if (n == 2) m_map[third+name]->Fill(value, weight);
     }
 
-    if(CS->doNthJetKinematics){
+    if(doNthJets){
 	if (n == m_nthJet) m_map[nth+name]->Fill(value, weight);
     }
 }
@@ -192,13 +192,13 @@ void HistogramMatrix::Fill(std::string name, std::vector<float>* valueVector, st
 	m_map[name]->Fill(valueVector->at(n), weight);
 
 	// Addition for leading, subleading and third jet
-	if(CS->doLeadSubleadThirdJetKinematics){
+    if(doLeadSubleadThird){
 	    if (n == 0) m_map[lead+name]->Fill(valueVector->at(0), weight);
 	    if (n == 1) m_map[sublead+name]->Fill(valueVector->at(1), weight);
 	    if (n == 2) m_map[third+name]->Fill(valueVector->at(2), weight);
 	}
 
-	if(CS->doNthJetKinematics){
+    if(doNthJets){
 	    if (n == m_nthJet) m_map[nth+name]->Fill(valueVector->at(n), weight);
 	}
 

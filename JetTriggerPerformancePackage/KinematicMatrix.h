@@ -52,6 +52,9 @@ class KinematicMatrix: public HistogramMatrix
   //ToolsJTPP
   ToolsJTPP* t;
 
+  //ConfigStatus
+  ConfigStatus* CS;
+
  public:
   KinematicMatrix(std::string key, std::string directory, int nthJet, ConfigStatus* a_CS);
   virtual ~KinematicMatrix();

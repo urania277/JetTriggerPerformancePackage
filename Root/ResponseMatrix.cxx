@@ -15,15 +15,15 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 
 
-ResponseMatrix::ResponseMatrix(std::string key, ConfigStatus* a_CS):
-    HistogramMatrix(key, a_CS),
+ResponseMatrix::ResponseMatrix(std::string key):
+    HistogramMatrix(key, false, false), // the "false" booleans deactivate leadSubleadThird and nthJet Plot options
     m_key(key), ptMinBinPos(2), ptMaxBinPos(3), etaMinBinPos(5), etaMaxBinPos(6), delimiter("_")
 {
   if (m_debug) std::cout << "Starting constructor ResponseMatrix()..." << std::endl;
 }
 
-ResponseMatrix::ResponseMatrix(std::string key, std::string directory, ConfigStatus* a_CS):
-    HistogramMatrix(directory, a_CS),
+ResponseMatrix::ResponseMatrix(std::string key, std::string directory):
+    HistogramMatrix(directory, false, false), // the "false" booleans deactivate leadSubleadThird and nthJet Plot options
     m_key(key), ptMinBinPos(2), ptMaxBinPos(3), etaMinBinPos(5), etaMaxBinPos(6), delimiter("_")
 {
   if (m_debug) std::cout << "Starting constructor ResponseMatrix()..." << std::endl;
@@ -100,7 +100,7 @@ void ResponseMatrix::Fill(double probeValue, double refValue, double eta, double
 
   //------------------------
 
-  //filter for very low jets
+  //filter for very low jets ?????
   if (refValue > m_ptBinEdges.at(0)){
     for(int n = 0; n < (m_ptBinEdges.size()-1); n++){
       for(int m = 0; m < (m_etaBinEdges.size()-1); m++){

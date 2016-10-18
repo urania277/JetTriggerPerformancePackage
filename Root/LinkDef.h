@@ -1,5 +1,6 @@
 #include <JetTriggerPerformancePackage/BaseJTPP.h>
 #include <JetTriggerPerformancePackage/TriggerHistoPack.h>
+#include <JetTriggerPerformancePackage/GraphMatrix.h>
 #include <JetTriggerPerformancePackage/HistogramMatrix.h>
 #include <JetTriggerPerformancePackage/ResponseMatrix.h>
 #include <JetTriggerPerformancePackage/KinematicMatrix.h>
@@ -27,6 +28,7 @@
 #ifdef __CINT__
 #pragma link C++ class BaseJTPP+;
 #pragma link C++ class TriggerHistoPack+;
+#pragma link C++ class GraphMatrix+;
 #pragma link C++ class HistogramMatrix+;
 #pragma link C++ class ResponseMatrix+;
 #pragma link C++ class KinematicMatrix+;

@@ -13,7 +13,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 
 KinematicMatrix::KinematicMatrix(std::string key, std::string directory, int nthJet, ConfigStatus* a_CS):
-    m_key(key), HistogramMatrix(directory, a_CS), m_nthJet(nthJet)
+    m_key(key), HistogramMatrix(directory, a_CS->doLeadSubleadThirdJetKinematics, a_CS->doNthJetKinematics), m_nthJet(nthJet), CS(a_CS)
 {
     if (m_debug) std::cout << "Starting constructor KinematicMatrix()..." << std::endl;
 
