@@ -16,8 +16,10 @@ import AtlasStyle
 
 # Select input data:
 
-inputDataList = ["hist-Data16_run300800.root", "hist-Data16_run300800_oldCuts.root"]
-#inputDataList = ["hist-Data16_run300800_oldCuts.root"]
+inputDataList = ["hist-Data16_run300800_newCut.root", "hist-Data16_run300800_oldCuts.root"]
+
+# please put here the header string in the turnon plots for each file
+inputDataTurnonHeader = ["new Cut", "old Cut"]
 
 # Select ATLAS Labeling
 ATLAS_Internal = True
@@ -26,7 +28,7 @@ ATLAS_Preliminary = False
 ####### KINEMATICS #######
 
 # Enabling Kinematic plots
-DoKinematics = False
+DoKinematics = True
 
 # Select wanted plots:
 
@@ -61,7 +63,7 @@ else:
 # Select if histos should be plotted together on one canvas and  the criteria for combination
 EnableHistoCombination = True
 
-CriteriaOfHistoCombination = "jetType" # other options: "inputData", "trigger", "jetType", "praefix", "obs", "etaBins"
+CriteriaOfHistoCombination = "inputData" # other options: "inputData", "trigger", "jetType", "praefix", "obs", "etaBins"
 
 # Select ratio plots at the buttom of the canvas
 # Only available if EnableHistoCombination = True (need other plots to compare with, right? ;) )
@@ -77,6 +79,9 @@ KLineStyle = 1
 KMarkerStyle = 0
 
 ######## TURNONS ########
+
+# Enabling Turnon plots
+#DoTurnons = False
 
 # Enable Turnon Plotting
 PlotTDT             = False
@@ -98,13 +103,13 @@ if (not EnableCombinedTurnons):
     TurnonList=["HLT_j360-HLT_j260","HLT_j110-HLT_j85","HLT_j25-HLT_j15","HLT_j60-HLT_j25"]
 
     #set the min and the max x-axis range for the selected turnons respectively
-    minXList = [ 20.0,  20.0,  20.0,  20.0]
+    minXList = [250.0,  20.0,  20.0,  20.0]
     maxXList = [600.0, 160.0,  40.0, 110.0]
 
     #set legend entries
     # Set Legend Settings
     TurnonLegendHeader = "look at Turnons!"
-    TurnonLegendEntryList = TurnonList
+    TurnonLegendEntryList = ["HLT_j360","HLT_j110","HLT_j25","HLT_j60"]
 
     #rebin factor (has to be a factor of 1200)
     rebinList = [5, 5, 5, 5]
@@ -313,10 +318,8 @@ if (DoKinematics):
                                         line = TLine(histoRatio.GetXaxis().GetXmin(), yLine, histoRatio.GetXaxis().GetXmax(), yLine);
                                         line.SetLineColor(kBlack);
                                         line.SetLineStyle(3);
-                                        #line.Draw("Same"); WARNING
+                                        line.Draw("Same"); 
                                         c.Update()
-
-
 
 
                             # increasing NPlots
@@ -330,7 +333,10 @@ if (DoKinematics):
                         if (EnableHistoCombination):
                             # modify name with respect to Criteria
                             subName = trigger + "-" + praefix + "-" + jetType + "-" + etaBins + "-" + obs
-                            modSubName = subName.replace(var[listSize-1], "")
+                            if (CriteriaOfHistoCombination != "inputData"): 
+                                modSubName = subName.replace(var[listSize-1], "")
+                            else:
+                                modSubName = subName
                             c.SaveAs("makeResultPdf/plots/"+ "Comb" + "-" + modSubName +".pdf")
                             c.SaveAs("makeResultPdf/plots/"+ "Comb" + "-" + modSubName +".eps")
 
@@ -343,6 +349,13 @@ if (DoKinematics):
 # Gstyle and ATLAS Style
 AtlasStyle.SetAtlasStyle()
 gStyle.SetOptStat(0) # get rid of statistics box
+
+# opening all output files
+finList = []
+
+for inputData in inputDataList:
+    finList.append(TFile.Open(inputData))
+
 
 # Create PraefixList
 EvalTypeList = []
@@ -363,21 +376,18 @@ for EvalType in EvalTypeList:
         legend.SetHeader(TurnonLegendHeader)
 
         NData = 0
-        for inputData  in inputDataList:
-
-            #open TFile
-            fin = TFile.Open(inputData)
+        for fin  in finList:
 
             # create histo names
             histoName = "TurnOns" + "/" + "effic_pt_" + EvalType + "_" + TurnonName
-            histoNameDN = "TurnOns" + "/" + "effic_DENUM_pt_" + EvalType + "_" + TurnonName
+            histoNameDN = "TurnOns" + "/" + "effic_DENOM_pt_" + EvalType + "_" + TurnonName
 
             # load histograms from Data
             histo = fin.Get(histoName)
             histoDN = fin.Get(histoNameDN)
 
             # rebin
-            print "NTurnon" + str(NTurnon)
+            print "NTurnon: " + str(NTurnon)
             histo.Rebin(rebinList[NTurnon])
             histoDN.Rebin(rebinList[NTurnon])
 
@@ -390,8 +400,8 @@ for EvalType in EvalTypeList:
             histo.SetLineStyle(TLineStyle)
             print "TMarkerStyle[NData]: " + str(TMarkerStyle[NData])
             histo.SetMarkerStyle(TMarkerStyle[NData])
-            histo.SetLineColor(colorList[NTurnon])
-            histo.SetMarkerColor(colorList[NTurnon])
+            histo.SetLineColor(colorList[0])
+            histo.SetMarkerColor(colorList[0])
 
             # set range
             histo.GetXaxis().SetRangeUser(minXList[NTurnon], maxXList[NTurnon])
@@ -410,11 +420,13 @@ for EvalType in EvalTypeList:
 
             # Drawing
             ## Draw histo
-            if (NData ==0): histo.Draw("PE")
+            if (NData == 0): histo.Draw("PE")
             else: histo.Draw("Same PE")
 
+            c.Update()
+
             ## Draw legend
-            legend.AddEntry(histo,TurnonLegendEntryList[NTurnon],"p")
+            legend.AddEntry(histo,TurnonLegendEntryList[NTurnon] + " - " + inputDataTurnonHeader[NData],"p")
             legend.Draw("Same")
 
             # ATLAS Style Setting
