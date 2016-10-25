@@ -37,93 +37,137 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
 
     int n = 0;
     do{
-    trigger = myTools->rmSpaces(TriggerName);
-    trigger = myTools->splitString(trigger,";", n);
-	config_triggerName.push_back(trigger);
-	config_passedTriggers.push_back(false);
-	n++;
+        trigger = myTools->rmSpaces(TriggerName);
+        trigger = myTools->splitString(trigger,";", n);
+        config_triggerName.push_back(trigger);
+        config_passedTriggers.push_back(false);
+        n++;
     } while( trigger.compare("String TOO SHORT") != 0);
-    config_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
-    config_passedTriggers.pop_back();
+        config_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
+        config_passedTriggers.pop_back();
 
-    // Cout of all selected triggers
-    std::cout << "\n=== Selected Triggers ===" << std::endl;
-    for (unsigned int i=0; i<config_triggerName.size(); i++){
-	std::cout << "trigger " << i << ": " << config_triggerName.at(i) << std::endl;
+        // Cout of all selected triggers
+        std::cout << "\n=== Selected Triggers ===" << std::endl;
+        for (unsigned int i=0; i<config_triggerName.size(); i++){
+        std::cout << "trigger " << i << ": " << config_triggerName.at(i) << std::endl;
     }
     std::cout << "======================== \n" << std::endl;
 
     nTriggers = config_triggerName.size();
 
-    // TURNONS
-    // split TurnOnName and fill probeTrigger and refTrigger
-    std::string turnon, trigger1, trigger2, level, pt;
-    n = 0;
-    do{
-        turnon = myTools->rmSpaces(TurnOnName);
-        turnon = myTools->splitString(turnon,";", n);
-        trigger1 = myTools->splitString(turnon,"/", 0);
-        trigger2 = myTools->splitString(turnon,"/", 1);
-        probe_triggerName.push_back(trigger1);
-        probe_passedTrigger.push_back(false);
-        ref_triggerName.push_back(trigger2);
-        ref_passedTrigger.push_back(false);
+    if (CS->doTurnOns){
+        // TURNONS
+        // split TurnOnName and fill probeTrigger and refTrigger
+        std::string turnon, trigger1, trigger2, level, pt;
+        n = 0;
+        do{
+            turnon = myTools->rmSpaces(TurnOnName);
+            turnon = myTools->splitString(turnon,";", n);
+            trigger1 = myTools->splitString(turnon,"/", 0);
+            trigger2 = myTools->splitString(turnon,"/", 1);
+            probe_triggerName.push_back(trigger1);
+            probe_passedTrigger.push_back(false);
+            ref_triggerName.push_back(trigger2);
+            ref_passedTrigger.push_back(false);
 
-        //fill pt threshold
-        //level = myTools->splitString(trigger1,"j"
-        //if (
+            n++;
+        } while(turnon.compare("String TOO SHORT") != 0);
+        probe_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
+        probe_passedTrigger.pop_back();
+        ref_triggerName.pop_back();
+        ref_passedTrigger.pop_back();
 
-        n++;
-     } while(turnon.compare("String TOO SHORT") != 0);
-     probe_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
-     probe_passedTrigger.pop_back();
-     ref_triggerName.pop_back();
-     ref_passedTrigger.pop_back();
+        // Cout of all selected turn-ons
+        std::cout << "\n=== Selected Turn-ons ===" << std::endl;
+        for (unsigned int i=0; i<probe_triggerName.size(); i++){
+            std::cout << "probe: " << probe_triggerName.at(i) << " ::: ref: " << ref_triggerName.at(i) << std::endl;
+        }
+        std::cout << "======================== \n" << std::endl;
 
-     // Cout of all selected turn-ons
-     std::cout << "\n=== Selected Turn-ons ===" << std::endl;
-      for (unsigned int i=0; i<probe_triggerName.size(); i++){
-        std::cout << "probe: " << probe_triggerName.at(i) << " ::: ref: " << ref_triggerName.at(i) << std::endl;
-       }
-    std::cout << "======================== \n" << std::endl;
+        // Initialise counting of passed events per trigger
+        for (unsigned int n=0; n < nTriggers; n++){
+            nPassedEvents.push_back(0);
+        }
 
-    // Initialise counting of passed events per trigger
-    for (unsigned int n=0; n < nTriggers; n++){
-        nPassedEvents.push_back(0);
+        // Fill config_nthJet
+        for (unsigned int n=0; n < config_triggerName.size(); n++){
+            if (this->isTriggerHT(config_triggerName.at(n))) {
+                config_nthJet.push_back(1);
+                continue;
+            } // Skip HT Triggers
+            config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
+            std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
+        }
+
+        // Fill probe and ref trigger information from config string
+        for (unsigned int n=0; n < probe_triggerName.size(); n++){
+
+            // Check for HT Triggers and fill information differently
+            if (this->isTriggerHT(probe_triggerName.at(n))){
+            probe_isHT.push_back(true);
+            probe_nthJet.push_back(0.0);
+            probe_ptThreshold.push_back(0.0);
+            probe_HTThreshold.push_back(this->GetHTThreshold(probe_triggerName.at(n))); // TODO
+            probe_etaMin.push_back(this->GetEtaMin(probe_triggerName.at(n)));
+            probe_etaMax.push_back(this->GetEtaMax(probe_triggerName.at(n)));
+            probe_isL1.push_back(this->isTriggerL1(probe_triggerName.at(n)));
+
+            }
+            //if it is no HT trigger, do the normal procedure
+            else {
+                probe_isHT.push_back(false);
+                probe_nthJet.push_back(this->GetnthJet(probe_triggerName.at(n)));
+                probe_ptThreshold.push_back(this->GetPtThreshold(probe_triggerName.at(n)));
+                probe_HTThreshold.push_back(this->GetHTThreshold(probe_triggerName.at(n))); // is no HT trigger
+                probe_etaMin.push_back(this->GetEtaMin(probe_triggerName.at(n)));
+                probe_etaMax.push_back(this->GetEtaMax(probe_triggerName.at(n)));
+                probe_isL1.push_back(this->isTriggerL1(probe_triggerName.at(n)));
+
+            }
+            std::cout << "probe_triggerName.at(n): " << probe_triggerName.at(n) << " ::: probe_nthJet.at(n): " << probe_nthJet.at(n) << std::endl;
+            std::cout << "probe_ptThreshold.at(n): " << probe_ptThreshold.at(n) << std::endl;
+            std::cout << "probe_HTThreshold.at(n): " << probe_HTThreshold.at(n) << std::endl;
+            std::cout << "probe_etaMin.at(n): " << probe_etaMin.at(n) << std:: endl;
+            std::cout << "probe_etaMax.at(n): " << probe_etaMax.at(n) << std:: endl;
+            std::cout << "probe_isL1.at(n): " << probe_isL1.at(n) << std:: endl;
+            std::cout << "probe_isHT.at(n): " << probe_isHT.at(n) << std:: endl;
+        }
+
+        // Fill probe and ref trigger information from config string
+        for (unsigned int n=0; n < ref_triggerName.size(); n++){
+
+            // Check for HT Triggers and fill information differently
+            if (this->isTriggerHT(ref_triggerName.at(n))){
+                ref_isHT.push_back(true);
+                ref_nthJet.push_back(1);
+                ref_ptThreshold.push_back(0.0);
+                ref_HTThreshold.push_back(this->GetHTThreshold(ref_triggerName.at(n)));
+                ref_etaMin.push_back(this->GetEtaMin(ref_triggerName.at(n)));
+                ref_etaMax.push_back(this->GetEtaMax(ref_triggerName.at(n)));
+                ref_isL1.push_back(this->isTriggerL1(ref_triggerName.at(n)));
+
+            }
+            //if it is no HT trigger, do the normal procedure
+            else {
+                ref_isHT.push_back(false);
+                ref_nthJet.push_back(this->GetnthJet(ref_triggerName.at(n)));
+                ref_ptThreshold.push_back(this->GetPtThreshold(ref_triggerName.at(n)));
+                ref_HTThreshold.push_back(0.0); // is no HT trigger
+                ref_etaMin.push_back(this->GetEtaMin(ref_triggerName.at(n)));
+                ref_etaMax.push_back(this->GetEtaMax(ref_triggerName.at(n)));
+                ref_isL1.push_back(this->isTriggerL1(ref_triggerName.at(n)));
+
+            }
+            std::cout << "ref_triggerName.at(n): " << ref_triggerName.at(n) << " ::: ref_nthJet.at(n): " << ref_nthJet.at(n) << std::endl;
+            std::cout << "ref_ptThreshold.at(n): " << ref_ptThreshold.at(n) << std::endl;
+            std::cout << "ref_HTThreshold.at(n): " << ref_HTThreshold.at(n) << std::endl;
+            std::cout << "ref_etaMin.at(n): " << ref_etaMin.at(n) << std:: endl;
+            std::cout << "ref_etaMax.at(n): " << ref_etaMax.at(n) << std:: endl;
+            std::cout << "ref_isL1.at(n): " << ref_isL1.at(n) << std:: endl;
+            std::cout << "ref_isHT.at(n): " << ref_isHT.at(n) << std:: endl;
+
+        }
     }
-
-    // Fill config_nthJet
-    for (unsigned int n=0; n < config_triggerName.size(); n++){
-        config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
-        //std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
-    }
-
-    // Fill probe_nthJet and ref_nthJet
-    for (unsigned int n=0; n < probe_triggerName.size(); n++){
-        probe_nthJet.push_back(this->GetnthJet(probe_triggerName.at(n)));
-        probe_ptThreshold.push_back(this->GetPtThreshold(probe_triggerName.at(n)));
-        probe_etaMin.push_back(this->GetEtaMin(probe_triggerName.at(n)));
-        probe_etaMax.push_back(this->GetEtaMax(probe_triggerName.at(n)));
-        probe_isL1.push_back(this->isTriggerL1(probe_triggerName.at(n)));
-        /*std::cout << "probe_triggerName.at(n): " << probe_triggerName.at(n) << " ::: probe_nthJet.at(n): " << probe_nthJet.at(n) << std::endl;
-        std::cout << "probe_ptThreshold.at(n): " << probe_ptThreshold.at(n) << std::endl;
-        std::cout << "probe_etaMin.at(n): " << probe_etaMin.at(n) << std:: endl;
-        std::cout << "probe_etaMax.at(n): " << probe_etaMax.at(n) << std:: endl;
-        std::cout << "probe_isL1.at(n): " << probe_isL1.at(n) << std:: endl;*/
-
-        ref_nthJet.push_back(this->GetnthJet(ref_triggerName.at(n)));
-        ref_ptThreshold.push_back(this->GetPtThreshold(ref_triggerName.at(n)));
-        ref_etaMin.push_back(this->GetEtaMin(ref_triggerName.at(n)));
-        ref_etaMax.push_back(this->GetEtaMax(ref_triggerName.at(n)));
-        ref_isL1.push_back(this->isTriggerL1(ref_triggerName.at(n)));
-        /*std::cout << "ref_triggerName.at(n): " << ref_triggerName.at(n) << " ::: ref_nthJet.at(n): " << ref_nthJet.at(n) << std::endl;
-        std::cout << "ref_ptThreshold.at(n): " << ref_ptThreshold.at(n) << std::endl;
-        std::cout << "ref_etaMin.at(n): " << ref_etaMin.at(n) << std:: endl;
-        std::cout << "ref_etaMax.at(n): " << ref_etaMax.at(n) << std:: endl;
-        std::cout << "ref_isL1.at(n): " << ref_isL1.at(n) << std:: endl;*/
-
-    }
-
 }
 
 TriggerData::~TriggerData()
@@ -192,9 +236,31 @@ float TriggerData::GetPtThreshold(std::string triggerString)
     else cut3 = cut2;
 
     if (triggerString.compare("STUDYALL") == 0) return 0.0; // everything will pass
-    else {
-	return std::stof(cut3);
+    else return std::stof(cut3);
+
+}
+
+float TriggerData::GetHTThreshold(std::string triggerString)
+{
+    if (m_debug) std::cout << "Starting method GetHTThreshold()..." << std::endl;
+
+    std::string cut1, cut2;
+    cut1 = myTools->splitString(triggerString,"_",1);
+    std::cout << "cut1: " << cut1 << std::endl;
+
+    if (cut1.find("ht") != std::string::npos) {
+        cut2 = myTools->splitString(cut1,"ht",1);
+        std::cout << "cut2: " << cut2 << std::endl;
+        return std::stof(cut2);
     }
+
+    if (cut1.find("HT") != std::string::npos) {
+        cut2 = myTools->splitString(cut1,"HT",1);
+        std::cout << "cut2: " << cut2 << std::endl;
+        return std::stof(cut2);
+    }
+
+    else return 0.0; // in dubio, HT threshold is 0
 
 }
 
@@ -252,5 +318,15 @@ bool TriggerData::isTriggerL1(std::string triggerString)
 
     //std::cout << "myTools->splitString(...): " << myTools->splitString(triggerString ,"_", 0) << std::endl;
     if (myTools->splitString(triggerString ,"_", 0).compare("L1") == 0) return true;
+    else return false;
+}
+
+bool TriggerData::isTriggerHT(std::string triggerString)
+{
+    if (m_debug) std::cout << "Starting method isTriggerHT()..." << std::endl;
+
+    //std::cout << "myTools->splitString(...): " << myTools->splitString(triggerString ,"_", 0) << std::endl;
+    if (myTools->splitString(triggerString ,"_", 1).find("ht") != std::string::npos) return true;
+    if (myTools->splitString(triggerString ,"_", 1).find("HT") != std::string::npos) return true;
     else return false;
 }

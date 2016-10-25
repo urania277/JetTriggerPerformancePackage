@@ -40,8 +40,9 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
 {
  private:
   const std::string m_key;
-  const std::string m_raw = "DENOM_pt";
-  const std::string m_pt = "pt";
+  const std::string m_denom = "DENOM";
+  const std::string m_nom =  "NOM";
+  const std::string m_xAxis = "pt";
   const std::string m_TDT = "TDT";
   const std::string m_Emu = "Emu";
   const std::string m_TBP = "TBP";

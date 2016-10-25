@@ -44,6 +44,7 @@ InputHandler :: InputHandler () :
     m_TriggerName("STUDYALL"),
     m_debug(false),
     m_debugInExecute(false),
+    m_coutPassedTriggers(false),
     m_isData(false),
     m_checkLArError(false),
     m_doOfflineJetKinematics(false),
@@ -171,8 +172,11 @@ EL::StatusCode  InputHandler :: configure ()
                         m_doOnlyThisNumberOfEvents);
 
   // Declare and construct CutHandler for kinematic plots
-  std::cout << "\n==== Kinematics Cut Selection ====" << std::endl;
-  cutH = new CutHandler(CS->cutStringKinematics);
+  if (CS->doCuts){
+    std::cout << "\n==== Kinematics Cut Selection ====" << std::endl;
+    cutH = new CutHandler(CS->cutStringKinematics);
+  }
+  else cutH = new CutHandler();
 
   // Declare and construct a TriggerData class
   TD = new TriggerData(m_TriggerName, m_TurnOnName, CS);
@@ -621,9 +625,16 @@ EL::StatusCode InputHandler :: execute ()
 
   // EVENTCOUNTER
   if (CS->doOnlyThisNumberOfEvents > -1){
-    if(eventCounter == CS->doOnlyThisNumberOfEvents) return EL::StatusCode::SUCCESS;
+    if(eventCounter >= CS->doOnlyThisNumberOfEvents) return EL::StatusCode::SUCCESS;
   }
 
+  if (m_coutPassedTriggers){
+      cout << "=== Passed Triggers of event: " << eventCounter << endl;
+      for (int n=0; n < TD->event_passedTriggers->size(); n++){
+          cout << TD->event_passedTriggers->at(n) << endl;
+      }
+
+  }
   /*  // Crosscheck Timing!!!! TODO
   cout << "Timing of event: " << eventCounter << endl;
   for (unsigned int n=0; n < ED_jet->Timing->size(); n++){
@@ -759,22 +770,25 @@ EL::StatusCode InputHandler :: execute ()
   std::vector<int> matchingIndexList;
   std::vector<double> DeltaRList;
 
+  // Just do matching if it is really needed, i.e. if we want to see Response plots
+  if (CS->doTriggerOfflineResponse || CS->doOfflineTruthResponse || CS->doTriggerTruthResponse || CS->doMjjResponseOffVsTruth || CS->doMjjResponseTrigVsOff || CS->doMjjResponseTrigVsTruth){
 
-  if (CS->doMatching){
-    for (unsigned int i = 0; i < ED_trigJet->pt->size(); i++){
-        matchingIndexList.push_back(-1);
-        DeltaRList.push_back(-1);
+    if (CS->doMatching){
+        for (unsigned int i = 0; i < ED_trigJet->pt->size(); i++){
+            matchingIndexList.push_back(-1);
+            DeltaRList.push_back(-1);
+        }
+        anaHandler->findBestMatching(ED_trigJet->pt, ED_trigJet->eta, ED_trigJet->phi, ED_trigJet->E, ED_jet->pt, ED_jet->eta, ED_jet->phi, ED_jet->E , matchingIndexList, DeltaRList, m_DeltaRMax);
     }
-    anaHandler->findBestMatching(ED_trigJet->pt, ED_trigJet->eta, ED_trigJet->phi, ED_trigJet->E, ED_jet->pt, ED_jet->eta, ED_jet->phi, ED_jet->E , matchingIndexList, DeltaRList, m_DeltaRMax);
-  }
-  else{
-      // if matchingIndex is still used, give it reasonable entries
-      int counter = 0;
-      for (unsigned int i = 0; i < ED_trigJet->pt->size(); i++){
+    else{
+        // if matchingIndex is still used, give it reasonable entries
+        int counter = 0;
+        for (unsigned int i = 0; i < ED_trigJet->pt->size(); i++){
           matchingIndexList.push_back(counter);
           counter ++;
           DeltaRList.push_back(-1);
-      }
+        }
+    }
   }
 
   /* ======= CHECK JET BY JET => isGood ======= */

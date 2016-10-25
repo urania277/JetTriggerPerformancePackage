@@ -63,16 +63,22 @@ void CutHandler::SearchTrigger(std::vector<std::string> confTriggers, std::vecto
     if (m_debug) std::cout << "Starting SearchTrigger()..." << std::endl;
 
   // Loop the wanted trigger chains
+  if (m_debug) std::cout << "confTriggers.size(): " << confTriggers.size() << std::endl; //TODO
   for (unsigned int n=0; n < confTriggers.size(); n++){
 
       // Check if this event passed this trigger
+      if (m_debug) std::cout << "passedTriggersOfEvent->size(): " << passedTriggersOfEvent->size() << std::endl; //TODO
       for (unsigned int m=0; m < passedTriggersOfEvent->size(); m++){
+
+           if (m_debug) std::cout << "confTriggers.at(n): " << confTriggers.at(n) << std::endl; //TODO
+           if (m_debug) std::cout << "passedTriggersOfEvent->at(m): " << passedTriggersOfEvent->at(m) << std::endl; //TODO
 
 	  if (confTriggers.at(n).compare(passedTriggersOfEvent->at(m)) == 0) boolConfTriggers[n] = true;
       }
       // STUDYALL always passes and gets 'true' if STUDYALL is in confTriggers
       if (confTriggers.at(n).compare("STUDYALL") == 0) boolConfTriggers[n] = true;
   }
+  if (m_debug) std::cout << "End of SearchTrigger" << std::endl; //TODO
 
 }
 
@@ -138,9 +144,10 @@ void CutHandler::InitialiseCutStringMethod(std::string cutString)
 
     // Cout of all selected cuts
     std::cout << "\n=== Selected cuts ===" << std::endl;
-    for (unsigned int i=0; i< vec_cuts.size(); i++){
-    std::cout << "cut " << i << ": " << vec_cuts.at(i) << std::endl;
+        for (unsigned int i=0; i< vec_cuts.size(); i++){
+        std::cout << "cut " << i << ": " << vec_cuts.at(i) << std::endl;
     }
+    if (vec_cuts.size() == 0) std::cout << "No Cuts selected \n" << std::endl;
     std::cout << "======================== \n" << std::endl;
 
     //--- parsing each cut ---

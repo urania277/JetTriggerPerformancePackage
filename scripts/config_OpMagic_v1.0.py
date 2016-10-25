@@ -36,7 +36,7 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 #
 # ============= 0. General Parameters ================================================================================================================
 #
-# Determine whether the ntuple contains REAL DATA or MC. In case of MC, this option will automatically switch of parameters that exist for real data only
+# Determine whether the ntuple contains REAL DATA or MC. In case of MC, this option will automatically switch off parameters that exist for real data only
 #
                            "m_isData"                                : True,                        
 #
@@ -44,11 +44,18 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
 #
                            "m_debug"                                 : False,
                            "m_debugInExecute"                        : False,
+                           "m_coutPassedTriggers"                    : True,
 #
 # Determine the name of the offline and trigger branches like "jet_X" and "trigJet_X" (with a capital X!):
 #
                            "m_branch_offlineJet"                     : "jet_X",
                            "m_branch_triggerJet"                     : "trigJet_X",
+#
+# Select triggers which KINEMATIC AND RESPONSE plots you would like to generate.
+# STUDYALL is the option to obtain kinematics for ANY trigger that are included in the ntuple.
+#
+                           "m_TriggerName"                           : "STUDYALL; HLT_j460_a10_lcw_L1HT190-J15.ETA21; HLT_j460_a10_lcw_L1J100; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490",
+
 #
 # Specifiy the wanted event cuts for ALL plots in the string (separate with semicolon, vector in edgy brackets [] and no units).
 # For trigger or truth jets, write 'trig' or 'truth' in front of the observable, e.g. trigpt or trig-pt.
@@ -76,11 +83,6 @@ c.setalg("InputHandler", { "m_name"                   : "MultijetAlgo",
                            "m_doOfflineJetKinematics"                : True,
                            "m_doTriggerJetKinematics"                : True,
                            "m_doTruthJetKinematics"                  : False,
-#
-# Select triggers which kinematic plots you would like to generate.
-# STUDYALL is the option to obtain kinematics for ANY trigger that are included in the ntuple
-#
-                           "m_TriggerName"                           : "STUDYALL; HLT_j460_a10_lcw_L1HT190-J15.ETA21; HLT_j460_a10_lcw_L1J100; HLT_j25; HLT_j60; HLT_j175; HLT_j360; HLT_j25_320eta490",
 #
 # Generate leading, subleading and third jet (in pt ordering) and/or the nth jet of each jet trigger
 #

@@ -52,19 +52,19 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
 
 	    if (CS->useTriggerDecisionTool){
-        std::string name = m_raw + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string name = m_xAxis + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
         graphMatrix->Book(name, 1200, wk);
 	    }
 
 	    if (CS->useEmulation){
-        std::string name = m_raw + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string name = m_xAxis + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
         graphMatrix->Book(name, 1200, wk);
 	    }
 
 	    if (CS->useTriggerBeforePraescale){
-        std::string name = m_raw + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string name = m_xAxis + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
         graphMatrix->Book(name, 1200, wk);
 	    }
@@ -74,22 +74,45 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
 	if (CS->useTriggerDecisionTool){
-        std::string name = m_pt + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string name = m_xAxis + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
         graphMatrix->Book(name, 1200, wk);
 	}
 
 	if (CS->useEmulation){
-        std::string name = m_pt + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string name = m_xAxis + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
         graphMatrix->Book(name, 1200, wk);
 	}
 
 	if (CS->useTriggerBeforePraescale){
-        std::string name = m_pt + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string name = m_xAxis + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
         graphMatrix->Book(name, 1200, wk);
 	}
+
+    }
+
+    // Book divided turnon plots
+    for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
+
+    if (CS->useTriggerDecisionTool){
+        std::string name = m_xAxis + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
+    }
+
+    if (CS->useEmulation){
+        std::string name = m_xAxis + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
+    }
+
+    if (CS->useTriggerBeforePraescale){
+        std::string name = m_xAxis + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
+        graphMatrix->Book(name, 1200, wk);
+    }
 
     }
 
@@ -145,12 +168,12 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
 
     // 2. Check if ref trigger fired and fill denominator
     if (TD->ref_passedTrigger.at(n)){
-        this->Fill(m_raw + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        this->Fill(m_xAxis + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
 	}
 
     // 3. Check if probe and ref trigger fired and fill nominator
     if ((TD->probe_passedTrigger.at(n))&&(TD->ref_passedTrigger.at(n))){
-        this->Fill(m_pt + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        this->Fill(m_xAxis + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
 	}
 
     }
@@ -178,7 +201,7 @@ void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, E
 
 	// 2. Check if ref trigger fired (in TDT) and fill Denumerator
     if (TD->ref_passedTrigger.at(n)){
-        this->Fill(m_raw + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        this->Fill(m_xAxis + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
 	}
 
 	// 3. Check if probe and ref trigger fired and fill numerator
@@ -186,7 +209,7 @@ void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, E
     if ((this->passedEmulation(TD->probe_isL1.at(n), TD->probe_nthJet.at(n), TD->probe_ptThreshold.at(n), TD->probe_etaMin.at(n),
                    TD->probe_etaMax.at(n), ED_trigJet, L1D))
         && (TD->ref_passedTrigger.at(n))){
-        this->Fill(m_pt + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        this->Fill(m_xAxis + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
 	}
     }
 
@@ -223,24 +246,22 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
 
     if (CS->useTriggerDecisionTool){
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
-        std::string turnOnName = m_key + "_" + m_pt + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        std::string refName = m_key + "_" + m_raw + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string turnOnName = m_key + "_" + m_xAxis + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string nomName = m_key + "_" + m_xAxis + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string denomName = m_key + "_" + m_xAxis + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 
-        //graphMatrix->Divide(turnOnName, m_map[turnOnName], m_map[refName],"b(1,1) mode", wk);
-	    //	    m_map[turnOnName]->Sumw2();
-	    //	    m_map[turnOnName]->Divide(m_map[turnOnName],m_map[refName], 1.0, 1.0 , "B"); //binominal errors
+         m_map[turnOnName]->Add(m_map[nomName]); //Divide(m_map[nomName],m_map[denomName], 1.0, 1.0 , ""); //binominal errors
 	}
     }
 
     if (CS->useEmulation){
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
-        std::string turnOnName = m_key + "_" + m_pt + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        std::string refName = m_key + "_" + m_raw + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string turnOnName = m_key + "_" + m_xAxis + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string nomName = m_key + "_" + m_xAxis + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        std::string denomName = m_key + "_" + m_xAxis + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 
-        //graphMatrix->Divide(turnOnName,m_map[turnOnName], m_map[refName],"b(1,1) mode", wk);
-	    //	    m_map[turnOnName]->Sumw2();
-	    //	    m_map[turnOnName]->Divide(m_map[turnOnName],m_map[refName], 1.0, 1.0 , "B"); //binominal errors
-	}
+        m_map[turnOnName]->Add(m_map[nomName]); //Divide(m_map[nomName],m_map[denomName], 1.0, 1.0 , ""); //binominal errors
+    }
     }
 
     std::cout << "final dummy_counter result: " << dummy_counter << std::endl;

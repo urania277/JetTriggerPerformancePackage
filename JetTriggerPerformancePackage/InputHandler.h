@@ -57,6 +57,7 @@ class InputHandler : public xAH::Algorithm
     //configuration variables
     bool m_debug;
     bool m_debugInExecute;
+    bool m_coutPassedTriggers;
 
     string m_branch_offlineJet;
     string m_branch_triggerJet;

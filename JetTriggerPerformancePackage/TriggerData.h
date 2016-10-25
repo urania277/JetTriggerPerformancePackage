@@ -33,9 +33,12 @@ class TriggerData: public BaseJTPP
     virtual void CoutCounting();
     virtual int  GetnthJet(std::string triggerString);
     virtual float GetPtThreshold(std::string triggerString);
+    virtual float GetHTThreshold(std::string triggerString);
     virtual float GetEtaMin(std::string triggerString);
     virtual float GetEtaMax(std::string triggerString);
     virtual bool isTriggerL1(std::string triggerString);
+    virtual bool isTriggerHT(std::string triggerString);
+
 
     // === Members ===
 
@@ -84,6 +87,14 @@ class TriggerData: public BaseJTPP
     // is L1 or not
     std::vector< bool> probe_isL1;
     std::vector< bool> ref_isL1;
+
+    // is HT or not
+    std::vector< bool> probe_isHT;
+    std::vector< bool> ref_isHT;
+
+    // corresponding HT threshold of triggers
+    std::vector< float> probe_HTThreshold;
+    std::vector< float> ref_HTThreshold;
 
     // Turnon Event Selection
      const float HLT_cen_etaMin;
