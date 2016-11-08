@@ -191,11 +191,11 @@ void KinematicMatrix::FillAll(EventData* ED, double weight)
    this->Fill("pt", ED->pt, ED->eta, weight, &(ED->isGood));
    this->Fill("phi", ED->phi, ED->eta, weight, &(ED->isGood));
    this->Fill("eta", ED->eta, ED->eta, weight, &(ED->isGood));
-   this->Fill("mjj", ED->mjj, ED->eta, weight, ED->isLSGood());
-   this->Fill("m23", ED->m23, ED->eta, weight, ED->isLSGood());
 
    //more observables
-   if(CS->doyStar)       this->Fill("yStar", ED->yStar, ED->eta, weight, ED->isLSGood());
+   if(CS->doMjj)         this->Fill("mjj", ED->Mjj(), ED->eta, weight, ED->isLSGood());
+   if(CS->doM23)         this->Fill("m23", ED->M23(), ED->eta, weight, ED->isLSGood());
+   if(CS->doyStar)       this->Fill("yStar", ED->YStar(), ED->eta, weight, ED->isLSGood());
    if(CS->doDeltaPhi)    this->Fill("deltaPhi", ED->deltaPhi, ED->eta, weight, ED->isLSGood());
    if(CS->doPTBalance)   this->Fill("pTBalance", ED->pTBalance, ED->eta, weight, ED->isLSGood());
    if(CS->doHT)          this->Fill("HT", ED->GetHT(), ED->eta, weight, ED->isLSGood());

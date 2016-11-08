@@ -54,6 +54,8 @@ InputHandler :: InputHandler () :
     m_doNthJetKinematics(false),
     m_doKinematicsInBinsOfEta(false),
     m_doEtainBinsOfPt(false),
+    m_doMjj(false),
+    m_doM23(false),
     m_doyStar(false),
     m_doDeltaPhi(false),
     m_doPTBalance(false),
@@ -63,11 +65,17 @@ InputHandler :: InputHandler () :
     m_doEMFrac(false),
     m_doHECFrac(false),
     m_doFracSamplingMax(false),
+    m_calculateMjj(false),
+    m_calculateM23(false),
+    m_calculateYStar(false),
     m_doMatching(false),
     m_DeltaRMax(0.4),
     m_doOfflineTruthResponse(false),
     m_doTriggerTruthResponse(false),
     m_doTriggerOfflineResponse(false),
+    m_Response_BinNumbers(100),
+    m_Response_MinBin(0.5),
+    m_Response_MaxBin(1.5),
     m_doMjjResponseTrigVsOff(false),
     m_doMjjResponseOffVsTruth(false),
     m_doMjjResponseTrigVsTruth(false),
@@ -80,6 +88,15 @@ InputHandler :: InputHandler () :
     m_useTriggerDecisionTool(false),
     m_useEmulation(false),
     m_useTriggerBeforePraescale(false),
+    m_PtTurnon_BinNumbers(1200),
+    m_PtTurnon_MinBin(0.0),
+    m_PtTurnon_MaxBin(1200.0),
+    m_HtTurnon_BinNumbers(1200),
+    m_HtTurnon_MinBin(0.0),
+    m_HtTurnon_MaxBin(1200.0),
+    m_TLATurnon_BinNumbers(1200),
+    m_TLATurnon_MinBin(0.0),
+    m_TLATurnon_MaxBin(1200.0),
     m_HLT_cen_etaMin(0.0), // DEFAULT ETA REGIONS AND TIMING FOR TURNON EVENT SELECTION!
     m_HLT_cen_etaMax(2.8), //
     m_HLT_fwd_etaMin(3.6), //
@@ -131,6 +148,8 @@ EL::StatusCode  InputHandler :: configure ()
                         m_doNthJetKinematics,
                         m_doKinematicsInBinsOfEta,
                         m_doEtainBinsOfPt,
+                        m_doMjj,
+                        m_doM23,
                         m_doyStar,
                         m_doDeltaPhi,
                         m_doPTBalance,
@@ -140,6 +159,9 @@ EL::StatusCode  InputHandler :: configure ()
                         m_doEMFrac,
                         m_doHECFrac,
                         m_doFracSamplingMax,
+                        m_calculateMjj,
+                        m_calculateM23,
+                        m_calculateYStar,
                         m_doMatching,
                         m_doOfflineTruthResponse,
                         m_doTriggerTruthResponse,
@@ -147,6 +169,9 @@ EL::StatusCode  InputHandler :: configure ()
                         m_doMjjResponseTrigVsOff,
                         m_doMjjResponseOffVsTruth,
                         m_doMjjResponseTrigVsTruth,
+                        m_Response_BinNumbers,
+                        m_Response_MinBin,
+                        m_Response_MaxBin,
                         m_PtResponse_ptBinning,
                         m_PtResponse_etaBinning,
                         m_MjjResponse_mjjBinning,
@@ -156,6 +181,15 @@ EL::StatusCode  InputHandler :: configure ()
                         m_useTriggerDecisionTool,
                         m_useEmulation,
                         m_useTriggerBeforePraescale,
+                        m_PtTurnon_BinNumbers,
+                        m_PtTurnon_MinBin,
+                        m_PtTurnon_MaxBin,
+                        m_HtTurnon_BinNumbers,
+                        m_HtTurnon_MinBin,
+                        m_HtTurnon_MaxBin,
+                        m_TLATurnon_BinNumbers,
+                        m_TLATurnon_MinBin,
+                        m_TLATurnon_MaxBin,
                         m_HLT_cen_etaMin,
                         m_HLT_cen_etaMax,
                         m_HLT_fwd_etaMin,
@@ -237,10 +271,10 @@ EL::StatusCode  InputHandler :: configure ()
   }
 
   // Declare and construct EventData classes for all jet types, i.e. offline jets, trigger jets, truth jets, matched truth jets and L1 jets
-  ED_jet = new EventData("jet");
-  ED_trigJet = new EventData("trigJet");
-  ED_truthJet = new EventData("truthJet");
-  ED_jet_truth = new EventData("jet_truth");
+  ED_jet = new EventData("jet", CS);
+  ED_trigJet = new EventData("trigJet", CS);
+  ED_truthJet = new EventData("truthJet", CS);
+  ED_jet_truth = new EventData("jet_truth", CS);
   L1D = new L1Data("L1Jet");
 
 
@@ -382,8 +416,8 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
       tree->SetBranchStatus  ((m_branch_offlineJet_front + "phi" + m_branch_offlineJet_back).c_str(), 1);
       tree->SetBranchAddress ((m_branch_offlineJet_front + "phi" + m_branch_offlineJet_back).c_str(), &(ED_jet->phi));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet_front + "E" + m_branch_offlineJet_back).c_str(), 1);
-      tree->SetBranchAddress ((m_branch_offlineJet_front + "E" + m_branch_offlineJet_back).c_str(), &(ED_jet->E));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "e" + m_branch_offlineJet_back).c_str(), 1); //TODO CHANGE BACK
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "e" + m_branch_offlineJet_back).c_str(), &(ED_jet->E));
 
       tree->SetBranchStatus  ((m_branch_offlineJet_front + "mjj" + m_branch_offlineJet_back).c_str(), 1);
       tree->SetBranchAddress ((m_branch_offlineJet_front + "mjj" + m_branch_offlineJet_back).c_str(), &(ED_jet->mjj));
@@ -625,7 +659,10 @@ EL::StatusCode InputHandler :: execute ()
 
   // EVENTCOUNTER
   if (CS->doOnlyThisNumberOfEvents > -1){
-    if(eventCounter >= CS->doOnlyThisNumberOfEvents) return EL::StatusCode::SUCCESS;
+    if(eventCounter >= CS->doOnlyThisNumberOfEvents){
+        eventCounter++;
+        return EL::StatusCode::SUCCESS;
+    }
   }
 
   if (m_coutPassedTriggers){
@@ -878,7 +915,7 @@ EL::StatusCode InputHandler :: finalize ()
 
   cout << "================== Results ====================" << endl;
 
-  std::cout << "Number Events that passed the cuts: " << eventCounter << std::endl;
+  std::cout << "Number of events in dataset: " << eventCounter << std::endl;
 
   TD->CoutCounting();
 

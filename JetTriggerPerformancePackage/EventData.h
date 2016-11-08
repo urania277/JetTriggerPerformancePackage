@@ -14,6 +14,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <map>
 #include <vector>
 #include "TLorentzVector.h"
+#include <JetTriggerPerformancePackage/ConfigStatus.h>
 
 
 //Own classes
@@ -22,7 +23,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 class EventData: public BaseJTPP
 {
  public:
-  EventData(std::string jetType);
+  EventData(std::string jetType, ConfigStatus* a_CS);
   ~EventData();
 
   // check if lead and sublead are good, so scalar obsverables are good for using
@@ -33,6 +34,11 @@ class EventData: public BaseJTPP
   virtual float GetMjj(int i, int j);
   virtual float GetYStar(int i, int j);
   virtual float GetHT();
+  virtual float GetHT_triggerLevel();
+
+  virtual float Mjj();
+  virtual float M23();
+  virtual float YStar();
 
   const std::string m_jetType;
 
@@ -61,6 +67,9 @@ class EventData: public BaseJTPP
   std::vector<float>*   HECFrac;
   std::vector<float>*   FracSamplingMax;
   std::vector<float>*   Timing;
+
+ private:
+     ConfigStatus* CS;
 };
 
 #endif // JetTriggerPerformancePackage_EVENTDATA_H

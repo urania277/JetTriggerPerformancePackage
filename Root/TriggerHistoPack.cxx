@@ -95,33 +95,33 @@ void TriggerHistoPack::BookAll(EL::Worker* wk)
 
   // --- RESPONSE PLOTS
   if (CS->doOfflineTruthResponse){
-      ptRespOffVsTruthMatrix = new ResponseMatrix("ptRespOffVsTruth", m_triggerDir + "/"+"ptRespOffVsTruth");
+      ptRespOffVsTruthMatrix = new ResponseMatrix("ptRespOffVsTruth", m_triggerDir + "/"+"ptRespOffVsTruth", CS);
       ptRespOffVsTruthMatrix ->BookAll(PtResponse_ptBinning, PtResponse_etaBinning, PtResponse_ptBinNumber, PtResponse_etaBinNumber, wk);
   }
 
   if (CS->doTriggerTruthResponse){
-      ptRespTrigVsTruthMatrix = new ResponseMatrix("ptRespTrigVsTruth", m_triggerDir + "/"+"ptRespTrigVsTruth");
+      ptRespTrigVsTruthMatrix = new ResponseMatrix("ptRespTrigVsTruth", m_triggerDir + "/"+"ptRespTrigVsTruth", CS);
       ptRespTrigVsTruthMatrix ->BookAll(PtResponse_ptBinning, PtResponse_etaBinning, PtResponse_ptBinNumber, PtResponse_etaBinNumber, wk);
   }
 
   if (CS->doTriggerOfflineResponse){
-      ptRespTrigVsOffMatrix = new ResponseMatrix("ptRespTrigVsOff", m_triggerDir + "/"+"ptRespTrigVsOff");
+      ptRespTrigVsOffMatrix = new ResponseMatrix("ptRespTrigVsOff", m_triggerDir + "/"+"ptRespTrigVsOff", CS);
       ptRespTrigVsOffMatrix ->BookAll(PtResponse_ptBinning, PtResponse_etaBinning, PtResponse_ptBinNumber, PtResponse_etaBinNumber, wk);
   }
 
 
   if (CS->doMjjResponseOffVsTruth){
-      mjjRespOffVsTruthMatrix = new ResponseMatrix("mjjRespOffVsTruth", m_triggerDir + "/"+"mjjRespOffVsTruth");
+      mjjRespOffVsTruthMatrix = new ResponseMatrix("mjjRespOffVsTruth", m_triggerDir + "/"+"mjjRespOffVsTruth", CS);
       mjjRespOffVsTruthMatrix ->BookAll(MjjResponse_mjjBinning, MjjResponse_etaBinning, MjjResponse_mjjBinNumber, MjjResponse_etaBinNumber, wk);
   }
 
   if (CS->doMjjResponseTrigVsTruth){
-      mjjRespTrigVsTruthMatrix = new ResponseMatrix("mjjRespTrigVsTruth", m_triggerDir + "/"+"mjjRespTrigVsTruth");
+      mjjRespTrigVsTruthMatrix = new ResponseMatrix("mjjRespTrigVsTruth", m_triggerDir + "/"+"mjjRespTrigVsTruth",CS);
       mjjRespTrigVsTruthMatrix ->BookAll(MjjResponse_mjjBinning, MjjResponse_etaBinning, MjjResponse_mjjBinNumber, MjjResponse_etaBinNumber, wk);
   }
 
   if (CS->doMjjResponseTrigVsOff){
-      mjjRespTrigVsOffMatrix = new ResponseMatrix("mjjRespTrigVsOff", m_triggerDir + "/"+"mjjRespTrigVsOff");
+      mjjRespTrigVsOffMatrix = new ResponseMatrix("mjjRespTrigVsOff", m_triggerDir + "/"+"mjjRespTrigVsOff", CS);
       mjjRespTrigVsOffMatrix ->BookAll(MjjResponse_mjjBinning, MjjResponse_etaBinning, MjjResponse_mjjBinNumber, MjjResponse_etaBinNumber, wk);
     }
 
@@ -143,9 +143,9 @@ void TriggerHistoPack::BookAll(EL::Worker* wk)
       kinematic->Book("pt", "pt", ptFineBinNumber-1, ptFineBinning, wk);
       kinematic->Book("phi", "phi", 50, -3.5, 3.5, wk);
       kinematic->Book("eta", "eta", etaBinNumber-1, etaBinning, wk);
-      kinematic->Book("mjj", "mjj", mjjBinNumber-1, mjjBinning, wk);
-      kinematic->Book("m23", "m23", mjjBinNumber-1, mjjBinning, wk);
       //more observables
+      if(CS->doMjj)       kinematic->Book("mjj", "mjj", mjjBinNumber-1, mjjBinning, wk);
+      if(CS->doM23)       kinematic->Book("m23", "m23", mjjBinNumber-1, mjjBinning, wk);
       if(CS->doyStar)     kinematic->Book("yStar", "yStar", 20, -0.7, 0.7, wk);
       if(CS->doDeltaPhi)  kinematic->Book("deltaPhi", "deltaPhi", 25, 0.0001, 3.5, wk);
       if(CS->doPTBalance) kinematic->Book("pTBalance", "pTBalance", 25, 0.0001, 1.0, wk);

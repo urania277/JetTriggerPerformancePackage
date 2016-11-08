@@ -45,9 +45,12 @@ class ResponseMatrix: public HistogramMatrix
   const int ptMinBinPos, ptMaxBinPos, etaMinBinPos, etaMaxBinPos;
   const std::string delimiter;
 
+  //ConfigStatus
+  ConfigStatus* CS;
+
  public:
-  ResponseMatrix(std::string key);
-  ResponseMatrix(std::string key, std::string directory);
+  ResponseMatrix(std::string key, ConfigStatus* a_CS);
+  ResponseMatrix(std::string key, std::string directory, ConfigStatus* a_CS);
   virtual ~ResponseMatrix();
 
   virtual void BookAll(double* ptBinEdges, double* etaBinEdges, int ptBinNumber, int etaBinNumber, EL::Worker* wk);

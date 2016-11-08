@@ -178,9 +178,9 @@ void CutHandler::InitialiseCutStringMethod(std::string cutString)
         if (vec_cuts.at(i).find("pt"             )!=std::string::npos) vec_obs_index.push_back(1);
         if (vec_cuts.at(i).find("phi"            )!=std::string::npos) vec_obs_index.push_back(2);
         if (vec_cuts.at(i).find("eta"            )!=std::string::npos) vec_obs_index.push_back(3);
+
         if (vec_cuts.at(i).find("mjj"            )!=std::string::npos) vec_obs_index.push_back(4);
         if (vec_cuts.at(i).find("m23"            )!=std::string::npos) vec_obs_index.push_back(5);
-
         if (vec_cuts.at(i).find("yStar"          )!=std::string::npos) vec_obs_index.push_back(6);
         if (vec_cuts.at(i).find("deltaPhi"       )!=std::string::npos) vec_obs_index.push_back(7);
         if (vec_cuts.at(i).find("pTBalance"      )!=std::string::npos) vec_obs_index.push_back(8);
@@ -190,6 +190,7 @@ void CutHandler::InitialiseCutStringMethod(std::string cutString)
         if (vec_cuts.at(i).find("HECFrac"        )!=std::string::npos) vec_obs_index.push_back(12);
         if (vec_cuts.at(i).find("FracSamplingMax")!=std::string::npos) vec_obs_index.push_back(13);
         if (vec_cuts.at(i).find("Timing"         )!=std::string::npos) vec_obs_index.push_back(14);
+        if (vec_cuts.at(i).find("Ht"             )!=std::string::npos) vec_obs_index.push_back(15);
 
         // Get the jet type
 
@@ -357,13 +358,13 @@ void CutHandler::AddCutWithThisJetType(EventData *ED, int obs_index, int index, 
         this->AddCut(ED->eta->at(index), cut_value, cut_options);
         break;
     case 4:
-        this->AddCut(ED->mjj, cut_value, cut_options);
+        this->AddCut(ED->Mjj(), cut_value, cut_options);
         break;
     case 5:
-        this->AddCut(ED->m23, cut_value, cut_options);
+        this->AddCut(ED->M23(), cut_value, cut_options);
         break;
     case 6:
-        this->AddCut(ED->yStar, cut_value, cut_options);
+        this->AddCut(ED->YStar(), cut_value, cut_options);
         break;
     case 7:
         this->AddCut(ED->deltaPhi, cut_value, cut_options);
@@ -389,6 +390,10 @@ void CutHandler::AddCutWithThisJetType(EventData *ED, int obs_index, int index, 
     case 14:
         this->AddCut(ED->Timing->at(index), cut_value, cut_options);
         break;
+    case 15:
+        this->AddCut(ED->GetHT(), cut_value, cut_options);
+        break;
+
     }
 
 

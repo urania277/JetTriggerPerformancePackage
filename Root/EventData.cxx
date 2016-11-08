@@ -17,8 +17,8 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 
 
-EventData::EventData(std::string jetType):
-    m_jetType(jetType), E(nullptr), pt(nullptr), eta(nullptr), phi(nullptr), mjj(0), m23(0), passedCleaning(nullptr), Timing(nullptr)
+EventData::EventData(std::string jetType, ConfigStatus* a_CS):
+    CS(a_CS), m_jetType(jetType), E(nullptr), pt(nullptr), eta(nullptr), phi(nullptr), mjj(0), m23(0), passedCleaning(nullptr), Timing(nullptr)
 {
   if (m_debug) std::cout << "Starting constructor EventData()..." << std::endl;
 }
@@ -91,9 +91,50 @@ float EventData::GetHT()
 
     float HT = 0.0;
 
-    // sum over all pt
+    // sum over all pt (if pt > 50 GeV and |eta| < 2.8)
     for (int j=0; j < pt->size(); j++){
-        HT += pt->at(j);
+        if ((pt->at(j) > 50.0) && (abs(eta->at(j)) < 2.8)) HT += pt->at(j);
     }
 
+    return HT;
+}
+
+float EventData::GetHT_triggerLevel()
+{
+    if (m_debug) std::cout << "Starting method GetHT_triggerLevel()..." << std::endl;
+
+    float HT = 0.0;
+    float Et;
+
+    // sum over all pt (if pt > 30 GeV and |eta| < 3.2)
+    for (int j=0; j < pt->size(); j++){
+        Et = this->GetEt(j);
+        if (( Et > 30.0) && (fabs(eta->at(j)) < 3.2)) HT += Et;
+    }
+
+    return HT;
+}
+
+float EventData::Mjj()
+{
+    if (m_debug) std::cout << "Starting method Mjj()..." << std::endl;
+
+    if (CS->calculateMjj) return this->GetMjj(0,1);
+    else return mjj;
+}
+
+float EventData::M23()
+{
+    if (m_debug) std::cout << "Starting method M23()..." << std::endl;
+
+    if (CS->calculateMjj) return this->GetMjj(1,2);
+    else return m23;
+}
+
+float EventData::YStar()
+{
+    if (m_debug) std::cout << "Starting method YStar()..." << std::endl;
+
+    if (CS->calculateYStar) return this->GetYStar(0,1);
+    else return yStar;
 }

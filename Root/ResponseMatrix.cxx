@@ -15,15 +15,15 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 
 
-ResponseMatrix::ResponseMatrix(std::string key):
-    HistogramMatrix(key, false, false), // the "false" booleans deactivate leadSubleadThird and nthJet Plot options
+ResponseMatrix::ResponseMatrix(std::string key, ConfigStatus* a_CS):
+    HistogramMatrix(key, false, false), CS(a_CS), // the "false" booleans deactivate leadSubleadThird and nthJet Plot options
     m_key(key), ptMinBinPos(2), ptMaxBinPos(3), etaMinBinPos(5), etaMaxBinPos(6), delimiter("_")
 {
   if (m_debug) std::cout << "Starting constructor ResponseMatrix()..." << std::endl;
 }
 
-ResponseMatrix::ResponseMatrix(std::string key, std::string directory):
-    HistogramMatrix(directory, false, false), // the "false" booleans deactivate leadSubleadThird and nthJet Plot options
+ResponseMatrix::ResponseMatrix(std::string key, std::string directory, ConfigStatus* a_CS):
+    HistogramMatrix(directory, false, false), CS(a_CS), // the "false" booleans deactivate leadSubleadThird and nthJet Plot options
     m_key(key), ptMinBinPos(2), ptMaxBinPos(3), etaMinBinPos(5), etaMaxBinPos(6), delimiter("_")
 {
   if (m_debug) std::cout << "Starting constructor ResponseMatrix()..." << std::endl;
@@ -42,7 +42,7 @@ void ResponseMatrix::BookAll(double* ptBinEdges, double* etaBinEdges, int ptBinN
   for(int n = 0; n < (ptBinNumber-1); n++){
     for(int m = 0; m < (etaBinNumber-1); m++){
       name1 = this->createHistoName(ptBinEdges[n], ptBinEdges[n+1], etaBinEdges[m], etaBinEdges[m+1]);
-      Book(name1, name1, 100, 0.0, 2.5, wk);
+      Book(name1, name1, CS->Response_BinNumbers, CS->Response_MinBin, CS->Response_MaxBin, wk);
     }
   }
 

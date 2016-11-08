@@ -48,48 +48,58 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
 {
     if (m_debug) std::cout << "Starting Book()..." << std::endl;
 
+    // Determine m_xAxix, i.e. the plotted variable (differs for pt or ht triggers)
+    for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
+        if (TD->probe_isHT.at(n)){
+            m_xAxis.push_back("ht");
+            m_BinNumber.push_back(CS->HtTurnon_BinNumbers);
+            m_BinMax.push_back(CS->HtTurnon_MaxBin);
+            m_BinMin.push_back(CS->HtTurnon_MinBin);
+        }
+        else{
+            m_xAxis.push_back("pt");
+            m_BinNumber.push_back(CS->PtTurnon_BinNumbers);
+            m_BinMax.push_back(CS->PtTurnon_MaxBin);
+            m_BinMin.push_back(CS->PtTurnon_MinBin);
+        }
+    }
+
     // Book Denominator plots
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
 
 	    if (CS->useTriggerDecisionTool){
-        std::string name = m_xAxis + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
+        std::string name = m_xAxis.at(n) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
 	    }
 
 	    if (CS->useEmulation){
-        std::string name = m_xAxis + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
-	    }
+        std::string name = m_xAxis.at(n) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
+        }
 
 	    if (CS->useTriggerBeforePraescale){
-        std::string name = m_xAxis + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-		this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
-	    }
+        std::string name = m_xAxis.at(n) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
+        }
     }
 
     // Book nominator turnon plots
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
 	if (CS->useTriggerDecisionTool){
-        std::string name = m_xAxis + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
-	}
+        std::string name = m_xAxis.at(n) + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
+    }
 
 	if (CS->useEmulation){
-        std::string name = m_xAxis + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
-	}
+        std::string name = m_xAxis.at(n) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
+    }
 
 	if (CS->useTriggerBeforePraescale){
-        std::string name = m_xAxis + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-	    this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
-	}
+        std::string name = m_xAxis.at(n) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
+    }
 
     }
 
@@ -97,25 +107,24 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
     if (CS->useTriggerDecisionTool){
-        std::string name = m_xAxis + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
+        std::string name = m_xAxis.at(n) + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
     if (CS->useEmulation){
-        std::string name = m_xAxis + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
+        std::string name = m_xAxis.at(n) + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
     if (CS->useTriggerBeforePraescale){
-        std::string name = m_xAxis + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        this->Book(name, name, 1200, 0.0, 1200.0, wk); // book its corresponding histogram here...
-        graphMatrix->Book(name, 1200, wk);
+        std::string name = m_xAxis.at(n) + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
     }
 
+    std::cout << "=== All Bookings ===" << std::endl;
+    this->coutAllBookings();
 }
 
 void TriggerEfficiencyMatrix::Book(std::string name1, std::string name2, int nBins, double xMin, double xMax, EL::Worker* wk)
@@ -160,22 +169,49 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
 
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
-	// 1. Get nthJetAfterCuts and the corresponding pt value
-    nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet, ED_trigJet, ED_truthJet);
+    // 0. Check if trigger is HT trigger
+    if (TD->probe_isHT.at(n)) this->FillUsingTDT_ht(n, TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
 
-	if (nthJetAfterCutsProbe == 0) continue; // continue if no proper jet was found
-	ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
+    // otherwise continue with default turnons
+    else {
+
+        // 1. Get nthJetAfterCuts and the corresponding pt value
+        nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet, ED_trigJet, ED_truthJet);
+
+        if (nthJetAfterCutsProbe == 0) continue; // continue if no proper jet was found
+        ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
+
+        // 2. Check if ref trigger fired and fill denominator
+        if (TD->ref_passedTrigger.at(n)){
+            this->Fill(m_xAxis.at(n) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        }
+
+        // 3. Check if probe and ref trigger fired and fill nominator
+        if ((TD->probe_passedTrigger.at(n))&&(TD->ref_passedTrigger.at(n))){
+            this->Fill(m_xAxis.at(n) + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+            this->Fill(m_xAxis.at(n) + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        }
+    }
+
+    }
+}
+
+void TriggerEfficiencyMatrix::FillUsingTDT_ht(int pos, TriggerData *TD, EventData *ED_jet, EventData *ED_trigJet, EventData *ED_truthJet, double weight, ConfigStatus *CS)
+{
+    if (m_debug) std::cout << "Starting FillUsingTDT_ht()..." << std::endl;
+
+    // 1. Event Selection
 
     // 2. Check if ref trigger fired and fill denominator
-    if (TD->ref_passedTrigger.at(n)){
-        this->Fill(m_xAxis + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
-	}
+    if (TD->ref_passedTrigger.at(pos)){
+        this->Fill(m_xAxis.at(pos) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT(), true, weight);
+    }
 
     // 3. Check if probe and ref trigger fired and fill nominator
-    if ((TD->probe_passedTrigger.at(n))&&(TD->ref_passedTrigger.at(n))){
-        this->Fill(m_xAxis + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
-	}
+    if ((TD->probe_passedTrigger.at(pos))&&(TD->ref_passedTrigger.at(pos))){
 
+        this->Fill(m_xAxis.at(pos) + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
+        this->Fill(m_xAxis.at(pos) + "_" + m_TDT + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
     }
 }
 
@@ -189,30 +225,57 @@ void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, E
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
     if (!TD->ref_passedTrigger.at(n)) continue; //speed things up
 
-	// 1. Get nthJetAfterCuts and the corresponding pt value
-    //nthJetAfterCutsProbe = this->nthJetAfterCutsChristiansVersion(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet);
-    nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet, ED_trigJet, ED_truthJet);
+    // 0. Check if trigger is HT trigger
+    if (TD->probe_isHT.at(n)) this->FillUsingEmu_ht(n, TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
 
-	// continue if no proper jet was found
-	if (nthJetAfterCutsProbe == 0) continue;
+    // otherwise continue with default turnons
+    else {
 
-	// get pt value to corresponding nth Jet
-	ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
+        // 1. Get nthJetAfterCuts and the corresponding pt value
+        //nthJetAfterCutsProbe = this->nthJetAfterCutsChristiansVersion(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet);
+        nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet, ED_trigJet, ED_truthJet);
 
-	// 2. Check if ref trigger fired (in TDT) and fill Denumerator
-    if (TD->ref_passedTrigger.at(n)){
-        this->Fill(m_xAxis + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
-	}
+        // continue if no proper jet was found
+        if (nthJetAfterCutsProbe == 0) continue;
 
-	// 3. Check if probe and ref trigger fired and fill numerator
-	// Important: we check TDT for ref trigger and emulation for ref and probe trigger
-    if ((this->passedEmulation(TD->probe_isL1.at(n), TD->probe_nthJet.at(n), TD->probe_ptThreshold.at(n), TD->probe_etaMin.at(n),
+        // get pt value to corresponding nth Jet
+        ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
+
+        // 2. Check if ref trigger fired (in TDT) and fill Denumerator
+        if (TD->ref_passedTrigger.at(n)){
+            this->Fill(m_xAxis.at(n) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        }
+
+        // 3. Check if probe and ref trigger fired and fill numerator
+        // Important: we check TDT for ref trigger and emulation for ref and probe trigger
+        if ((this->passedEmulation(TD->probe_isL1.at(n), TD->probe_nthJet.at(n), TD->probe_ptThreshold.at(n), TD->probe_etaMin.at(n),
                    TD->probe_etaMax.at(n), ED_trigJet, L1D))
-        && (TD->ref_passedTrigger.at(n))){
-        this->Fill(m_xAxis + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
-	}
+            && (TD->ref_passedTrigger.at(n))){
+                this->Fill(m_xAxis.at(n) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+                this->Fill(m_xAxis.at(n) + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        }
+    }
     }
 
+}
+
+void TriggerEfficiencyMatrix::FillUsingEmu_ht(int pos, TriggerData *TD, EventData *ED_jet, EventData *ED_trigJet, EventData *ED_truthJet, double weight, ConfigStatus *CS)
+{
+    if (m_debug) std::cout << "Starting FillUsingEmu_ht()..." << std::endl;
+
+    // 1. Event Selection
+
+    // 2. Check if ref trigger fired and fill denominator
+    if (TD->ref_passedTrigger.at(pos)){
+        this->Fill(m_xAxis.at(pos) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT(), true, weight);
+    }
+
+    // 3. Check if probe and ref trigger fired and fill nominator
+    if ((this->passedEmulationOfHtTrigger(TD->probe_HTThreshold.at(pos),ED_trigJet))&&(TD->ref_passedTrigger.at(pos))){
+
+        this->Fill(m_xAxis.at(pos) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
+        this->Fill(m_xAxis.at(pos) + "_" + m_Emu + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
+    }
 }
 
 void TriggerEfficiencyMatrix::FillUsingTBP()
@@ -220,6 +283,11 @@ void TriggerEfficiencyMatrix::FillUsingTBP()
     if (m_debug) std::cout << "Starting FillUsingTBP()..." << std::endl;
 
     // TODO UNDER CONSTRUCTION
+}
+
+void TriggerEfficiencyMatrix::FillUsingTBP_ht()
+{
+    if (m_debug) std::cout << "Starting FillUsingTBP_ht()..." << std::endl;
 }
 
 void  TriggerEfficiencyMatrix::Fill(std::string obs, double value, bool isGood, double weight)
@@ -245,23 +313,26 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
     if (m_debug) std::cout << "Starting CreateEfficiencyPlots()..." << std::endl;
 
     if (CS->useTriggerDecisionTool){
-    for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
-        std::string turnOnName = m_key + "_" + m_xAxis + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        std::string nomName = m_key + "_" + m_xAxis + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        std::string denomName = m_key + "_" + m_xAxis + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+            std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+            std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+            std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 
-         m_map[turnOnName]->Add(m_map[nomName]); //Divide(m_map[nomName],m_map[denomName], 1.0, 1.0 , ""); //binominal errors
-	}
+            m_map[turnOnName]->Sumw2();
+            m_map[turnOnName]->Divide(m_map[denomName]);
+
+        }
     }
 
     if (CS->useEmulation){
-    for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
-        std::string turnOnName = m_key + "_" + m_xAxis + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        std::string nomName = m_key + "_" + m_xAxis + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
-        std::string denomName = m_key + "_" + m_xAxis + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+        for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+            std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+            std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+            std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 
-        m_map[turnOnName]->Add(m_map[nomName]); //Divide(m_map[nomName],m_map[denomName], 1.0, 1.0 , ""); //binominal errors
-    }
+            m_map[turnOnName]->Sumw2();
+            m_map[turnOnName]->Divide(m_map[denomName]);
+        }
     }
 
     std::cout << "final dummy_counter result: " << dummy_counter << std::endl;
@@ -284,7 +355,7 @@ int TriggerEfficiencyMatrix::nthJetAfterCuts(TriggerData* TD, int nthJet, float 
     // Apply default cuts
     cutHandler->AddCut(ED_jet->eta->at(n), etaMin, "absmin");
     cutHandler->AddCut(ED_jet->eta->at(n), etaMax, "absmax");
-    cutHandler->AddCut(ED_jet->Timing->at(n), 10.0, "absmax");
+    //cutHandler->AddCut(ED_jet->Timing->at(n), 10.0, "absmax"); //TODO PUTBACK
 
     // Additional Cuts if needed
     cutHandler->UseCutStringMethod(ED_jet, ED_trigJet, ED_truthJet);
@@ -412,6 +483,17 @@ bool TriggerEfficiencyMatrix::passedEmulation(bool isL1, int nthJet, float ptThr
     }
 
     return false;
+}
+
+bool TriggerEfficiencyMatrix::passedEmulationOfHtTrigger(float HtThreshold, EventData *ED_trigJet)
+{
+    if (m_debug) std::cout << "passedEmulationOfHtTrigger()..." << std::endl;
+
+    // Calculate HT on trigger level using ED_trigJet
+    float Ht = ED_trigJet->GetHT_triggerLevel();
+
+    if (Ht > HtThreshold) return true;
+    else return false;
 }
 
 int TriggerEfficiencyMatrix::nthJetAfterCutsEmu()

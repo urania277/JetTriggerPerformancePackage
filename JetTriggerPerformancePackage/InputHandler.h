@@ -80,6 +80,8 @@ class InputHandler : public xAH::Algorithm
     bool m_doKinematicsInBinsOfEta;
     bool m_doEtainBinsOfPt;
 
+    bool m_doMjj;
+    bool m_doM23;
     bool m_doyStar;
     bool m_doDeltaPhi;
     bool m_doPTBalance;
@@ -89,6 +91,10 @@ class InputHandler : public xAH::Algorithm
     bool m_doEMFrac;
     bool m_doHECFrac;
     bool m_doFracSamplingMax;
+
+    bool m_calculateMjj;
+    bool m_calculateM23;
+    bool m_calculateYStar;
 
     bool m_doMatching;
     float m_DeltaRMax;
@@ -101,6 +107,10 @@ class InputHandler : public xAH::Algorithm
     bool m_doMjjResponseOffVsTruth;
     bool m_doMjjResponseTrigVsTruth;
 
+    int m_Response_BinNumbers;
+    float m_Response_MinBin;
+    float m_Response_MaxBin;
+
     string m_PtResponse_ptBinning;
     string m_PtResponse_etaBinning;
     string m_MjjResponse_mjjBinning;
@@ -111,6 +121,18 @@ class InputHandler : public xAH::Algorithm
     bool m_useTriggerDecisionTool;
     bool m_useEmulation;
     bool m_useTriggerBeforePraescale;
+
+    int   m_PtTurnon_BinNumbers;
+    float m_PtTurnon_MinBin;
+    float m_PtTurnon_MaxBin;
+
+    int   m_HtTurnon_BinNumbers;
+    float m_HtTurnon_MinBin;
+    float m_HtTurnon_MaxBin;
+
+    int   m_TLATurnon_BinNumbers;
+    float m_TLATurnon_MinBin;
+    float m_TLATurnon_MaxBin;
 
     // Turnon Event Selection
     float m_HLT_cen_etaMin;

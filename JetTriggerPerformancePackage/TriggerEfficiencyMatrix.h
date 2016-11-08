@@ -42,10 +42,13 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
   const std::string m_key;
   const std::string m_denom = "DENOM";
   const std::string m_nom =  "NOM";
-  const std::string m_xAxis = "pt";
+  std::vector<std::string> m_xAxis;
   const std::string m_TDT = "TDT";
   const std::string m_Emu = "Emu";
   const std::string m_TBP = "TBP";
+  std::vector<int>   m_BinNumber;
+  std::vector<float> m_BinMin;
+  std::vector<float> m_BinMax;
 
   int dummy_counter;
 
@@ -95,10 +98,16 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
   virtual  void FillUsingEmu(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, L1Data* L1D, double weight, ConfigStatus* CS);
   virtual  void FillUsingTBP();
 
+  virtual  void FillUsingTDT_ht(int pos, TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
+  virtual  void FillUsingEmu_ht(int pos, TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
+  virtual  void FillUsingTBP_ht();
+
   virtual  int nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet);
   virtual  int nthJetAfterCutsChristiansVersion(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED);
 
   virtual  bool passedEmulation(bool isL1, int nthJet, float ptThreshold, float etaMin, float etaMax, EventData* ED_trigJet, L1Data* L1D);
+  virtual  bool passedEmulationOfHtTrigger(float HtThreshold, EventData* ED_trigJet);
+
   virtual  int nthJetAfterCutsEmu();
   virtual  int nthJetAfterCutsTBP();
 

@@ -33,6 +33,8 @@ class ConfigStatus: public BaseJTPP
 		 bool a_doNthJetKinematics,
 		 bool a_doKinematicsInBinsOfEta,
 		 bool a_doEtainBinsOfPt,
+         bool a_doMjj,
+         bool a_doM23,
 		 bool a_doyStar,
 		 bool a_doDeltaPhi,
 		 bool a_doPTBalance,
@@ -42,6 +44,9 @@ class ConfigStatus: public BaseJTPP
 		 bool a_doEMFrac,
 		 bool a_doHECFrac,
 		 bool a_doFracSamplingMax,
+         bool a_calculateMjj,
+         bool a_calculateM23,
+         bool a_calculateYStar,
          bool a_doMatching,
          bool a_doOfflineTruthResponse,
 		 bool a_doTriggerTruthResponse,
@@ -49,6 +54,9 @@ class ConfigStatus: public BaseJTPP
 		 bool a_doMjjResponseTrigVsOff,
 		 bool a_doMjjResponseOffVsTruth,
 		 bool a_doMjjResponseTrigVsTruth,
+         int a_Response_BinNumbers,
+         float a_Response_MinBin,
+         float a_Response_MaxBin,
          std::string a_PtResponse_ptBinning,
          std::string a_PtResponse_etaBinning,
          std::string a_MjjResponse_mjjBinning,
@@ -58,6 +66,15 @@ class ConfigStatus: public BaseJTPP
 		 bool a_useTriggerDecisionTool,
 		 bool a_useEmulation,
 		 bool a_useTriggerBeforePraescale,
+         int   a_PtTurnon_BinNumbers,
+         float a_PtTurnon_MinBin,
+         float a_PtTurnon_MaxBin,
+         int   a_HtTurnon_BinNumbers,
+         float a_HtTurnon_MinBin,
+         float a_HtTurnon_MaxBin,
+         int   a_TLATurnon_BinNumbers,
+         float a_TLATurnon_MinBin,
+         float a_TLATurnon_MaxBin,
          const float a_HLT_cen_etaMin,
          const float a_HLT_cen_etaMax,
          const float a_HLT_fwd_etaMin,
@@ -99,6 +116,8 @@ class ConfigStatus: public BaseJTPP
     const bool doEtainBinsOfPt;
 
     //More kinematics
+    const bool doMjj;
+    const bool doM23;
     const bool doyStar;
     const bool doDeltaPhi;
     const bool doPTBalance;
@@ -108,6 +127,11 @@ class ConfigStatus: public BaseJTPP
     const bool doEMFrac;
     const bool doHECFrac;
     const bool doFracSamplingMax;
+
+    //Calculate observables
+    const bool calculateMjj;
+    const bool calculateM23;
+    const bool calculateYStar;
 
     // Matching
     const bool doMatching;
@@ -122,7 +146,12 @@ class ConfigStatus: public BaseJTPP
     const bool doMjjResponseOffVsTruth;
     const bool doMjjResponseTrigVsTruth;
 
-    //Response Binnings
+    //Response Binning
+    const int   Response_BinNumbers;
+    const float Response_MinBin;
+    const float Response_MaxBin;
+
+    //Pt and Eta Response Binnings
     const std::string PtResponse_ptBinning;
     const std::string PtResponse_etaBinning;
     const std::string MjjResponse_mjjBinning;
@@ -134,6 +163,15 @@ class ConfigStatus: public BaseJTPP
     const bool useTriggerDecisionTool;
     const bool useEmulation;
     const bool useTriggerBeforePraescale;
+    const int   PtTurnon_BinNumbers;
+    const float PtTurnon_MinBin;
+    const float PtTurnon_MaxBin;
+    const int   HtTurnon_BinNumbers;
+    const float HtTurnon_MinBin;
+    const float HtTurnon_MaxBin;
+    const int   TLATurnon_BinNumbers;
+    const float TLATurnon_MinBin;
+    const float TLATurnon_MaxBin;
     const float HLT_cen_etaMin;
     const float HLT_cen_etaMax;
     const float HLT_fwd_etaMin;
