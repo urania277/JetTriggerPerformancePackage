@@ -96,11 +96,11 @@ class TriggerEfficiencyMatrix: public HistogramMatrix
 
   virtual  void FillUsingTDT(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
   virtual  void FillUsingEmu(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, L1Data* L1D, double weight, ConfigStatus* CS);
-  virtual  void FillUsingTBP();
+  virtual  void FillUsingTBP(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
 
   virtual  void FillUsingTDT_ht(int pos, TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
   virtual  void FillUsingEmu_ht(int pos, TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
-  virtual  void FillUsingTBP_ht();
+  virtual  void FillUsingTBP_ht(int pos, TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS);
 
   virtual  int nthJetAfterCuts(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet);
   virtual  int nthJetAfterCutsChristiansVersion(TriggerData* TD, int nthJet, float etaMin, float etaMax, EventData* ED);

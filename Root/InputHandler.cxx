@@ -386,6 +386,18 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
   tree->SetBranchStatus  ("passedTriggers",    1);
   tree->SetBranchAddress ("passedTriggers",    &(TD->event_passedTriggers));
 
+  if (CS->useTriggerBeforePraescale){
+
+    tree->SetBranchStatus  ("triggerPrescales",    1);
+    tree->SetBranchAddress ("triggerPrescales",  &(TD->event_triggerPrescales));
+
+    tree->SetBranchStatus  ("isPassBits",    1);
+    tree->SetBranchAddress ("isPassBits",  &(TD->event_isPassBits));
+
+    tree->SetBranchStatus  ("isPassBitsNames",    1);
+    tree->SetBranchAddress ("isPassBitsNames",  &(TD->event_isPassBitsNames));
+  }
+
   tree->SetBranchStatus  ("runNumber",    1);
   tree->SetBranchAddress ("runNumber",    &m_runNumber);
 
@@ -416,8 +428,8 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
       tree->SetBranchStatus  ((m_branch_offlineJet_front + "phi" + m_branch_offlineJet_back).c_str(), 1);
       tree->SetBranchAddress ((m_branch_offlineJet_front + "phi" + m_branch_offlineJet_back).c_str(), &(ED_jet->phi));
 
-      tree->SetBranchStatus  ((m_branch_offlineJet_front + "e" + m_branch_offlineJet_back).c_str(), 1); //TODO CHANGE BACK
-      tree->SetBranchAddress ((m_branch_offlineJet_front + "e" + m_branch_offlineJet_back).c_str(), &(ED_jet->E));
+      tree->SetBranchStatus  ((m_branch_offlineJet_front + "E" + m_branch_offlineJet_back).c_str(), 1);
+      tree->SetBranchAddress ((m_branch_offlineJet_front + "E" + m_branch_offlineJet_back).c_str(), &(ED_jet->E));
 
       tree->SetBranchStatus  ((m_branch_offlineJet_front + "mjj" + m_branch_offlineJet_back).c_str(), 1);
       tree->SetBranchAddress ((m_branch_offlineJet_front + "mjj" + m_branch_offlineJet_back).c_str(), &(ED_jet->mjj));
@@ -670,7 +682,6 @@ EL::StatusCode InputHandler :: execute ()
       for (int n=0; n < TD->event_passedTriggers->size(); n++){
           cout << TD->event_passedTriggers->at(n) << endl;
       }
-
   }
   /*  // Crosscheck Timing!!!! TODO
   cout << "Timing of event: " << eventCounter << endl;
@@ -774,6 +785,21 @@ EL::StatusCode InputHandler :: execute ()
 
       // ref
       cutH->SearchTrigger(TD->ref_triggerName, TD->event_passedTriggers, TD->ref_passedTrigger);
+
+      if (CS->useTriggerBeforePraescale){
+
+          //probe
+          cutH->SearchPassBits(TD->probe_triggerName,TD->probe_passBits, TD->probe_prescaledOut, TD->event_isPassBitsNames, TD->event_isPassBits);
+
+          //ref
+          cutH->SearchPassBits(TD->ref_triggerName,TD->ref_passBits, TD->ref_prescaledOut, TD->event_isPassBitsNames, TD->event_isPassBits);
+      }
+
+      cout << " === passed Bits === " << endl;
+      for (int j=0; j < TD->probe_triggerName.size(); j++){
+        cout << "probe: " << TD->probe_triggerName.at(j) << " ::: passedBit: " << TD->probe_passBits.at(j) << " ::: passed:" << TD->probe_passedTrigger.at(j) << " ::: prescaledOut: " << TD->probe_prescaledOut.at(j) << endl;
+        cout << "ref  : " << TD->ref_triggerName.at(j)   << " ::: passedBit: " << TD->ref_passBits.at(j)   << " ::: passed:" << TD->ref_passedTrigger.at(j)   << " ::: prescaledOut: " << TD->ref_prescaledOut.at(j)   << endl;
+      }
   }
 
   //Apply trigger specific cuts
@@ -911,7 +937,7 @@ EL::StatusCode InputHandler :: finalize ()
   // gets called on worker nodes that processed input events.
 
   // Creating Turn-On histograms
-  //trigEffic->DivideEfficiencyPlots(TD, CS, wk());
+  trigEffic->DivideEfficiencyPlots(TD, CS, wk());
 
   cout << "================== Results ====================" << endl;
 

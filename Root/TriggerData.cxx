@@ -17,6 +17,9 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, ConfigStatus* CS):
     event_passedTriggers(nullptr),
+    event_triggerPrescales(nullptr),
+    event_isPassBits(nullptr),
+    event_isPassBitsNames(nullptr),
     HLT_cen_etaMin(CS->HLT_cen_etaMin),
     HLT_cen_etaMax(CS->HLT_cen_etaMax),
     HLT_fwd_etaMin(CS->HLT_fwd_etaMin),
@@ -67,15 +70,23 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
             trigger2 = myTools->splitString(turnon,"/", 1);
             probe_triggerName.push_back(trigger1);
             probe_passedTrigger.push_back(false);
+            probe_passBits.push_back(0);
+            probe_prescaledOut.push_back(true);
             ref_triggerName.push_back(trigger2);
             ref_passedTrigger.push_back(false);
+            ref_passBits.push_back(0);
+            ref_prescaledOut.push_back(true);
 
             n++;
         } while(turnon.compare("String TOO SHORT") != 0);
         probe_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
         probe_passedTrigger.pop_back();
+        probe_passBits.pop_back();
+        probe_prescaledOut.pop_back();
         ref_triggerName.pop_back();
         ref_passedTrigger.pop_back();
+        ref_passBits.pop_back();
+        ref_prescaledOut.pop_back();
 
         // Cout of all selected turn-ons
         std::cout << "\n=== Selected Turn-ons ===" << std::endl;

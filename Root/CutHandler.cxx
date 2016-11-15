@@ -82,6 +82,29 @@ void CutHandler::SearchTrigger(std::vector<std::string> confTriggers, std::vecto
 
 }
 
+void CutHandler::SearchPassBits(std::vector<std::string> confTriggers, std::vector<unsigned int> &confPassedBits, std::vector<bool> &confPrescaledOut, std::vector<std::string> *passBitsNames, std::vector<unsigned int> *passBits)
+{
+    if (m_debug) std::cout << "Starting SearchPassBits()..." << std::endl;
+
+    //Loop over wanted chains
+    for (unsigned int n=0; n < confTriggers.size(); n++){
+
+        // reset passBits to 0
+        confPassedBits[n] = 0;
+        confPrescaledOut[n] = true;
+
+        // Loop over passBits
+        for (unsigned int m=0; m < passBits->size(); m++){
+
+            if (confTriggers.at(n).compare(passBitsNames->at(m)) ==0){
+
+                confPassedBits[n] = passBits->at(m);
+                confPrescaledOut[n] = passBits->at(m) & TrigDefs::EF_prescaled;
+            }
+        }
+    }
+}
+
 void CutHandler::AddCut(bool status)
 {
     if (!status) m_passedCuts = false;

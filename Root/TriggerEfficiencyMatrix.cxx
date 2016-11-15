@@ -12,7 +12,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <iostream>
 #include <assert.h>
 
-
+//#include <Tri
 
 TriggerEfficiencyMatrix::TriggerEfficiencyMatrix(std::string key, std::string directory, ConfigStatus* a_CS):
     m_key(key), HistogramMatrix(directory, false, false), // "false" booleans deactivate options for LeadSubleadThird and NthJet plots which are not needed for Turnons in general
@@ -155,7 +155,7 @@ void TriggerEfficiencyMatrix::FillAll(TriggerData* TD, EventData* ED_jet, EventD
 
     //TBP
     if (CS->useTriggerBeforePraescale){
-	//	this->FillUsingTBP();
+    this->FillUsingTBP(TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
     }
 
 }
@@ -278,16 +278,59 @@ void TriggerEfficiencyMatrix::FillUsingEmu_ht(int pos, TriggerData *TD, EventDat
     }
 }
 
-void TriggerEfficiencyMatrix::FillUsingTBP()
+void TriggerEfficiencyMatrix::FillUsingTBP(TriggerData* TD, EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, double weight, ConfigStatus* CS)
 {
     if (m_debug) std::cout << "Starting FillUsingTBP()..." << std::endl;
 
-    // TODO UNDER CONSTRUCTION
+    int nthJetAfterCutsProbe, nthJetAfterCutsRef;
+    float ptNthJetAfterCutsProbe;
+
+    for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
+
+    // 0. Check if trigger is HT trigger
+    if (TD->probe_isHT.at(n)) this->FillUsingTBP_ht(n, TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
+
+    // otherwise continue with default turnons
+    else {
+
+        // 1. Get nthJetAfterCuts and the corresponding pt value
+        nthJetAfterCutsProbe = this->nthJetAfterCuts(TD, TD->probe_nthJet.at(n), TD->probe_etaMin.at(n), TD->probe_etaMax.at(n), ED_jet, ED_trigJet, ED_truthJet);
+
+        if (nthJetAfterCutsProbe == 0) continue; // continue if no proper jet was found
+        ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
+
+        // 2. Check if ref trigger fired and fill denominator
+        if ((TD->ref_passedTrigger.at(n)) && (TD->probe_passBits.at(n)) && (!TD->probe_prescaledOut.at(n)) ){
+            this->Fill(m_xAxis.at(n) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        }
+
+        // 3. Check if probe and ref trigger fired and fill nominator
+        if ((TD->probe_passedTrigger.at(n))&&(TD->ref_passedTrigger.at(n)) && (TD->probe_passBits.at(n)) && (!TD->probe_prescaledOut.at(n))){
+            this->Fill(m_xAxis.at(n) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+            this->Fill(m_xAxis.at(n) + "_" + m_TBP+ "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
+        }
+    }
+
+    }
 }
 
-void TriggerEfficiencyMatrix::FillUsingTBP_ht()
+void TriggerEfficiencyMatrix::FillUsingTBP_ht(int pos, TriggerData *TD, EventData *ED_jet, EventData *ED_trigJet, EventData *ED_truthJet, double weight, ConfigStatus *CS)
 {
     if (m_debug) std::cout << "Starting FillUsingTBP_ht()..." << std::endl;
+
+    // 1. Event Selection
+
+    // 2. Check if ref trigger fired and fill denominator
+    if ((TD->ref_passedTrigger.at(pos)) && (TD->probe_passBits.at(pos)) && (!TD->probe_prescaledOut.at(pos)) ){
+        this->Fill(m_xAxis.at(pos) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT(), true, weight);
+    }
+
+    // 3. Check if probe and ref trigger fired and fill nominator
+    if ((TD->probe_passedTrigger.at(pos))&&(TD->ref_passedTrigger.at(pos)) && (TD->probe_passBits.at(pos)) && (!TD->probe_prescaledOut.at(pos))){
+
+        this->Fill(m_xAxis.at(pos) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
+        this->Fill(m_xAxis.at(pos) + "_" + m_TBP + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
+    }
 }
 
 void  TriggerEfficiencyMatrix::Fill(std::string obs, double value, bool isGood, double weight)
@@ -329,6 +372,17 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
             std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+
+            m_map[turnOnName]->Sumw2();
+            m_map[turnOnName]->Divide(m_map[denomName]);
+        }
+    }
+
+    if (CS->useTriggerBeforePraescale){
+        for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+            std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+            std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
+            std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
 
             m_map[turnOnName]->Sumw2();
             m_map[turnOnName]->Divide(m_map[denomName]);

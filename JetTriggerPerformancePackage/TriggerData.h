@@ -51,6 +51,9 @@ class TriggerData: public BaseJTPP
 
     // passed triggers of an event
     std::vector<std::string>* event_passedTriggers; //passedtriggersofevent
+    std::vector<float>* event_triggerPrescales;
+    std::vector<unsigned int>* event_isPassBits;
+    std::vector<std::string>* event_isPassBitsNames;
 
     // nth Jet of config file
     std::vector< int> config_nthJet;
@@ -73,6 +76,14 @@ class TriggerData: public BaseJTPP
     // corresponding bools for passing
     std::vector< bool> probe_passedTrigger;
     std::vector< bool> ref_passedTrigger;
+
+    // corresponding passBits
+    std::vector< unsigned int> probe_passBits;
+    std::vector< unsigned int> ref_passBits;
+
+    // corresponding prescaledOut bools
+    std::vector< bool> probe_prescaledOut;
+    std::vector< bool> ref_prescaledOut;
 
     // corresponding pt threshold of triggers
     std::vector< float> probe_ptThreshold;
