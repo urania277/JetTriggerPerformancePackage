@@ -62,7 +62,7 @@ class ConfigStatus: public BaseJTPP
          std::string a_MjjResponse_mjjBinning,
          std::string a_MjjResponse_etaBinning,
 		 bool a_doTurnOns,
-		 std::string a_TurnOnName,
+         std::string a_TurnOnName,
 		 bool a_useTriggerDecisionTool,
 		 bool a_useEmulation,
 		 bool a_useTriggerBeforePraescale,

@@ -61,13 +61,16 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
     if (CS->doTurnOns){
         // TURNONS
         // split TurnOnName and fill probeTrigger and refTrigger
-        std::string turnon, trigger1, trigger2, level, pt;
+        std::string turnon, trigger1, trigger2, trigger2Bracket, prebracket ,bracket, level, pt;
         n = 0;
         do{
             turnon = myTools->rmSpaces(TurnOnName);
             turnon = myTools->splitString(turnon,";", n);
             trigger1 = myTools->splitString(turnon,"/", 0);
-            trigger2 = myTools->splitString(turnon,"/", 1);
+            trigger2Bracket = myTools->splitString(turnon,"/", 1);
+            trigger2 = myTools->splitString(trigger2Bracket,"(", 0);
+            prebracket = myTools->splitString(trigger2Bracket,"(", 1);
+            bracket = myTools->splitString(prebracket,")", 0);
             probe_triggerName.push_back(trigger1);
             probe_passedTrigger.push_back(false);
             probe_passBits.push_back(0);
@@ -76,6 +79,10 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
             ref_passedTrigger.push_back(false);
             ref_passBits.push_back(0);
             ref_prescaledOut.push_back(true);
+
+            //fill bracket_string
+            if (bracket.compare("String TOO SHORT") == 0) bracket_string.push_back("tep");
+            else bracket_string.push_back(bracket);
 
             n++;
         } while(turnon.compare("String TOO SHORT") != 0);
@@ -87,6 +94,7 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
         ref_passedTrigger.pop_back();
         ref_passBits.pop_back();
         ref_prescaledOut.pop_back();
+        bracket_string.pop_back();
 
         // Cout of all selected turn-ons
         std::cout << "\n=== Selected Turn-ons ===" << std::endl;
@@ -142,6 +150,7 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
             std::cout << "probe_etaMax.at(n): " << probe_etaMax.at(n) << std:: endl;
             std::cout << "probe_isL1.at(n): " << probe_isL1.at(n) << std:: endl;
             std::cout << "probe_isHT.at(n): " << probe_isHT.at(n) << std:: endl;
+            std::cout << "bracket_string.at(n): " << bracket_string.at(n) << std:: endl;
         }
 
         // Fill probe and ref trigger information from config string
@@ -169,6 +178,8 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
                 ref_isL1.push_back(this->isTriggerL1(ref_triggerName.at(n)));
 
             }
+
+            // Output
             std::cout << "ref_triggerName.at(n): " << ref_triggerName.at(n) << " ::: ref_nthJet.at(n): " << ref_nthJet.at(n) << std::endl;
             std::cout << "ref_ptThreshold.at(n): " << ref_ptThreshold.at(n) << std::endl;
             std::cout << "ref_HTThreshold.at(n): " << ref_HTThreshold.at(n) << std::endl;
@@ -176,6 +187,20 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
             std::cout << "ref_etaMax.at(n): " << ref_etaMax.at(n) << std:: endl;
             std::cout << "ref_isL1.at(n): " << ref_isL1.at(n) << std:: endl;
             std::cout << "ref_isHT.at(n): " << ref_isHT.at(n) << std:: endl;
+
+        }
+
+        // Initialise BRACKET options
+        for (unsigned int n=0; n < bracket_string.size(); n++){
+
+            if (bracket_string.at(n).find("t") != std::string::npos) bracket_doTDT.push_back(true);
+            else bracket_doTDT.push_back(false);
+
+            if (bracket_string.at(n).find("e") != std::string::npos) bracket_doEmu.push_back(true);
+            else bracket_doEmu.push_back(false);
+
+            if (bracket_string.at(n).find("p") != std::string::npos) bracket_doTBP.push_back(true);
+            else bracket_doTBP.push_back(false);
 
         }
     }

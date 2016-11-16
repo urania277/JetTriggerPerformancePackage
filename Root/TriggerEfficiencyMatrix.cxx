@@ -67,17 +67,17 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
     // Book Denominator plots
     for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
 
-	    if (CS->useTriggerDecisionTool){
+        if ((CS->useTriggerDecisionTool) && (TD->bracket_doTDT.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
 	    }
 
-	    if (CS->useEmulation){
+        if ((CS->useEmulation) && (TD->bracket_doEmu.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
         }
 
-	    if (CS->useTriggerBeforePraescale){
+        if ((CS->useTriggerBeforePraescale) && (TD->bracket_doTBP.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
         }
@@ -86,17 +86,17 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
     // Book nominator turnon plots
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
-	if (CS->useTriggerDecisionTool){
+    if ((CS->useTriggerDecisionTool) && (TD->bracket_doTDT.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
-	if (CS->useEmulation){
+    if ((CS->useEmulation) && (TD->bracket_doEmu.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
-	if (CS->useTriggerBeforePraescale){
+    if ((CS->useTriggerBeforePraescale) && (TD->bracket_doTBP.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
@@ -106,17 +106,17 @@ void TriggerEfficiencyMatrix::BookAll(TriggerData* TD, ConfigStatus* CS, EL::Wor
     // Book divided turnon plots
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
 
-    if (CS->useTriggerDecisionTool){
+    if ((CS->useTriggerDecisionTool) && (TD->bracket_doTDT.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
-    if (CS->useEmulation){
+    if ((CS->useEmulation) && (TD->bracket_doEmu.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
 
-    if (CS->useTriggerBeforePraescale){
+    if ((CS->useTriggerBeforePraescale) && (TD->bracket_doTBP.at(n))){
         std::string name = m_xAxis.at(n) + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
         this->Book(name, name, m_BinNumber.at(n), m_BinMin.at(n), m_BinMax.at(n), wk); // book its corresponding histogram here...
     }
@@ -168,6 +168,8 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
     float ptNthJetAfterCutsProbe;
 
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
+
+        if (!TD->bracket_doTDT.at(n)) continue; // Proceed only with TDT triggers
 
     // 0. Check if trigger is HT trigger
     if (TD->probe_isHT.at(n)) this->FillUsingTDT_ht(n, TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
@@ -223,6 +225,10 @@ void TriggerEfficiencyMatrix::FillUsingEmu(TriggerData* TD, EventData* ED_jet, E
     float ptNthJetAfterCutsProbe;
 
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
+
+        if (!TD->bracket_doEmu.at(n)) continue; // Proceed only with Emu triggers
+
+
     if (!TD->ref_passedTrigger.at(n)) continue; //speed things up
 
     // 0. Check if trigger is HT trigger
@@ -286,6 +292,8 @@ void TriggerEfficiencyMatrix::FillUsingTBP(TriggerData* TD, EventData* ED_jet, E
     float ptNthJetAfterCutsProbe;
 
     for (unsigned int n=0; n < TD->probe_triggerName.size(); n++){
+
+        if (!TD->bracket_doTBP.at(n)) continue; // Proceed only with TBP triggers
 
     // 0. Check if trigger is HT trigger
     if (TD->probe_isHT.at(n)) this->FillUsingTBP_ht(n, TD, ED_jet, ED_trigJet, ED_truthJet, weight, CS);
@@ -355,8 +363,8 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
 {
     if (m_debug) std::cout << "Starting CreateEfficiencyPlots()..." << std::endl;
 
-    if (CS->useTriggerDecisionTool){
-        for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+    for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+        if ((CS->useTriggerDecisionTool) && (TD->bracket_doTDT.at(n))){
             std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
@@ -367,8 +375,8 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
         }
     }
 
-    if (CS->useEmulation){
-        for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+    for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+       if ((CS->useEmulation) && (TD->bracket_doEmu.at(n))){
             std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_Emu + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
@@ -378,8 +386,8 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
         }
     }
 
-    if (CS->useTriggerBeforePraescale){
-        for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+    for (unsigned int n=0; n < TD->ref_triggerName.size(); n++){
+       if ((CS->useTriggerBeforePraescale) && (TD->bracket_doTBP.at(n))){
             std::string turnOnName = m_key + "_" + m_xAxis.at(n) + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string nomName = m_key + "_" + m_xAxis.at(n) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);
             std::string denomName = m_key + "_" + m_xAxis.at(n) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n);

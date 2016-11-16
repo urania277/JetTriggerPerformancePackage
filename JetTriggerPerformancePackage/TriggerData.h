@@ -39,7 +39,6 @@ class TriggerData: public BaseJTPP
     virtual bool isTriggerL1(std::string triggerString);
     virtual bool isTriggerHT(std::string triggerString);
 
-
     // === Members ===
 
     // ---- For Kinematics ----
@@ -68,6 +67,7 @@ class TriggerData: public BaseJTPP
     // strings for turn-ons, one entry corresponds for one histogram request
     std::vector< std::string> probe_triggerName; // list of probe triggers
     std::vector< std::string> ref_triggerName; // list of ref triggers
+    std::vector< std::string> bracket_string; // bracket options
 
     // corresponding nthJets
     std::vector< int> probe_nthJet;
@@ -106,6 +106,11 @@ class TriggerData: public BaseJTPP
     // corresponding HT threshold of triggers
     std::vector< float> probe_HTThreshold;
     std::vector< float> ref_HTThreshold;
+
+    // do TDT, Emu, TBP; turnon specific
+    std::vector< bool> bracket_doTDT;
+    std::vector< bool> bracket_doEmu;
+    std::vector< bool> bracket_doTBP;
 
     // Turnon Event Selection
      const float HLT_cen_etaMin;
