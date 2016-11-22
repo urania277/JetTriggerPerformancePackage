@@ -43,7 +43,7 @@ class TriggerHistoPack: public BaseJTPP
   virtual ~TriggerHistoPack();
 
   void BookAll(EL::Worker* wk);
-  void FillAll(EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, EventData* ED_jet_truth, std::vector<int> &matchingIndexList, double m_weight);
+  void FillAll(EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, std::vector<int> &matchingIndexList_TriggvsOff, std::vector<int> &matchingIndexList_OffvsTruth, std::vector<int> &matchingIndexList_TriggvsTruth, double m_weight);
 
  private:
   //ConfigStatus

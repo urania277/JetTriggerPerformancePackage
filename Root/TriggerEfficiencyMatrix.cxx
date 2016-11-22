@@ -185,6 +185,22 @@ void TriggerEfficiencyMatrix::FillUsingTDT(TriggerData* TD, EventData* ED_jet, E
 
         // 2. Check if ref trigger fired and fill denominator
         if (TD->ref_passedTrigger.at(n)){
+
+/*            // CROSSCHECK ZONE
+            std::cout << " ==== probe trigger TDT: " << TD->probe_triggerName.at(n) << std::endl;
+            std::cout << " ==== ref trigger passing TDT: " << TD->ref_triggerName.at(n) << std::endl;
+            std::cout << " probe TDT: " << TD->probe_passedTrigger.at(n) << std::endl;
+            std::cout << " ref TDT  : " << TD->ref_passedTrigger.at(n) << std::endl;
+            std::cout << " probe passed bits  : " << TD->probe_passBits.at(n) << std::endl;
+            std::cout << " ref passed bits  : " << TD->ref_passBits.at(n) << std::endl;
+            std::cout << " probe not (!) prescaled out  : " << (!TD->probe_prescaledOut.at(n)) << std::endl;
+            std::cout << " ref not (!) prescaled out  : " << (!TD->ref_prescaledOut.at(n)) << std::endl;
+            std::cout << " L1_J75: " << TD->ref_triggerName.at(0) << std::endl;
+            std::cout << " L1_J75 passed?: " << TD->ref_passedTrigger.at(0) << std::endl;
+            std::cout << " L1_beforePrescale: " << (TD->probe_passBits.at(n) & TrigDefs::L1_isPassedBeforePrescale ) << std::endl;
+            std::cout << " L1_afterPrescale: "  << (TD->probe_passBits.at(n) & TrigDefs::L1_isPassedAfterPrescale ) << std::endl;
+            */
+
             this->Fill(m_xAxis.at(n) + "_" + m_denom + "_" + m_TDT + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
         }
 
@@ -308,12 +324,18 @@ void TriggerEfficiencyMatrix::FillUsingTBP(TriggerData* TD, EventData* ED_jet, E
         ptNthJetAfterCutsProbe = ED_jet->pt->at(nthJetAfterCutsProbe-1);
 
         // 2. Check if ref trigger fired and fill denominator
-        if ((TD->ref_passedTrigger.at(n)) && (TD->probe_passBits.at(n)) && (!TD->probe_prescaledOut.at(n)) ){
+
+        // check if the L1 seed passed after prescale (i.e. prescale is considered)
+        int L1_passedAfterPrescale = TD->probe_passBits.at(n) & TrigDefs::L1_isPassedAfterPrescale;
+        int probe_prescaledOut = TD->probe_passBits.at(n) & TrigDefs::EF_prescaled;
+
+        if ((TD->ref_passedTrigger.at(n)) && (L1_passedAfterPrescale) && (!probe_prescaledOut) ){
             this->Fill(m_xAxis.at(n) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
         }
 
         // 3. Check if probe and ref trigger fired and fill nominator
-        if ((TD->probe_passedTrigger.at(n))&&(TD->ref_passedTrigger.at(n)) && (TD->probe_passBits.at(n)) && (!TD->probe_prescaledOut.at(n))){
+        if ((TD->probe_passedTrigger.at(n)) && (TD->ref_passedTrigger.at(n)) && (L1_passedAfterPrescale) && (!probe_prescaledOut)){
+
             this->Fill(m_xAxis.at(n) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
             this->Fill(m_xAxis.at(n) + "_" + m_TBP+ "_" + TD->probe_triggerName.at(n) + "-" + TD->ref_triggerName.at(n), ptNthJetAfterCutsProbe , true, weight);
         }
@@ -329,12 +351,17 @@ void TriggerEfficiencyMatrix::FillUsingTBP_ht(int pos, TriggerData *TD, EventDat
     // 1. Event Selection
 
     // 2. Check if ref trigger fired and fill denominator
-    if ((TD->ref_passedTrigger.at(pos)) && (TD->probe_passBits.at(pos)) && (!TD->probe_prescaledOut.at(pos)) ){
+
+    // check if the L1 seed passed after prescale (i.e. prescale is considered)
+    int L1_passedAfterPrescale = TD->probe_passBits.at(pos) & TrigDefs::L1_isPassedAfterPrescale;
+    int probe_prescaledOut = TD->probe_passBits.at(pos) & TrigDefs::EF_prescaled;
+
+    if ((TD->ref_passedTrigger.at(pos)) && (L1_passedAfterPrescale) && (!probe_prescaledOut) ){
         this->Fill(m_xAxis.at(pos) + "_" + m_denom + "_" + m_TBP + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT(), true, weight);
     }
 
     // 3. Check if probe and ref trigger fired and fill nominator
-    if ((TD->probe_passedTrigger.at(pos))&&(TD->ref_passedTrigger.at(pos)) && (TD->probe_passBits.at(pos)) && (!TD->probe_prescaledOut.at(pos))){
+    if ((TD->probe_passedTrigger.at(pos)) && (TD->ref_passedTrigger.at(pos)) && (L1_passedAfterPrescale) && (!probe_prescaledOut)){
 
         this->Fill(m_xAxis.at(pos) + "_" + m_nom + "_" + m_TBP + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
         this->Fill(m_xAxis.at(pos) + "_" + m_TBP + "_" + TD->probe_triggerName.at(pos) + "-" + TD->ref_triggerName.at(pos), ED_jet->GetHT() , true, weight);
@@ -397,7 +424,6 @@ void  TriggerEfficiencyMatrix::DivideEfficiencyPlots(TriggerData* TD, ConfigStat
         }
     }
 
-    std::cout << "final dummy_counter result: " << dummy_counter << std::endl;
 }
 
 // Returns number of nth jet after the wished cuts, if value is 0, no nth jet exists

@@ -16,6 +16,7 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 
 //Own classes
 #include <JetTriggerPerformancePackage/BaseJTPP.h>
+#include <JetTriggerPerformancePackage/EventData.h>
 
 class AnalysisHandler: public BaseJTPP
 {
@@ -23,7 +24,7 @@ class AnalysisHandler: public BaseJTPP
   AnalysisHandler();
   virtual ~AnalysisHandler();
 
-  virtual void  findBestMatching(std::vector<float>* refVec_pt, std::vector<float>* refVec_eta, std::vector<float>* refVec_phi, std::vector<float>* refVec_E, std::vector<float>* matchVec_pt, std::vector<float>* matchVec_eta, std::vector<float>* matchVec_phi, std::vector<float>* matchVec_E, std::vector<int> &matchingIndex, std::vector<double> &DeltaR, double DeltaRMax);
+  virtual void  findBestMatching(EventData* ED_ref, EventData* ED_match, std::vector<int> &matchingIndex, std::vector<double> &DeltaR, double DeltaRMax);
 
 };
 

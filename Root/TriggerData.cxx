@@ -58,9 +58,25 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
 
     nTriggers = config_triggerName.size();
 
+    // Initialise counting of passed events per trigger
+    for (unsigned int n=0; n < nTriggers; n++){
+        nPassedEvents.push_back(0);
+    }
+
+    // Fill config_nthJet
+    for (unsigned int n=0; n < config_triggerName.size(); n++){
+        if (this->isTriggerHT(config_triggerName.at(n))) {
+            config_nthJet.push_back(1);
+            continue;
+        } // Skip HT Triggers
+        config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
+        std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
+    }
+
     if (CS->doTurnOns){
         // TURNONS
         // split TurnOnName and fill probeTrigger and refTrigger
+        if (m_debug) std::cout << "Starting TurnonInitialisation" << std::endl;
         std::string turnon, trigger1, trigger2, trigger2Bracket, prebracket ,bracket, level, pt;
         n = 0;
         do{
@@ -74,11 +90,9 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
             probe_triggerName.push_back(trigger1);
             probe_passedTrigger.push_back(false);
             probe_passBits.push_back(0);
-            probe_prescaledOut.push_back(true);
             ref_triggerName.push_back(trigger2);
             ref_passedTrigger.push_back(false);
             ref_passBits.push_back(0);
-            ref_prescaledOut.push_back(true);
 
             //fill bracket_string
             if (bracket.compare("String TOO SHORT") == 0) bracket_string.push_back("tep");
@@ -89,11 +103,9 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
         probe_triggerName.pop_back(); //remove last entry since it is just "String TOO SHORT"
         probe_passedTrigger.pop_back();
         probe_passBits.pop_back();
-        probe_prescaledOut.pop_back();
         ref_triggerName.pop_back();
         ref_passedTrigger.pop_back();
         ref_passBits.pop_back();
-        ref_prescaledOut.pop_back();
         bracket_string.pop_back();
 
         // Cout of all selected turn-ons
@@ -103,20 +115,6 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
         }
         std::cout << "======================== \n" << std::endl;
 
-        // Initialise counting of passed events per trigger
-        for (unsigned int n=0; n < nTriggers; n++){
-            nPassedEvents.push_back(0);
-        }
-
-        // Fill config_nthJet
-        for (unsigned int n=0; n < config_triggerName.size(); n++){
-            if (this->isTriggerHT(config_triggerName.at(n))) {
-                config_nthJet.push_back(1);
-                continue;
-            } // Skip HT Triggers
-            config_nthJet.push_back(this->GetnthJet(config_triggerName.at(n)));
-            std::cout << "config_triggerName.at(n): " << config_triggerName.at(n) << " ::: config_nthJet.at(n): " << config_nthJet.at(n) << std::endl;
-        }
 
         // Fill probe and ref trigger information from config string
         for (unsigned int n=0; n < probe_triggerName.size(); n++){
@@ -202,6 +200,9 @@ TriggerData::TriggerData(std::string TriggerName, std::string TurnOnName, Config
             if (bracket_string.at(n).find("p") != std::string::npos) bracket_doTBP.push_back(true);
             else bracket_doTBP.push_back(false);
 
+            if (bracket_string.at(n).find("m") != std::string::npos) bracket_doMjj.push_back(true);
+            else bracket_doMjj.push_back(false);
+
         }
     }
 }
@@ -213,7 +214,7 @@ TriggerData::~TriggerData()
 
 void TriggerData::UpdateCounting()
 {
-    if (m_debug) std::cout << "Starting destructor UpdateCounting()..." << std::endl;
+    if (m_debug) std::cout << "Starting  UpdateCounting()..." << std::endl;
 
     for (unsigned int n=0; n < nTriggers; n++){
 	if (config_passedTriggers.at(n)) nPassedEvents.at(n)++;

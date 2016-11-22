@@ -52,7 +52,7 @@ class CutHandler: public BaseJTPP
   virtual void Reset();
   virtual void Reset(std::vector<bool> &boolConfTriggers);
   virtual void SearchTrigger(std::vector<std::string> confTriggers, std::vector<std::string>* passedTriggersOfEvent, std::vector<bool> &boolConfTriggers);
-  virtual void SearchPassBits(std::vector<std::string> confTriggers, std::vector<unsigned int> &confPassedBits, std::vector<bool> &confPrescaledOut, std::vector<std::string>* passBitsNames, std::vector<unsigned int>* passBits);
+  virtual void SearchPassBits(std::vector<std::string> confTriggers, std::vector<unsigned int> &confPassedBits, std::vector<std::string>* passBitsNames, std::vector<unsigned int>* passBits);
   //  virtual void SearchTrigger(TriggerData* TD);
   virtual void AddCut(bool status);
   virtual void AddCut(float observable, float cutValue, std::string option);

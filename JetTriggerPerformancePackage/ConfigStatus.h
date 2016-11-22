@@ -72,9 +72,9 @@ class ConfigStatus: public BaseJTPP
          int   a_HtTurnon_BinNumbers,
          float a_HtTurnon_MinBin,
          float a_HtTurnon_MaxBin,
-         int   a_TLATurnon_BinNumbers,
-         float a_TLATurnon_MinBin,
-         float a_TLATurnon_MaxBin,
+         int   a_MjjTurnon_BinNumbers,
+         float a_MjjTurnon_MinBin,
+         float a_MjjTurnon_MaxBin,
          const float a_HLT_cen_etaMin,
          const float a_HLT_cen_etaMax,
          const float a_HLT_fwd_etaMin,
@@ -169,9 +169,9 @@ class ConfigStatus: public BaseJTPP
     const int   HtTurnon_BinNumbers;
     const float HtTurnon_MinBin;
     const float HtTurnon_MaxBin;
-    const int   TLATurnon_BinNumbers;
-    const float TLATurnon_MinBin;
-    const float TLATurnon_MaxBin;
+    const int   MjjTurnon_BinNumbers;
+    const float MjjTurnon_MinBin;
+    const float MjjTurnon_MaxBin;
     const float HLT_cen_etaMin;
     const float HLT_cen_etaMax;
     const float HLT_fwd_etaMin;

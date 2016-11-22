@@ -66,9 +66,9 @@ ConfigStatus::ConfigStatus(bool a_debug,
                int   a_HtTurnon_BinNumbers,
                float a_HtTurnon_MinBin,
                float a_HtTurnon_MaxBin,
-               int   a_TLATurnon_BinNumbers,
-               float a_TLATurnon_MinBin,
-               float a_TLATurnon_MaxBin,
+               int   a_MjjTurnon_BinNumbers,
+               float a_MjjTurnon_MinBin,
+               float a_MjjTurnon_MaxBin,
                float a_HLT_cen_etaMin,
                float a_HLT_cen_etaMax,
                float a_HLT_fwd_etaMin,
@@ -148,9 +148,9 @@ ConfigStatus::ConfigStatus(bool a_debug,
     HtTurnon_BinNumbers(a_HtTurnon_BinNumbers),
     HtTurnon_MinBin(a_HtTurnon_MinBin),
     HtTurnon_MaxBin(a_HtTurnon_MaxBin),
-    TLATurnon_BinNumbers(a_TLATurnon_BinNumbers),
-    TLATurnon_MinBin(a_TLATurnon_MinBin),
-    TLATurnon_MaxBin(a_TLATurnon_MaxBin)
+    MjjTurnon_BinNumbers(a_MjjTurnon_BinNumbers),
+    MjjTurnon_MinBin(a_MjjTurnon_MinBin),
+    MjjTurnon_MaxBin(a_MjjTurnon_MaxBin)
 {
   if (m_debug) std::cout << "Starting constructor ConfigStatus()..." << std::endl;
 }

@@ -25,36 +25,44 @@ AnalysisHandler::~AnalysisHandler()
   if (m_debug) std::cout << "Starting destructor AnalysisHandler()..." << std::endl;
 }
 
-void  AnalysisHandler::findBestMatching(std::vector<float>* refVec_pt, std::vector<float>* refVec_eta, std::vector<float>* refVec_phi, std::vector<float>* refVec_E, std::vector<float>* matchVec_pt, std::vector<float>* matchVec_eta, std::vector<float>* matchVec_phi, std::vector<float>* matchVec_E, std::vector<int> &matchingIndexList, std::vector<double> &DeltaRList, double DeltaRMax)
+void  AnalysisHandler::findBestMatching(EventData* ED_ref, EventData* ED_match, std::vector<int> &matchingIndexList, std::vector<double> &DeltaRList, double DeltaRMax)
 {
   if (m_debug) std::cout << "Starting findBestMatching()... Magic will happen here!" << std::endl;
 
    double BestDeltaR, DeltaR;
-   int BestID;
+   int BestID, minVecSize;
 
    TLorentzVector refVec;
    TLorentzVector matchVec;
 
    double refRap, matchRap;
 
-   for (int n = 0; n < refVec_pt->size(); n++){
+   if (m_debug) std::cout << "ED_ref->pt->size(): "   << ED_ref->pt->size()   << std::endl;
+   if (m_debug) std::cout << "ED_match->pt->size(): " << ED_match->pt->size() << std::endl;
+
+   if (ED_ref->pt->size() <= ED_match->pt->size()) minVecSize = ED_ref->pt->size();
+   else minVecSize = ED_match->pt->size();
+
+   if (m_debug) std::cout << "minVecSize: " << minVecSize << std::endl;
+
+   for (int n = 0; n < ED_ref->pt->size(); n++){
 
      //initialise value
      BestDeltaR = DeltaRMax;
      BestID = -1;
-     refVec.SetPtEtaPhiE(refVec_pt->at(n), refVec_eta->at(n), refVec_phi->at(n), refVec_E->at(n));
+     refVec.SetPtEtaPhiE(ED_ref->pt->at(n), ED_ref->eta->at(n), ED_ref->phi->at(n), ED_ref->E->at(n));
      refRap = refVec.Rapidity();
 
-     for (int m = 0; m < matchVec_pt->size(); m++){
+     for (int m = 0; m < minVecSize; m++){
 
-       matchVec.SetPtEtaPhiE(matchVec_pt->at(m), matchVec_eta->at(m), matchVec_phi->at(m), matchVec_E->at(m));
+       matchVec.SetPtEtaPhiE(ED_match->pt->at(m), ED_match->eta->at(m), ED_match->phi->at(m), ED_match->E->at(m));
        matchRap = matchVec.Rapidity();
-       DeltaR = sqrt(pow(matchRap - refRap, 2) + pow(matchVec_phi->at(m) - refVec_phi->at(n), 2));
+       DeltaR = sqrt(pow(matchRap - refRap, 2) + pow(ED_match->phi->at(m) - ED_ref->phi->at(m), 2));
 
        if (DeltaR < BestDeltaR) {
-	 BestDeltaR = DeltaR;
-	 matchingIndexList[n] = m;
-	 DeltaRList[n] = DeltaR;
+        BestDeltaR = DeltaR;
+        matchingIndexList[n] = m;
+        DeltaRList[n] = DeltaR;
        }
      }
    }

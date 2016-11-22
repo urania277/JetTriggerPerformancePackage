@@ -162,7 +162,7 @@ void TriggerHistoPack::BookAll(EL::Worker* wk)
 
 }
 
-void TriggerHistoPack::FillAll(EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet, EventData* ED_jet_truth, std::vector<int> &matchingIndexList, double m_weight)
+void TriggerHistoPack::FillAll(EventData* ED_jet, EventData* ED_trigJet, EventData* ED_truthJet,  std::vector<int> &matchingIndexList_TriggvsOff, std::vector<int> &matchingIndexList_OffvsTruth, std::vector<int> &matchingIndexList_TriggvsTruth, double m_weight)
 {
  if (m_debug) std::cout << "Starting FillAll()..." << std::endl;
 
@@ -172,40 +172,42 @@ void TriggerHistoPack::FillAll(EventData* ED_jet, EventData* ED_trigJet, EventDa
   // i.e. option 0: eta of ProbeValue; 1: eta of RefValue
 
 
-  // OfflineTruthResponse: using matched set: ED_jet_truth->...
+  // OfflineTruthResponse
  if (CS->doOfflineTruthResponse){
      if (m_debug) std::cout << "Starting Filling of ptRespOffVsTruth..." << std::endl;
-     ptRespOffVsTruthMatrix ->Fill(ED_jet->pt, ED_jet_truth->pt, ED_jet_truth->eta, m_weight, 1);
+     ptRespOffVsTruthMatrix ->Fill(ED_jet->pt, ED_truthJet->pt, ED_truthJet->eta, m_weight, 1);
   }
 
  if (CS->doTriggerOfflineResponse){
      if (m_debug) std::cout << "Starting Filling of ptRespTrigVsOff..." << std::endl;
-     ptRespTrigVsOffMatrix ->Fill(ED_trigJet->pt, ED_jet->pt, ED_jet->eta, matchingIndexList, m_weight, 1);
+     ptRespTrigVsOffMatrix ->Fill(ED_trigJet->pt, ED_jet->pt, ED_jet->eta, matchingIndexList_TriggvsOff, m_weight, 1);
   }
 
  if (CS->doTriggerTruthResponse){
      if (m_debug) std::cout << "Starting Filling of ptRespTrigVsTruth..." << std::endl;
-     ptRespTrigVsTruthMatrix ->Fill(ED_trigJet->pt, ED_jet_truth->pt, ED_jet_truth->eta, matchingIndexList, m_weight, 1);
+     ptRespTrigVsTruthMatrix ->Fill(ED_trigJet->pt, ED_truthJet->pt, ED_truthJet->eta, matchingIndexList_TriggvsTruth, m_weight, 1);
   }
 
   // --- 2. mjj Response plots ---
 
  if (CS->doMjjResponseOffVsTruth){
-     if (m_debug) std::cout << "Starting Filling of mjjRespOffVsTruth..." << std::endl;
-     mjjRespOffVsTruthMatrix ->Fill(ED_jet->mjj, ED_jet_truth->GetMjj(0,1), ED_truthJet->eta->at(0), m_weight, 1);
+     if ((matchingIndexList_OffvsTruth[0] != -1) && (matchingIndexList_OffvsTruth[1] != -1)){
+        if (m_debug) std::cout << "Starting Filling of mjjRespOffVsTruth..." << std::endl;
+        mjjRespOffVsTruthMatrix ->Fill(ED_jet->mjj, ED_truthJet->GetMjj(matchingIndexList_OffvsTruth[0],matchingIndexList_OffvsTruth[1]), ED_truthJet->eta->at(0), m_weight, 1);
+     }
  }
 
  if (CS->doMjjResponseTrigVsTruth){
-     if ((matchingIndexList[0] != -1) && (matchingIndexList[1] != -1)){
+     if ((matchingIndexList_TriggvsTruth[0] != -1) && (matchingIndexList_TriggvsTruth[1] != -1)){
         if (m_debug) std::cout << "Starting Filling of mjjRespTrigVsTruth..." << std::endl;
-        mjjRespTrigVsTruthMatrix ->Fill(ED_trigJet->mjj, ED_jet_truth->GetMjj(matchingIndexList[0],matchingIndexList[1]), ED_truthJet->eta->at(0), m_weight, 1);
+        mjjRespTrigVsTruthMatrix ->Fill(ED_trigJet->mjj, ED_truthJet->GetMjj(matchingIndexList_TriggvsTruth[0],matchingIndexList_TriggvsTruth[1]), ED_truthJet->eta->at(0), m_weight, 1);
      }
  }
 
  if (CS->doMjjResponseTrigVsOff){
-     if ((matchingIndexList[0] != -1) && (matchingIndexList[1] != -1)){
+     if ((matchingIndexList_TriggvsOff[0] != -1) && (matchingIndexList_TriggvsOff[1] != -1)){
         if (m_debug) std::cout << "Starting Filling of mjjRespTrigVsOff..." << std::endl;
-        mjjRespTrigVsOffMatrix ->Fill(ED_trigJet->mjj, ED_jet->GetMjj(matchingIndexList[0],matchingIndexList[1]), ED_jet->eta->at(0), m_weight, 1);
+        mjjRespTrigVsOffMatrix ->Fill(ED_trigJet->mjj, ED_jet->GetMjj(matchingIndexList_TriggvsOff[0],matchingIndexList_TriggvsOff[1]), ED_jet->eta->at(0), m_weight, 1);
      }
  }
 

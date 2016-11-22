@@ -36,6 +36,9 @@ created by Edgar Kellermann (edgar.kellermann@cern.ch)
 #include <JetTriggerPerformancePackage/CutHandler.h>
 #include <JetTriggerPerformancePackage/ToolsJTPP.h>
 
+//TrigDecisionTool
+#include "TrigDecisionTool/TrigDecisionTool.h"
+
 class TriggerEfficiencyMatrix: public HistogramMatrix
 {
  private:

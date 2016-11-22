@@ -39,7 +39,6 @@ InputHandler :: InputHandler () :
     m_branch_offlineJet("jet_X"),
     m_branch_triggerJet("trigJet_X"),
     m_branch_truthJet("truthJet_X"),
-    m_branch_jet_truth("jet_truth_X"),
     m_branch_LVL1JetROI("LVL1JetROIs_X"),
     m_TriggerName("STUDYALL"),
     m_debug(false),
@@ -94,9 +93,9 @@ InputHandler :: InputHandler () :
     m_HtTurnon_BinNumbers(1200),
     m_HtTurnon_MinBin(0.0),
     m_HtTurnon_MaxBin(1200.0),
-    m_TLATurnon_BinNumbers(1200),
-    m_TLATurnon_MinBin(0.0),
-    m_TLATurnon_MaxBin(1200.0),
+    m_MjjTurnon_BinNumbers(1200),
+    m_MjjTurnon_MinBin(0.0),
+    m_MjjTurnon_MaxBin(1200.0),
     m_HLT_cen_etaMin(0.0), // DEFAULT ETA REGIONS AND TIMING FOR TURNON EVENT SELECTION!
     m_HLT_cen_etaMax(2.8), //
     m_HLT_fwd_etaMin(3.6), //
@@ -118,7 +117,6 @@ InputHandler :: InputHandler () :
     ED_jet(nullptr),
     ED_trigJet(nullptr),
     ED_truthJet(nullptr),
-    ED_jet_truth(nullptr),
     L1D(nullptr),
     anaHandler(nullptr),
     logwr(nullptr),
@@ -187,9 +185,9 @@ EL::StatusCode  InputHandler :: configure ()
                         m_HtTurnon_BinNumbers,
                         m_HtTurnon_MinBin,
                         m_HtTurnon_MaxBin,
-                        m_TLATurnon_BinNumbers,
-                        m_TLATurnon_MinBin,
-                        m_TLATurnon_MaxBin,
+                        m_MjjTurnon_BinNumbers,
+                        m_MjjTurnon_MinBin,
+                        m_MjjTurnon_MaxBin,
                         m_HLT_cen_etaMin,
                         m_HLT_cen_etaMax,
                         m_HLT_fwd_etaMin,
@@ -239,9 +237,6 @@ EL::StatusCode  InputHandler :: configure ()
   m_branch_truthJet_front = myTools->splitString(m_branch_truthJet,"X",0);
   m_branch_truthJet_back  = myTools->splitString(m_branch_truthJet,"X",1);
 
-  m_branch_jet_truth_front = myTools->splitString(m_branch_jet_truth,"X",0);
-  m_branch_jet_truth_back  = myTools->splitString(m_branch_jet_truth,"X",1);
-
   m_branch_LVL1JetROI_front = myTools->splitString(m_branch_LVL1JetROI,"X",0);
   m_branch_LVL1JetROI_back  = myTools->splitString(m_branch_LVL1JetROI,"X",1);
 
@@ -265,6 +260,7 @@ EL::StatusCode  InputHandler :: configure ()
 
   // Declare all TriggerHistoPack classes (one for each trigger) and book all histograms
   for (unsigned int i=0; i<TD->config_triggerName.size(); i++){
+
       TriggerHistoPack* triggerhisto = new TriggerHistoPack(TD->config_triggerName.at(i), TD->config_triggerName.at(i), TD->config_nthJet.at(i), CS);
       triggerhisto->BookAll(wk());
       m_map_triggerhistos[TD->config_triggerName.at(i)] = triggerhisto;
@@ -274,9 +270,7 @@ EL::StatusCode  InputHandler :: configure ()
   ED_jet = new EventData("jet", CS);
   ED_trigJet = new EventData("trigJet", CS);
   ED_truthJet = new EventData("truthJet", CS);
-  ED_jet_truth = new EventData("jet_truth", CS);
   L1D = new L1Data("L1Jet");
-
 
   // Declare the AnalysisHandler class
   anaHandler = new AnalysisHandler();
@@ -386,7 +380,7 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
   tree->SetBranchStatus  ("passedTriggers",    1);
   tree->SetBranchAddress ("passedTriggers",    &(TD->event_passedTriggers));
 
-  if (CS->useTriggerBeforePraescale){
+  if ((CS->doTurnOns) && CS->useTriggerBeforePraescale){
 
     tree->SetBranchStatus  ("triggerPrescales",    1);
     tree->SetBranchAddress ("triggerPrescales",  &(TD->event_triggerPrescales));
@@ -547,7 +541,7 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
   }
 
   // Truth jets
-  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse)){
+  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse)){
 
       if(m_debug) Info("InputHandler()", "Setting truth branches");
 
@@ -602,24 +596,6 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
       tree->SetBranchAddress ((m_branch_truthJet_front + "FracSamplingMax" + m_branch_truthJet_back).c_str(), &(ED_truthJet->FracSamplingMax));
       }
 
-  }
-
-  // Truth jets matched to offline jets
-  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse)){
-
-      if(m_debug) Info("InputHandler()", "Setting jet_truth branches");
-
-      tree->SetBranchStatus  ((m_branch_jet_truth_front + "pt" + m_branch_jet_truth_back).c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth_front + "pt" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->pt));
-
-      tree->SetBranchStatus  ((m_branch_jet_truth_front + "eta" + m_branch_jet_truth_back).c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth_front + "eta" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->eta));
-
-      tree->SetBranchStatus  ((m_branch_jet_truth_front + "phi" + m_branch_jet_truth_back).c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth_front + "phi" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->phi));
-
-      tree->SetBranchStatus  ((m_branch_jet_truth_front + "E" + m_branch_jet_truth_back).c_str(), 1);
-      tree->SetBranchAddress ((m_branch_jet_truth_front + "E" + m_branch_jet_truth_back).c_str(), &(ED_jet_truth->E));
   }
 
   // L1 jets
@@ -789,17 +765,17 @@ EL::StatusCode InputHandler :: execute ()
       if (CS->useTriggerBeforePraescale){
 
           //probe
-          cutH->SearchPassBits(TD->probe_triggerName,TD->probe_passBits, TD->probe_prescaledOut, TD->event_isPassBitsNames, TD->event_isPassBits);
+          cutH->SearchPassBits(TD->probe_triggerName,TD->probe_passBits, TD->event_isPassBitsNames, TD->event_isPassBits);
 
           //ref
-          cutH->SearchPassBits(TD->ref_triggerName,TD->ref_passBits, TD->ref_prescaledOut, TD->event_isPassBitsNames, TD->event_isPassBits);
+          cutH->SearchPassBits(TD->ref_triggerName,TD->ref_passBits, TD->event_isPassBitsNames, TD->event_isPassBits);
       }
 
-      cout << " === passed Bits === " << endl;
+/*      cout << " === passed Bits === " << endl;
       for (int j=0; j < TD->probe_triggerName.size(); j++){
         cout << "probe: " << TD->probe_triggerName.at(j) << " ::: passedBit: " << TD->probe_passBits.at(j) << " ::: passed:" << TD->probe_passedTrigger.at(j) << " ::: prescaledOut: " << TD->probe_prescaledOut.at(j) << endl;
         cout << "ref  : " << TD->ref_triggerName.at(j)   << " ::: passedBit: " << TD->ref_passBits.at(j)   << " ::: passed:" << TD->ref_passedTrigger.at(j)   << " ::: prescaledOut: " << TD->ref_prescaledOut.at(j)   << endl;
-      }
+      } */
   }
 
   //Apply trigger specific cuts
@@ -814,7 +790,7 @@ EL::StatusCode InputHandler :: execute ()
       cout << "Event passed cuts!" << endl;
       cout << "The triggers that are wanted:..." << TD->config_triggerName.size() << endl;
       for (int n=0; n < TD->config_triggerName.size(); n++){
-	  cout << TD->config_triggerName.at(n) << " passes?: " << TD->config_passedTriggers.at(n) << endl;
+        cout << TD->config_triggerName.at(n) << " passes?: " << TD->config_passedTriggers.at(n) << endl;
       }
   }
 
@@ -830,26 +806,62 @@ EL::StatusCode InputHandler :: execute ()
   // 1.1. Matching of trigger and offline jets
 
   // Initialise matchingIndex
-  std::vector<int> matchingIndexList;
-  std::vector<double> DeltaRList;
+  std::vector<int> matchingIndexList_TriggvsOffl;
+  std::vector<int> matchingIndexList_OfflvsTruth;
+  std::vector<int> matchingIndexList_TriggvsTruth;
+
+  std::vector<double> DeltaRList_TriggvsOffl;
+  std::vector<double> DeltaRList_OfflvsTruth;
+  std::vector<double> DeltaRList_TriggvsTruth;
 
   // Just do matching if it is really needed, i.e. if we want to see Response plots
   if (CS->doTriggerOfflineResponse || CS->doOfflineTruthResponse || CS->doTriggerTruthResponse || CS->doMjjResponseOffVsTruth || CS->doMjjResponseTrigVsOff || CS->doMjjResponseTrigVsTruth){
 
     if (CS->doMatching){
         for (unsigned int i = 0; i < ED_trigJet->pt->size(); i++){
-            matchingIndexList.push_back(-1);
-            DeltaRList.push_back(-1);
+            matchingIndexList_TriggvsOffl.push_back(-1);
+            matchingIndexList_TriggvsTruth.push_back(-1);
+
+            DeltaRList_TriggvsOffl.push_back(-1);
+            DeltaRList_TriggvsTruth.push_back(-1);
         }
-        anaHandler->findBestMatching(ED_trigJet->pt, ED_trigJet->eta, ED_trigJet->phi, ED_trigJet->E, ED_jet->pt, ED_jet->eta, ED_jet->phi, ED_jet->E , matchingIndexList, DeltaRList, m_DeltaRMax);
+
+        for (unsigned int i = 0; i < ED_jet->pt->size(); i++){
+            matchingIndexList_OfflvsTruth.push_back(-1);
+            DeltaRList_OfflvsTruth.push_back(-1);
+        }
+
+        // Matching of offline and trigger jets
+        if ((CS->doTriggerOfflineResponse) || (CS->doMjjResponseTrigVsOff)) {
+            anaHandler->findBestMatching(ED_trigJet, ED_jet, matchingIndexList_TriggvsOffl, DeltaRList_TriggvsOffl, m_DeltaRMax);
+        }
+
+        // Matching of offline and truth jets
+        if ((CS->doOfflineTruthResponse) || (CS->doMjjResponseOffVsTruth)) {
+            anaHandler->findBestMatching(ED_jet, ED_truthJet, matchingIndexList_OfflvsTruth, DeltaRList_OfflvsTruth, m_DeltaRMax);
+        }
+
+        // Matching of trigger and truht jets
+        if ((CS->doTriggerTruthResponse) || (CS->doMjjResponseTrigVsTruth)){
+            anaHandler->findBestMatching(ED_trigJet, ED_truthJet, matchingIndexList_TriggvsTruth, DeltaRList_TriggvsTruth, m_DeltaRMax);
+        }
     }
     else{
         // if matchingIndex is still used, give it reasonable entries
         int counter = 0;
         for (unsigned int i = 0; i < ED_trigJet->pt->size(); i++){
-          matchingIndexList.push_back(counter);
+          matchingIndexList_TriggvsOffl.push_back(counter);
+          matchingIndexList_TriggvsTruth.push_back(counter);
           counter ++;
-          DeltaRList.push_back(-1);
+          DeltaRList_TriggvsOffl.push_back(-1);
+          DeltaRList_TriggvsTruth.push_back(-1);
+        }
+
+
+        for (unsigned int i = 0; i < ED_jet->pt->size(); i++){
+            matchingIndexList_OfflvsTruth.push_back(counter);
+            counter++;
+            DeltaRList_OfflvsTruth.push_back(-1);
         }
     }
   }
@@ -897,7 +909,7 @@ EL::StatusCode InputHandler :: execute ()
       if (!TD->config_passedTriggers.at(n)) continue;
 
       // Fill triggerHistoPacks
-      m_map_triggerhistos[TD->config_triggerName.at(n)]->FillAll(ED_jet, ED_trigJet, ED_truthJet, ED_jet_truth, matchingIndexList, m_weight);
+      m_map_triggerhistos[TD->config_triggerName.at(n)]->FillAll(ED_jet, ED_trigJet, ED_truthJet, matchingIndexList_TriggvsOffl, matchingIndexList_OfflvsTruth, matchingIndexList_TriggvsTruth, m_weight);
   }
 
   /* ======= Fill Turnons ======= */
@@ -908,6 +920,7 @@ EL::StatusCode InputHandler :: execute ()
 
   eventCounter++;
   TD->UpdateCounting();
+  if (m_debug) cout << "=== End of Execute ===" << endl;
   return EL::StatusCode::SUCCESS;
 }
 
@@ -937,7 +950,9 @@ EL::StatusCode InputHandler :: finalize ()
   // gets called on worker nodes that processed input events.
 
   // Creating Turn-On histograms
-  trigEffic->DivideEfficiencyPlots(TD, CS, wk());
+  if (CS->doTurnOns){
+    trigEffic->DivideEfficiencyPlots(TD, CS, wk());
+  }
 
   cout << "================== Results ====================" << endl;
 

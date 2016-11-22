@@ -130,9 +130,9 @@ class InputHandler : public xAH::Algorithm
     float m_HtTurnon_MinBin;
     float m_HtTurnon_MaxBin;
 
-    int   m_TLATurnon_BinNumbers;
-    float m_TLATurnon_MinBin;
-    float m_TLATurnon_MaxBin;
+    int   m_MjjTurnon_BinNumbers;
+    float m_MjjTurnon_MinBin;
+    float m_MjjTurnon_MaxBin;
 
     // Turnon Event Selection
     float m_HLT_cen_etaMin;

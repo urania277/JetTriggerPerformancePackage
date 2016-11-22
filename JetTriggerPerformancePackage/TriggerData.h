@@ -81,10 +81,6 @@ class TriggerData: public BaseJTPP
     std::vector< unsigned int> probe_passBits;
     std::vector< unsigned int> ref_passBits;
 
-    // corresponding prescaledOut bools
-    std::vector< bool> probe_prescaledOut;
-    std::vector< bool> ref_prescaledOut;
-
     // corresponding pt threshold of triggers
     std::vector< float> probe_ptThreshold;
     std::vector< float> ref_ptThreshold;
@@ -107,10 +103,11 @@ class TriggerData: public BaseJTPP
     std::vector< float> probe_HTThreshold;
     std::vector< float> ref_HTThreshold;
 
-    // do TDT, Emu, TBP; turnon specific
-    std::vector< bool> bracket_doTDT;
-    std::vector< bool> bracket_doEmu;
-    std::vector< bool> bracket_doTBP;
+    // bracket options
+    std::vector< bool> bracket_doTDT; // t
+    std::vector< bool> bracket_doEmu; // e
+    std::vector< bool> bracket_doTBP; // p
+    std::vector< bool> bracket_doMjj; // m
 
     // Turnon Event Selection
      const float HLT_cen_etaMin;
