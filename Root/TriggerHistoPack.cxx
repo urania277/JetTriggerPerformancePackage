@@ -193,21 +193,21 @@ void TriggerHistoPack::FillAll(EventData* ED_jet, EventData* ED_trigJet, EventDa
  if (CS->doMjjResponseOffVsTruth){
      if ((matchingIndexList_OffvsTruth[0] != -1) && (matchingIndexList_OffvsTruth[1] != -1)){
         if (m_debug) std::cout << "Starting Filling of mjjRespOffVsTruth..." << std::endl;
-        mjjRespOffVsTruthMatrix ->Fill(ED_jet->mjj, ED_truthJet->GetMjj(matchingIndexList_OffvsTruth[0],matchingIndexList_OffvsTruth[1]), ED_truthJet->eta->at(0), m_weight, 1);
+        mjjRespOffVsTruthMatrix ->Fill(ED_jet->GetMjj(0,1), ED_truthJet->GetMjj(matchingIndexList_OffvsTruth[0],matchingIndexList_OffvsTruth[1]), ED_truthJet->eta->at(0), m_weight, 1);
      }
  }
 
  if (CS->doMjjResponseTrigVsTruth){
      if ((matchingIndexList_TriggvsTruth[0] != -1) && (matchingIndexList_TriggvsTruth[1] != -1)){
         if (m_debug) std::cout << "Starting Filling of mjjRespTrigVsTruth..." << std::endl;
-        mjjRespTrigVsTruthMatrix ->Fill(ED_trigJet->mjj, ED_truthJet->GetMjj(matchingIndexList_TriggvsTruth[0],matchingIndexList_TriggvsTruth[1]), ED_truthJet->eta->at(0), m_weight, 1);
+        mjjRespTrigVsTruthMatrix ->Fill(ED_trigJet->GetMjj(0,1), ED_truthJet->GetMjj(matchingIndexList_TriggvsTruth[0],matchingIndexList_TriggvsTruth[1]), ED_truthJet->eta->at(0), m_weight, 1);
      }
  }
 
  if (CS->doMjjResponseTrigVsOff){
      if ((matchingIndexList_TriggvsOff[0] != -1) && (matchingIndexList_TriggvsOff[1] != -1)){
         if (m_debug) std::cout << "Starting Filling of mjjRespTrigVsOff..." << std::endl;
-        mjjRespTrigVsOffMatrix ->Fill(ED_trigJet->mjj, ED_jet->GetMjj(matchingIndexList_TriggvsOff[0],matchingIndexList_TriggvsOff[1]), ED_jet->eta->at(0), m_weight, 1);
+        mjjRespTrigVsOffMatrix ->Fill(ED_trigJet->GetMjj(0,1), ED_jet->GetMjj(matchingIndexList_TriggvsOff[0],matchingIndexList_TriggvsOff[1]), ED_jet->eta->at(0), m_weight, 1);
      }
  }
 
