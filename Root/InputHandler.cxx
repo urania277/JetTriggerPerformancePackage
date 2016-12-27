@@ -270,6 +270,7 @@ EL::StatusCode  InputHandler :: configure ()
   ED_jet = new EventData("jet", CS);
   ED_trigJet = new EventData("trigJet", CS);
   ED_truthJet = new EventData("truthJet", CS);
+    
   L1D = new L1Data("L1Jet");
 
   // Declare the AnalysisHandler class
@@ -541,7 +542,7 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
   }
 
   // Truth jets
-  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse)){
+  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doMjjResponseTrigVsTruth) || (CS->doMjjResponseOffVsTruth)){
 
       if(m_debug) Info("InputHandler()", "Setting truth branches");
 
@@ -683,15 +684,19 @@ EL::StatusCode InputHandler :: execute ()
 
   // --- check if jet vector has more than 1 jets otherwise skip this event
   // check offline jets
-  if ((CS->doOfflineJetKinematics)||(CS->doTriggerTruthResponse)||(CS->doTriggerOfflineResponse)||(CS->doTurnOns)){
+  if ((CS->doOfflineJetKinematics)||(CS->doTriggerTruthResponse)||(CS->doTriggerOfflineResponse)||(CS->doTurnOns) || (CS->doMjjResponseOffVsTruth)){
       if(ED_jet->eta->size() < 2) return EL::StatusCode::SUCCESS;
   }
   // check trigger jets
-  if ((CS->doTriggerJetKinematics)||(CS->doTriggerTruthResponse)||(CS->doTriggerOfflineResponse)||((CS->doTurnOns)&&(CS->useEmulation))){
+  if ((CS->doTriggerJetKinematics)||(CS->doTriggerTruthResponse)||(CS->doTriggerOfflineResponse)||((CS->doTurnOns)&&(CS->useEmulation)) || (CS->doMjjResponseTrigVsTruth)){
       if(ED_trigJet->eta->size() < 2) return EL::StatusCode::SUCCESS;
   }
   // check truth jets
-  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse)){
+  if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doMjjResponseTrigVsTruth) || (CS->doMjjResponseOffVsTruth)){
+
+      std::cout << "CD: CHECKING TRUTH JET" << std::endl;
+      std::cout << ED_truthJet->eta->size() << std::endl;
+
       if(ED_truthJet->eta->size() < 2) return EL::StatusCode::SUCCESS;
   }
 

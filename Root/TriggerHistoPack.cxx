@@ -75,22 +75,22 @@ void TriggerHistoPack::BookAll(EL::Worker* wk)
 
   // PtResponse_etaBinNumber
   const int PtResponse_etaBinNumber = std::count(CS->PtResponse_etaBinning.begin(),CS->PtResponse_etaBinning.end(),',') +1;
-  double PtResponse_etaBinning[PtResponse_etaBinNumber] = {0.0};
+  double PtResponse_etaBinning[PtResponse_etaBinNumber];// = {0.0};
   myTools->stringToArray(CS->PtResponse_etaBinning,PtResponse_etaBinning,",");
 
   // PtResponse_ptBinNumber
   const int PtResponse_ptBinNumber = std::count(CS->PtResponse_ptBinning.begin(),CS->PtResponse_ptBinning.end(),',') +1;
-  double PtResponse_ptBinning[PtResponse_ptBinNumber] = {0.0};
+  double PtResponse_ptBinning[PtResponse_ptBinNumber];// = {0.0};
   myTools->stringToArray(CS->PtResponse_ptBinning,PtResponse_ptBinning,",");
 
   // MjjResponse_etaBinNumber
   const int MjjResponse_etaBinNumber = std::count(CS->MjjResponse_etaBinning.begin(),CS->MjjResponse_etaBinning.end(),',') +1;
-  double MjjResponse_etaBinning[MjjResponse_etaBinNumber] = {0.0};
+  double MjjResponse_etaBinning[MjjResponse_etaBinNumber];// = {0.0};
   myTools->stringToArray(CS->MjjResponse_etaBinning,MjjResponse_etaBinning,",");
 
   // MjjResponse_mjjBinNumber
   const int MjjResponse_mjjBinNumber = std::count(CS->MjjResponse_mjjBinning.begin(),CS->MjjResponse_mjjBinning.end(),',') +1;
-  double MjjResponse_mjjBinning[MjjResponse_mjjBinNumber] = {0.0};
+  double MjjResponse_mjjBinning[MjjResponse_mjjBinNumber];// = {0.0};
   myTools->stringToArray(CS->MjjResponse_mjjBinning,MjjResponse_mjjBinning,",");
 
   // --- RESPONSE PLOTS
