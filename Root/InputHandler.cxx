@@ -693,10 +693,6 @@ EL::StatusCode InputHandler :: execute ()
   }
   // check truth jets
   if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doMjjResponseTrigVsTruth) || (CS->doMjjResponseOffVsTruth)){
-
-      std::cout << "CD: CHECKING TRUTH JET" << std::endl;
-      std::cout << ED_truthJet->eta->size() << std::endl;
-
       if(ED_truthJet->eta->size() < 2) return EL::StatusCode::SUCCESS;
   }
 
