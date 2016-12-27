@@ -545,6 +545,8 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
   if ((CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doTruthJetKinematics)||(CS->doOfflineTruthResponse)||(CS->doTriggerTruthResponse) || (CS->doMjjResponseTrigVsTruth) || (CS->doMjjResponseOffVsTruth)){
 
       if(m_debug) Info("InputHandler()", "Setting truth branches");
+      
+      //std::cout << "m_branch_truthJet_front:" << m_branch_truthJet_front << "m_branch_truthJet_back:" << m_branch_truthJet_back << std::endl;
 
       tree->SetBranchStatus  ((m_branch_truthJet_front + "pt" + m_branch_truthJet_back).c_str(), 1);
       tree->SetBranchAddress ((m_branch_truthJet_front + "pt" + m_branch_truthJet_back).c_str(), &(ED_truthJet->pt));
@@ -802,6 +804,10 @@ EL::StatusCode InputHandler :: execute ()
       cout << TD->event_passedTriggers->at(n) << endl;
       }*/
 
+  //  for (int i=0; i<ED_truthJet->pt->size(); i++) {
+  //      std::cout << "CD: ED_truthJet->pt->at(i) " << ED_truthJet->pt->at(i) << ", i=" << std::endl;
+  //  }
+    
   /* ======= Matching ======= */
 
   // 1.1. Matching of trigger and offline jets
