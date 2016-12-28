@@ -54,13 +54,23 @@ void  AnalysisHandler::findBestMatching(EventData* ED_ref, EventData* ED_match, 
      //initialise value
      BestDeltaR = DeltaRMax;
      BestID = -1;
+
+
+     //CD: more debug if needed
+     //std::cout << "CD:refVec.SetPtEtaPhiE" << std::endl;
+     //std::cout << "CD:refVec.Pt" << ED_ref->pt->at(n) << std::endl;
      refVec.SetPtEtaPhiE(ED_ref->pt->at(n), ED_ref->eta->at(n), ED_ref->phi->at(n), ED_ref->E->at(n));
+     //std::cout << "CD:refVec.Rapidity" << std::endl;
      refRap = refVec.Rapidity();
 
      for (int m = 0; m < minVecSize; m++){
 
+     //std::cout << "CD:matchVec.SetPtEtaPhiE" << std::endl;
+     //std::cout << "CD:matchVec.Pt" << ED_match->pt->at(m) << std::endl;
        matchVec.SetPtEtaPhiE(ED_match->pt->at(m), ED_match->eta->at(m), ED_match->phi->at(m), ED_match->E->at(m));
+     //std::cout << "CD:matchVec.Rapidity" << std::endl;
        matchRap = matchVec.Rapidity();
+     //std::cout << "CD:matchVec.DeltaR" << std::endl;
        DeltaR = matchVec.DeltaR(refVec);
 
        //CD: this would not be correct - think of two jets that are at 3.14/-3.14 in phi...
