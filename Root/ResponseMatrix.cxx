@@ -118,7 +118,7 @@ void ResponseMatrix::Fill(double probeValue, double refValue, double eta, double
     }
   }
 
-    delete tools;
+    delete Tools;
 
   
 
