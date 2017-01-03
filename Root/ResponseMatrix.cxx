@@ -118,6 +118,8 @@ void ResponseMatrix::Fill(double probeValue, double refValue, double eta, double
     }
   }
 
+    delete tools;
+
   
 
   //  // Find right histogram and book it
@@ -148,7 +150,7 @@ void ResponseMatrix::Fill(double probeValue, double refValue, double eta, double
 void ResponseMatrix::Fill(std::vector<float>* probeValueVec, std::vector<float>* refValueVec, std::vector<float>* etaVec, double weight, int binningType)
 {
   int nMax;
-    std::cout << "CD:MATRIX VALUES:" << probeValueVec->size() << refValueVec->size() << std::endl;
+    //std::cout << "CD:MATRIX VALUES:" << probeValueVec->size() << refValueVec->size() << std::endl;
   if (probeValueVec->size() <= refValueVec->size()) nMax = probeValueVec->size();
   else nMax = refValueVec->size();
 

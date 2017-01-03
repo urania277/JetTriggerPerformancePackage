@@ -225,6 +225,7 @@ EL::StatusCode  InputHandler :: configure ()
   eventCounter = 0;
 
   // Declare and construct ToolsJTPP();
+  // this will go out of scope at the end of the constructor, so need to delete it here.
   ToolsJTPP* myTools = new ToolsJTPP();
 
   // Cut branch names and fill variables
@@ -295,7 +296,8 @@ EL::StatusCode  InputHandler :: configure ()
   }
 
   if(m_debug) Info("InputHandler()", "Finishing InputHandler :: configure");
-
+ 
+  delete myTools;
   return EL::StatusCode::SUCCESS;
 }
 
