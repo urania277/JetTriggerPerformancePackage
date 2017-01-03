@@ -73,6 +73,8 @@ std::string ResponseMatrix::createHistoName(double d_ptBE1, double d_ptBE2, doub
   ptBE2 = tools->ftos(d_ptBE2,5);
   etaBE1 = tools->ftos(d_etaBE1,2);
   etaBE2 = tools->ftos(d_etaBE2,2);
+    
+    delete tools;
 
   return m_key + "_pt_" + ptBE1 + "_" + ptBE2 + "_eta_" + etaBE1 + "_" + etaBE2;
 }
@@ -146,6 +148,7 @@ void ResponseMatrix::Fill(double probeValue, double refValue, double eta, double
 void ResponseMatrix::Fill(std::vector<float>* probeValueVec, std::vector<float>* refValueVec, std::vector<float>* etaVec, double weight, int binningType)
 {
   int nMax;
+    std::cout << "CD:MATRIX VALUES:" << probeValueVec->size() << refValueVec->size() << std::endl;
   if (probeValueVec->size() <= refValueVec->size()) nMax = probeValueVec->size();
   else nMax = refValueVec->size();
 
