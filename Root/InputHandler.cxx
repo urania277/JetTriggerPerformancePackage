@@ -368,6 +368,7 @@ EL::StatusCode InputHandler :: changeInput (bool firstFile)
     }//over Keys
     if(m_debug) std::cout << "looking at cutflow..." << std::endl;
 
+    //CD: this is not useful anymore, I think?
     //for MC events: open cutflow histo and obtain numberOfEntries
     if(!CS->isData){
         numberOfEntries = 1; // For some nutples, cutflow does not exist
@@ -681,10 +682,12 @@ EL::StatusCode InputHandler :: execute ()
   if ((CS->doTurnOns)&&(CS->useEmulation)) L1D->FillEAndPTVector();
 
   //For MC only: Normalise weight by dividing through numberOfEntries
-  if (!CS->isData){
+  //CD: we don't quite want to do this, because the normalization unfortunately works only if we take the number of events all together rather than one ntuple at a time
+  //Think of the following:
+  //1/10+1/20 != 1/30 (when there are 30 events all together)
+  /*if (!CS->isData){
       m_weight = m_weight/ (double) numberOfEntries;
-  }
-
+  }*/
 
   // --- check if jet vector has more than 1 jets otherwise skip this event
   // check offline jets
